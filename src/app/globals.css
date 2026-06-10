@@ -1,0 +1,172 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ──────────────────────────────────────────────────────────────
+   World Cup 2026 Fantasy — Design Tokens
+   Using HSL values without the hsl() wrapper so Tailwind's
+   opacity modifier (e.g. bg-primary/50) works correctly.
+   ────────────────────────────────────────────────────────────── */
+
+@layer base {
+  :root {
+    /* Backgrounds */
+    --background: 220 85% 9%;       /* navy-900 dark canvas */
+    --foreground: 43 30% 95%;       /* warm off-white */
+
+    /* Card / Popover (slightly lighter than background) */
+    --card: 220 75% 13%;
+    --card-foreground: 43 30% 95%;
+    --popover: 220 75% 13%;
+    --popover-foreground: 43 30% 95%;
+
+    /* Primary — gold */
+    --primary: 43 96% 47%;
+    --primary-foreground: 220 85% 9%;
+
+    /* Secondary — navy accent */
+    --secondary: 220 60% 20%;
+    --secondary-foreground: 43 30% 95%;
+
+    /* Muted — subtle backgrounds */
+    --muted: 220 50% 16%;
+    --muted-foreground: 220 20% 65%;
+
+    /* Accent — lighter gold */
+    --accent: 43 100% 66%;
+    --accent-foreground: 220 85% 9%;
+
+    /* Destructive — crimson */
+    --destructive: 348 83% 47%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Borders */
+    --border: 220 40% 22%;
+    --input: 220 40% 22%;
+    --ring: 43 96% 47%;
+
+    /* Border radius (Shadcn default) */
+    --radius: 0.5rem;
+  }
+
+  /* Light mode override (opt-in via .light class) */
+  .light {
+    --background: 220 60% 97%;
+    --foreground: 220 85% 9%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 85% 9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 85% 9%;
+    --primary: 43 96% 47%;
+    --primary-foreground: 220 85% 9%;
+    --secondary: 220 60% 92%;
+    --secondary-foreground: 220 85% 9%;
+    --muted: 220 40% 93%;
+    --muted-foreground: 220 20% 40%;
+    --accent: 43 100% 54%;
+    --accent-foreground: 220 85% 9%;
+    --destructive: 348 83% 47%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 30% 85%;
+    --input: 220 30% 85%;
+    --ring: 43 96% 47%;
+  }
+
+  /* ── Base element resets ── */
+  * {
+    @apply border-border;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-inter), system-ui, sans-serif;
+    font-feature-settings: "cv11", "ss01";
+  }
+
+  /* Focus ring — visible for keyboard nav, hidden on mouse */
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   Utility classes
+   ────────────────────────────────────────────────────────────── */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Glassmorphism card */
+  .glass {
+    @apply bg-white/5 backdrop-blur-md border border-white/10;
+  }
+
+  /* Pitch-green striped background */
+  .pitch-bg {
+    background-image: repeating-linear-gradient(
+      90deg,
+      hsl(130 55% 33%) 0px,
+      hsl(130 55% 33%) 48px,
+      hsl(130 55% 30%) 48px,
+      hsl(130 55% 30%) 96px
+    );
+  }
+
+  /* Shimmer loading skeleton */
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      hsl(220 50% 16%) 25%,
+      hsl(220 40% 22%) 50%,
+      hsl(220 50% 16%) 75%
+    );
+    background-size: 200% 100%;
+    @apply animate-shimmer;
+  }
+
+  /* Gold gradient text */
+  .text-gold-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(
+      135deg,
+      hsl(43 100% 66%) 0%,
+      hsl(43 96% 47%) 50%,
+      hsl(38 92% 40%) 100%
+    );
+  }
+
+  /* Navy gradient background */
+  .bg-navy-gradient {
+    background-image: linear-gradient(
+      135deg,
+      hsl(220 90% 6%) 0%,
+      hsl(220 80% 14%) 100%
+    );
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   Scrollbar styling
+   ────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(220 85% 9%);
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(220 40% 28%);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(43 96% 47%);
+}
