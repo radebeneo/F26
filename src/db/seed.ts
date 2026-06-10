@@ -32,9 +32,6 @@ async function main() {
     }
   }
 
-  // Fetch updated gameweeks to map IDs for fixtures
-  const updatedGameweeks = await db.select().from(gameweeks);
-
   // 2. Seed Fixtures
   console.log("Seeding Fixtures...");
   for (const fix of fixturesData) {

@@ -28,7 +28,7 @@ export default function HomePage() {
       <div className="flex gap-4">
         <Link
           id="cta-get-started"
-          href="/auth/signup"
+          href="/auth/register"
           className="rounded-lg bg-primary px-6 py-3 font-semibold text-primary-foreground transition-all hover:brightness-110 hover:scale-105 active:scale-95"
         >
           Get Started
