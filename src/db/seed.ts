@@ -74,7 +74,13 @@ async function main() {
     const key = `${p.firstName}|${p.lastName}|${p.nation}`;
     const existing = playerMap.get(key);
     if (existing) {
-      toUpdate.push({ id: existing.id, ...p });
+      if (
+        existing.price !== p.price ||
+        existing.position !== p.position ||
+        existing.club !== p.club
+      ) {
+        toUpdate.push({ id: existing.id, ...p });
+      }
     } else {
       toInsert.push(p);
     }
