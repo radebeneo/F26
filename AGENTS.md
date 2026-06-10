@@ -55,6 +55,26 @@ For every feature:
 
 ---
 
+## Agent Skills
+
+For complex, non-obvious workflows, consult the relevant skill file in
+`docs/agent-skills/` **before writing any code**. These files contain
+exact rules, edge cases, test cases, and common mistakes that are easy
+to get wrong without context.
+
+| Skill file | When to use it |
+|---|---|
+| `docs/agent-skills/drizzle-migrations.md` | Any edit to `src/db/schema.ts`; adding tables, columns, or enums |
+| `docs/agent-skills/seed-data.md` | Adding or updating player, fixture, or gameweek seed data |
+| `docs/agent-skills/squad-validation.md` | Implementing or modifying squad validation (client or server) |
+| `docs/agent-skills/point-calculation-engine.md` | Touching `calculatePoints`, scoring rules, or the points pipeline |
+| `docs/agent-skills/admin-stat-entry.md` | Implementing or testing `POST /api/admin/stats` end-to-end |
+
+If your task matches one of these areas, read the skill file first.
+Do not rely solely on this `AGENTS.md` for those workflows.
+
+---
+
 ## Architecture Guidelines
 
 ### Directory Structure
@@ -73,13 +93,26 @@ src/
   db/
     schema.ts             # Drizzle ORM schema — single source of truth
     index.ts              # Drizzle client instance
+    seeds/                # Seed data files (players, gameweeks, fixtures)
+    seed.ts               # Seeder entry point
   lib/
     supabase/
       client.ts           # Browser Supabase client
       server.ts           # Server Supabase client (cookies)
     utils.ts              # cn() utility
+    calculatePoints.ts    # Raw per-player point calculator (server-side only)
+    aggregateSquadPoints.ts # Captain multiplier + squad total aggregation
+  store/
+    squadStore.ts         # Zustand store for squad builder state
   middleware.ts           # Supabase session refresh + route protection
   types/                  # Shared TypeScript types beyond schema inference
+docs/
+  agent-skills/           # Executable skill guides for complex workflows
+    drizzle-migrations.md
+    seed-data.md
+    squad-validation.md
+    point-calculation-engine.md
+    admin-stat-entry.md
 ```
 
 > Directories that do not exist yet should be created when the first file in them is needed.
@@ -180,9 +213,10 @@ The points engine is the core business logic. Follow these constraints exactly:
 
 ### Squad Rules
 - 15 players total: 11 starters + 4 bench
-- Exactly 1 GK, 4 DEF, 4 MID, 3 FWD in starting XI
+- Full squad composition: 2 GK, 5 DEF, 5 MID, 3 FWD
+- Starting XI: 1 GK, 3–5 DEF, 2–5 MID, 1–3 FWD (all four ranges must be satisfied simultaneously)
 - Budget cap: £100m
-- Max **3 players from any single nation** per gameweek squad
+- Nation limit per squad varies by gameweek — **see `docs/agent-skills/squad-validation.md`** for the full lookup table (not a flat 3-player cap)
 
 ### Scoring Rules
 
@@ -417,6 +451,11 @@ The points engine runs server-side only (API route or server action). It must:
 
 Never run point calculations client-side.
 
+> **Before implementing or modifying the points engine**, read
+> `docs/agent-skills/point-calculation-engine.md` — it contains the
+> exact rule application order, critical edge cases, and required
+> test cases that must pass after every change.
+
 ---
 
 ## Admin Rules
@@ -427,6 +466,11 @@ The admin stat entry endpoint is `POST /api/admin/stats`.
 - It must validate the request body with Zod before any DB write.
 - After writing stats, it should trigger the points engine for the fixture.
 - Respond with the updated player stats and computed points.
+
+> **Before implementing or modifying this endpoint**, read
+> `docs/agent-skills/admin-stat-entry.md` — it documents the full
+> 10-step processing pipeline, Zod schema, error response shapes,
+> and common sequencing mistakes.
 
 ---
 
