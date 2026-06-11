@@ -14,7 +14,7 @@ const features = [
     id: "feature-build-team",
     icon: Users,
     title: "Build Your Team",
-    description: "Select 15 players with your £100m budget",
+    description: "Select 15 players with your $100m budget",
   },
   {
     id: "feature-performance",
