@@ -172,4 +172,3 @@ Before contributing:
 
 ## License
 
-MIT

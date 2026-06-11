@@ -8,68 +8,48 @@
    opacity modifier (e.g. bg-primary/50) works correctly.
    ────────────────────────────────────────────────────────────── */
 
+
 @layer base {
   :root {
     /* Backgrounds */
-    --background: 220 85% 9%;       /* navy-900 dark canvas */
-    --foreground: 43 30% 95%;       /* warm off-white */
+    --background: 0 0% 100%;
+    /* white canvas */
+    --foreground: 240 6% 17%;
+    /* neutral-950 text */
 
-    /* Card / Popover (slightly lighter than background) */
-    --card: 220 75% 13%;
-    --card-foreground: 43 30% 95%;
-    --popover: 220 75% 13%;
-    --popover-foreground: 43 30% 95%;
+    /* Card / Popover */
+    --card: 0 0% 100%;
+    --card-foreground: 240 6% 17%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 6% 17%;
 
-    /* Primary — gold */
-    --primary: 43 96% 47%;
-    --primary-foreground: 220 85% 9%;
+    /* Primary — vibrant blue */
+    --primary: 205 100% 58%;
+    --primary-foreground: 0 0% 100%;
 
-    /* Secondary — navy accent */
-    --secondary: 220 60% 20%;
-    --secondary-foreground: 43 30% 95%;
+    /* Secondary — neutral 100 */
+    --secondary: 240 12% 94%;
+    --secondary-foreground: 240 8% 24%;
 
-    /* Muted — subtle backgrounds */
-    --muted: 220 50% 16%;
-    --muted-foreground: 220 20% 65%;
+    /* Muted — neutral 100 */
+    --muted: 240 12% 94%;
+    --muted-foreground: 235 9% 48%;
 
-    /* Accent — lighter gold */
-    --accent: 43 100% 66%;
-    --accent-foreground: 220 85% 9%;
+    /* Accent — yellow/orange */
+    --accent: 36 100% 52%;
+    --accent-foreground: 0 0% 100%;
 
-    /* Destructive — crimson */
-    --destructive: 348 83% 47%;
+    /* Destructive — red */
+    --destructive: 348 90% 57%;
     --destructive-foreground: 0 0% 100%;
 
     /* Borders */
-    --border: 220 40% 22%;
-    --input: 220 40% 22%;
-    --ring: 43 96% 47%;
+    --border: 231 10% 86%;
+    --input: 231 10% 86%;
+    --ring: 205 100% 58%;
 
     /* Border radius (Shadcn default) */
     --radius: 0.5rem;
-  }
-
-  /* Light mode override (opt-in via .light class) */
-  .light {
-    --background: 220 60% 97%;
-    --foreground: 220 85% 9%;
-    --card: 0 0% 100%;
-    --card-foreground: 220 85% 9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 85% 9%;
-    --primary: 43 96% 47%;
-    --primary-foreground: 220 85% 9%;
-    --secondary: 220 60% 92%;
-    --secondary-foreground: 220 85% 9%;
-    --muted: 220 40% 93%;
-    --muted-foreground: 220 20% 40%;
-    --accent: 43 100% 54%;
-    --accent-foreground: 220 85% 9%;
-    --destructive: 348 83% 47%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 220 30% 85%;
-    --input: 220 30% 85%;
-    --ring: 43 96% 47%;
   }
 
   /* ── Base element resets ── */
@@ -81,10 +61,23 @@
     @apply scroll-smooth;
   }
 
-  body {
+  body,
+  button,
+  input,
+  select,
+  textarea {
     @apply bg-background text-foreground antialiased;
-    font-family: var(--font-inter), system-ui, sans-serif;
+    font-family: var(--font-sans);
     font-feature-settings: "cv11", "ss01";
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
   }
 
   /* Focus ring — visible for keyboard nav, hidden on mouse */
@@ -108,23 +101,19 @@
 
   /* Pitch-green striped background */
   .pitch-bg {
-    background-image: repeating-linear-gradient(
-      90deg,
-      hsl(130 55% 33%) 0px,
-      hsl(130 55% 33%) 48px,
-      hsl(130 55% 30%) 48px,
-      hsl(130 55% 30%) 96px
-    );
+    background-image: repeating-linear-gradient(90deg,
+        hsl(130 55% 33%) 0px,
+        hsl(130 55% 33%) 48px,
+        hsl(130 55% 30%) 48px,
+        hsl(130 55% 30%) 96px);
   }
 
   /* Shimmer loading skeleton */
   .shimmer {
-    background: linear-gradient(
-      90deg,
-      hsl(220 50% 16%) 25%,
-      hsl(220 40% 22%) 50%,
-      hsl(220 50% 16%) 75%
-    );
+    background: linear-gradient(90deg,
+        hsl(220 50% 16%) 25%,
+        hsl(220 40% 22%) 50%,
+        hsl(220 50% 16%) 75%);
     background-size: 200% 100%;
     @apply animate-shimmer;
   }
@@ -132,21 +121,17 @@
   /* Gold gradient text */
   .text-gold-gradient {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(
-      135deg,
-      hsl(43 100% 66%) 0%,
-      hsl(43 96% 47%) 50%,
-      hsl(38 92% 40%) 100%
-    );
+    background-image: linear-gradient(135deg,
+        hsl(43 100% 66%) 0%,
+        hsl(43 96% 47%) 50%,
+        hsl(38 92% 40%) 100%);
   }
 
   /* Navy gradient background */
   .bg-navy-gradient {
-    background-image: linear-gradient(
-      135deg,
-      hsl(220 90% 6%) 0%,
-      hsl(220 80% 14%) 100%
-    );
+    background-image: linear-gradient(135deg,
+        hsl(220 90% 6%) 0%,
+        hsl(220 80% 14%) 100%);
   }
 }
 
@@ -169,4 +154,725 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: hsl(43 96% 47%);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   Homepage — FIFA World Cup Fantasy layout styles
+   All selectors are prefixed with `homepage-` to keep scope clear.
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Nav bar ────────────────────────────────────────────────── */
+.homepage-nav {
+  position: fixed;
+  inset-block-start: 0;
+  inset-inline: 0;
+  z-index: 50;
+  background-color: #0a0a0a;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.homepage-nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+  height: 52px;
+  gap: 1rem;
+}
+
+.homepage-nav-left,
+.homepage-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex: 1;
+}
+
+.homepage-nav-right {
+  justify-content: flex-end;
+}
+
+.homepage-nav-link {
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #fff;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  transition: opacity 0.15s;
+  text-decoration: none;
+}
+
+.homepage-nav-link:hover {
+  opacity: 0.7;
+}
+
+.homepage-nav-chevron {
+  font-size: 0.625rem;
+  opacity: 0.7;
+}
+
+/* Aramco centre badge */
+.homepage-aramco-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  background: #fff;
+  border-radius: 4px;
+  padding: 0.25rem 0.625rem;
+  flex-shrink: 0;
+}
+
+.homepage-aramco-label {
+  font-size: 0.5rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #444;
+  text-transform: uppercase;
+}
+
+.homepage-aramco-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #007a4d;
+  letter-spacing: -0.01em;
+}
+
+/* ── Hero section ───────────────────────────────────────────── */
+.homepage-hero {
+  display: flex;
+  min-height: 100svh;
+  padding-top: 52px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Left blue panel */
+.homepage-hero-content {
+  flex: 0 0 auto;
+  width: 50%;
+  background: #0057b8;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-inline: clamp(2rem, 5vw, 6rem);
+  padding-block: 4rem;
+  position: relative;
+  z-index: 2;
+}
+
+/* Right visual panel */
+.homepage-hero-visual {
+  flex: 1;
+  background: #0057b8;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Logo lockup */
+.homepage-logo-lockup {
+  margin-bottom: 1.5rem;
+}
+
+.homepage-logo-eyebrow {
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  margin-bottom: 0.1em;
+}
+
+.homepage-logo-headline {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 900;
+  color: #fff;
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.homepage-aramco-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: #fff;
+  border-radius: 4px;
+  padding: 0.2rem 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.homepage-aramco-label-sm {
+  font-size: 0.45rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #444;
+  text-transform: uppercase;
+}
+
+.homepage-aramco-name-sm {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #007a4d;
+}
+
+.homepage-tagline {
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 2.5vw, 1.625rem);
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.15;
+  margin-bottom: 0.625rem;
+}
+
+.homepage-sub-tagline {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.75);
+  margin-bottom: 2rem;
+}
+
+.homepage-cta-btn {
+  display: inline-block;
+  background: #c8f000;
+  color: #000;
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  padding: 0.75rem 2.25rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  transition: filter 0.15s, transform 0.15s;
+  align-self: flex-start;
+}
+
+.homepage-cta-btn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.homepage-cta-btn:active {
+  transform: translateY(0);
+}
+
+/* ── Portrait pitch illustration ─────────────────────────────── */
+.homepage-pitch-wrapper {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1.5rem;
+}
+
+/* The pitch itself — green, half-pitch portrait */
+.homepage-pitch-portrait {
+  position: relative;
+  width: min(300px, 55%);
+  /* 300:220 matches the half-pitch SVG viewBox */
+  aspect-ratio: 300 / 220;
+  background: #2e8b3c;
+  border-radius: 4px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* SVG pitch markings — absolutely fills the portrait card */
+.homepage-pitch-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Player slot grid overlaid on the pitch */
+.homepage-pitch-slots {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: stretch;
+  padding: 6% 3% 4%;
+  gap: 0;
+}
+
+/* Each row of slots */
+.homepage-slot-row {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  flex: 1;
+}
+
+/* GKP row is tighter at the top */
+.homepage-slot-row--gkp {
+  flex: 0.8;
+  justify-content: center;
+  gap: 12%;
+}
+
+/* FWD row is at the bottom */
+.homepage-slot-row--fwd {
+  flex: 0.9;
+}
+
+/* Individual player slot card */
+.homepage-player-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  background: rgba(0, 100, 60, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 4px;
+  padding: 4px 3px 5px;
+  width: clamp(32px, 16%, 48px);
+  backdrop-filter: blur(2px);
+  transition: background 0.15s, transform 0.15s;
+}
+
+.homepage-player-slot:hover {
+  background: rgba(0, 140, 80, 0.7);
+  transform: scale(1.06);
+}
+
+/* Icon wrapper — person silhouette + "+" badge */
+.homepage-slot-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.homepage-slot-person {
+  width: clamp(14px, 4vw, 20px);
+  height: clamp(14px, 4vw, 20px);
+  opacity: 0.9;
+}
+
+.homepage-slot-plus {
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  width: 10px;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  font-size: 9px;
+  font-weight: 900;
+  color: #1a6630;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* Position label */
+.homepage-slot-pos {
+  font-family: var(--font-ultra-condensed);
+  font-size: clamp(6px, 1.2vw, 9px);
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.95);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+/* Trophy beside the pitch */
+.homepage-trophy {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.homepage-trophy-img {
+  object-fit: contain;
+  filter: drop-shadow(0 8px 28px rgba(0, 0, 0, 0.55));
+  animation: homepage-float 4s ease-in-out infinite;
+}
+
+@keyframes homepage-float {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.homepage-green-slice {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 40%;
+  height: 55%;
+  background: #036ee8;
+  clip-path: polygon(100% 0%, 100% 100%, 0% 100%);
+  z-index: 0;
+}
+
+
+/* ── Feature cards ───────────────────────────────────────────── */
+.homepage-features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  background: #0a0a0a;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.homepage-feature-card {
+  padding: 2rem 1.75rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  transition: background 0.2s;
+}
+
+.homepage-feature-card:last-child {
+  border-right: none;
+}
+
+.homepage-feature-card:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.homepage-feature-icon {
+  color: #c8f000;
+  margin-bottom: 0.25rem;
+}
+
+.homepage-feature-title {
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 0.01em;
+}
+
+.homepage-feature-desc {
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.5;
+}
+
+/* ── Players showcase strip ──────────────────────────────────── */
+.homepage-players-showcase {
+  background: #111;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-block: 4rem;
+}
+
+.homepage-players-showcase-inner {
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: 2rem;
+}
+
+.homepage-showcase-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 2vw, 1.75rem);
+  font-weight: 900;
+  color: #fff;
+  margin-bottom: 2rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.homepage-showcase-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+}
+
+.homepage-showcase-card {
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+}
+
+.homepage-showcase-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
+}
+
+.homepage-showcase-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+}
+
+/* ── Footer ──────────────────────────────────────────────────── */
+.homepage-footer {
+  background: #0a0a0a;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-block: 1.5rem;
+}
+
+.homepage-footer-inner {
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.homepage-footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.homepage-footer-logo {
+  object-fit: contain;
+
+}
+
+.homepage-footer-fifa {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 0.05em;
+}
+
+.homepage-footer-links {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.homepage-footer-link {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.55);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.homepage-footer-link:hover {
+  color: #c8f000;
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .homepage-showcase-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .homepage-hero {
+    flex-direction: column;
+  }
+
+  .homepage-hero-content {
+    width: 100%;
+    padding-block: 2.5rem;
+    padding-inline: 1.5rem;
+  }
+
+  .homepage-hero-visual {
+    height: 320px;
+  }
+
+  .homepage-trophy {
+    right: 1rem;
+  }
+
+  .homepage-pitch {
+    width: min(260px, 80%);
+    margin-left: -2rem;
+  }
+
+  .homepage-features {
+    grid-template-columns: 1fr;
+  }
+
+  .homepage-feature-card {
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .homepage-showcase-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .homepage-footer-inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .homepage-showcase-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   Exact Pitch Recreation Styles
+   ══════════════════════════════════════════════════════════════ */
+
+.exact-pitch-container {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  aspect-ratio: 1.4;
+  margin: 0 auto;
+  perspective: 1000px;
+  z-index: 10;
+}
+
+.exact-pitch-3d {
+  position: absolute;
+  bottom: 0;
+  left: -15%;
+  width: 130%;
+  height: 140%;
+  transform-origin: bottom center;
+  transform: rotateX(45deg);
+  background-image: repeating-linear-gradient(to bottom, #018a32 0%, #018a32 10%, #009639 10%, #009639 20%);
+  border-top: 2px solid rgba(255, 255, 255, 0.8);
+  border-left: 2px solid rgba(255, 255, 255, 0.8);
+  border-right: 2px solid rgba(255, 255, 255, 0.8);
+  border-radius: 4px 4px 0 0;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.exact-pitch-svg {
+  width: 100%;
+  height: 100%;
+  opacity: 0.8;
+}
+
+.exact-pitch-banner {
+  position: absolute;
+  top: -2%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  height: 8%;
+  z-index: 10;
+  width: 70%;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.exact-pitch-banner-left {
+  background: #036ee8;
+  height: 100%;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #38003c;
+  font-weight: 900;
+  font-size: clamp(8px, 1.5vw, 12px);
+  padding: 0 8px;
+}
+
+.exact-pitch-banner-goal {
+  width: 20%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.9);
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+}
+
+.exact-pitch-banner-goal div {
+  border: 0.5px solid rgba(0, 0, 0, 0.15);
+}
+
+.exact-pitch-banner-right {
+  background: #3700FF;
+  height: 100%;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-weight: 900;
+  font-size: clamp(8px, 1.5vw, 12px);
+  padding: 0 8px;
+}
+
+.exact-pitch-players {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 10% 8% 4%;
+}
+
+.exact-pitch-row {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.exact-pitch-row.center {
+  justify-content: center;
+  gap: 15%;
+}
+
+.exact-pitch-row.fwd {
+  padding: 0 10%;
+}
+
+.exact-pitch-player-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  background: rgba(0, 100, 60, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+  padding: 4px 2px;
+  width: clamp(36px, 17%, 60px);
+  aspect-ratio: 3/4;
+  backdrop-filter: blur(2px);
+  transition: background 0.15s, transform 0.15s;
+}
+
+.exact-pitch-player-slot:hover {
+  background: rgba(0, 140, 80, 0.85);
+  transform: scale(1.05);
 }

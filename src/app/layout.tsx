@@ -1,10 +1,64 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
+const fwcSans = localFont({
+  src: [
+    {
+      path: "../../public/fonts/FWC2026-NormalRegular.77c3c249.ttf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/FWC2026-NormalBlack.2bd896c8.ttf",
+      weight: "900",
+      style: "normal",
+    },
+  ],
+  variable: "--font-sans",
+  display: "swap",
+});
+
+const fwcDisplay = localFont({
+  src: "../../public/fonts/FWC2026-ExpandedBlack.e49451e9.ttf",
+  variable: "--font-display",
+  weight: "900",
+  display: "swap",
+});
+
+const fwcSemiExpanded = localFont({
+  src: "../../public/fonts/FWC2026-SemiExpandedBlack.e378fa1c.ttf",
+  variable: "--font-semi-expanded",
+  weight: "900",
+  display: "swap",
+});
+
+const fwcCondensed = localFont({
+  src: "../../public/fonts/FWC2026-CondensedLight.c11e508e.ttf",
+  variable: "--font-condensed",
+  weight: "300",
+  display: "swap",
+});
+
+const fwcUltraCondensed = localFont({
+  src: [
+    {
+      path: "../../public/fonts/FWC2026-UltraCondensedMedium.4da29b9d.ttf",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/FWC2026-UltraCondensedBold.0e7149b5.ttf",
+      weight: "700",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/FWC2026-UltraCondensedBlack.8e6ba053.ttf",
+      weight: "900",
+      style: "normal",
+    },
+  ],
+  variable: "--font-ultra-condensed",
   display: "swap",
 });
 
@@ -58,7 +112,7 @@ export default function RootLayout({
   return (
     // `dark` class enables dark-first design via Tailwind darkMode: 'class'
     <html lang="en" className="dark" suppressHydrationWarning>
-      <body className={`${inter.variable} antialiased min-h-screen bg-navy-gradient`}>
+      <body className={`${fwcSans.variable} ${fwcDisplay.variable} ${fwcSemiExpanded.variable} ${fwcCondensed.variable} ${fwcUltraCondensed.variable} antialiased min-h-screen bg-navy-gradient font-sans`}>
         {children}
       </body>
     </html>

@@ -47,47 +47,48 @@ const config: Config = {
         ring: "hsl(var(--ring))",
 
         // Brand palette
-        navy: {
-          50:  "hsl(220 60% 97%)",
-          100: "hsl(220 60% 92%)",
-          200: "hsl(220 60% 82%)",
-          300: "hsl(220 60% 65%)",
-          400: "hsl(220 60% 50%)",
-          500: "hsl(220 60% 38%)",
-          600: "hsl(220 70% 28%)",
-          700: "hsl(220 75% 20%)",
-          800: "hsl(220 80% 14%)",
-          900: "hsl(220 85% 9%)",
-          950: "hsl(220 90% 6%)",
+        // Brand palette from web-colors.png
+        neutral: {
+          50:  "#f7f7f8", 100: "#ededf1", 200: "#d8d9df", 300: "#b6b7c3",
+          400: "#8e90a2", 500: "#707287", 600: "#5a5b6f", 700: "#49495b",
+          800: "#3f404d", 900: "#383842", 950: "#29292e",
         },
-        gold: {
-          50:  "hsl(43 100% 97%)",
-          100: "hsl(43 100% 90%)",
-          200: "hsl(43 100% 78%)",
-          300: "hsl(43 100% 66%)",
-          400: "hsl(43 100% 54%)",
-          500: "hsl(43 96% 47%)",  // primary gold
-          600: "hsl(38 92% 40%)",
-          700: "hsl(33 88% 33%)",
-          800: "hsl(28 80% 26%)",
-          900: "hsl(23 70% 20%)",
+        primaryBrand: {
+          50:  "#edf9ff", 100: "#d7f0ff", 200: "#b9e7ff", 300: "#88daff",
+          400: "#50c3ff", 500: "#28a5ff", 600: "#0a84ff", 700: "#005cff",
+          800: "#004bd5", 900: "#0244a6", 950: "#03122b",
         },
-        crimson: {
-          400: "hsl(348 80% 55%)",
-          500: "hsl(348 83% 47%)",
-          600: "hsl(348 86% 38%)",
+        secondaryGreen: {
+          50:  "#f1fcf3", 100: "#defae4", 200: "#bef4cb", 300: "#8beaa2",
+          400: "#51d772", 500: "#30d158", 600: "#1d9c3d", 700: "#1a7b32",
+          800: "#1a612d", 900: "#175027", 950: "#072c12",
+        },
+        secondaryRed: {
+          50:  "#fff1f2", 100: "#ffe4e7", 200: "#fecdd4", 300: "#fda4b1",
+          400: "#fc7088", 500: "#f43056", 600: "#e21c4c", 700: "#bf1140",
+          800: "#a0113c", 900: "#88133a", 950: "#4c051b",
+        },
+        secondaryYellow: {
+          50:  "#fffcea", 100: "#fff3c5", 200: "#ffe785", 300: "#ffd346",
+          400: "#ffbe1b", 500: "#ff9f0a", 600: "#e27300", 700: "#bb4e02",
+          800: "#7c320b", 900: "#572205", 950: "#481800",
         },
         pitch: {
-          light: "hsl(130 50% 40%)",
-          DEFAULT: "hsl(130 55% 33%)",
-          dark: "hsl(130 60% 24%)",
-          stripe: "hsl(130 55% 30%)",
+          light: "#51d772",
+          DEFAULT: "#30d158",
+          dark: "#1d9c3d",
+          stripe: "#2fc253",
         },
       },
 
       fontFamily: {
-        sans: ["var(--font-inter)", "system-ui", "sans-serif"],
-        display: ["var(--font-inter)", "system-ui", "sans-serif"],
+        sans: ["var(--font-sans)"],
+        serif: ["var(--font-sans)"],
+        mono: ["var(--font-sans)"],
+        display: ["var(--font-display)"],
+        "semi-expanded": ["var(--font-semi-expanded)"],
+        condensed: ["var(--font-condensed)"],
+        "ultra-condensed": ["var(--font-ultra-condensed)"],
       },
 
       borderRadius: {
