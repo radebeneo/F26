@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { Mail, Lock, User, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { CountrySelect } from "./CountrySelect";
 
 type FormState = {
   error?: string;
@@ -47,7 +48,7 @@ export function AuthForm({ mode, action }: AuthFormProps) {
     >
       {/* Header */}
       <div className="mb-8">
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.1 }}
@@ -56,7 +57,7 @@ export function AuthForm({ mode, action }: AuthFormProps) {
           <span className="text-xs font-semibold uppercase tracking-widest text-primary">
             {isLogin ? "Welcome back" : "Get started"}
           </span>
-        </motion.div>
+        </motion.div> */}
 
         <motion.h1
           initial={{ opacity: 0, y: 10 }}
@@ -64,7 +65,7 @@ export function AuthForm({ mode, action }: AuthFormProps) {
           transition={{ delay: 0.15 }}
           className="text-3xl font-bold text-foreground"
         >
-          {isLogin ? "Sign in to your team" : "Create your team"}
+          {isLogin ? "Login to your team" : "Create your team"}
         </motion.h1>
         <motion.p
           initial={{ opacity: 0 }}
@@ -74,7 +75,7 @@ export function AuthForm({ mode, action }: AuthFormProps) {
         >
           {isLogin
             ? "Enter your credentials to access your squad."
-            : "Join F26 Fantasy and pick your World Cup squad."}
+            : "Join FWC26 Fantasy and pick your World Cup squad."}
         </motion.p>
       </div>
 
@@ -97,6 +98,7 @@ export function AuthForm({ mode, action }: AuthFormProps) {
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.25 }}
+            className="flex flex-col gap-4"
           >
             <Input
               id="teamName"
@@ -109,6 +111,20 @@ export function AuthForm({ mode, action }: AuthFormProps) {
               maxLength={50}
               icon={<User size={16} />}
             />
+
+            <Input
+              id="managerName"
+              name="managerName"
+              type="text"
+              label="Manager Name"
+              placeholder="e.g. Pep Guardiola"
+              autoComplete="name"
+              required
+              maxLength={50}
+              icon={<User size={16} />}
+            />
+
+            <CountrySelect name="favoriteCountry" id="favoriteCountry" />
           </motion.div>
         )}
 
@@ -202,7 +218,7 @@ export function AuthForm({ mode, action }: AuthFormProps) {
           transition={{ delay: isLogin ? 0.35 : 0.45 }}
           className="mt-2"
         >
-          <SubmitButton label={isLogin ? "Sign In" : "Create Account"} />
+          <SubmitButton label={isLogin ? "Log In" : "Create Account"} />
         </motion.div>
       </form>
 
@@ -230,7 +246,7 @@ export function AuthForm({ mode, action }: AuthFormProps) {
               href="/auth/login"
               className="font-semibold text-primary hover:text-primary/80 transition-colors"
             >
-              Sign in
+              Log In
             </Link>
           </>
         )}

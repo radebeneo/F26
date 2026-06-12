@@ -1,0 +1,2034 @@
+﻿diff --git a/public/fantasy-icons/add.png b/public/fantasy-icons/add.png
+new file mode 100644
+index 0000000..bcc547b
+Binary files /dev/null and b/public/fantasy-icons/add.png differ
+diff --git a/public/fantasy-icons/bench-swap.png b/public/fantasy-icons/bench-swap.png
+new file mode 100644
+index 0000000..ad1a373
+Binary files /dev/null and b/public/fantasy-icons/bench-swap.png differ
+diff --git a/public/fantasy-icons/bench.png b/public/fantasy-icons/bench.png
+new file mode 100644
+index 0000000..477782c
+Binary files /dev/null and b/public/fantasy-icons/bench.png differ
+diff --git a/public/fantasy-icons/boosters.png b/public/fantasy-icons/boosters.png
+new file mode 100644
+index 0000000..569308b
+Binary files /dev/null and b/public/fantasy-icons/boosters.png differ
+diff --git a/public/fantasy-icons/captain.png b/public/fantasy-icons/captain.png
+new file mode 100644
+index 0000000..e1137d5
+Binary files /dev/null and b/public/fantasy-icons/captain.png differ
+diff --git a/public/fantasy-icons/eliminated.png b/public/fantasy-icons/eliminated.png
+new file mode 100644
+index 0000000..b61cf70
+Binary files /dev/null and b/public/fantasy-icons/eliminated.png differ
+diff --git a/public/fantasy-icons/injured.png b/public/fantasy-icons/injured.png
+new file mode 100644
+index 0000000..2a9a9fb
+Binary files /dev/null and b/public/fantasy-icons/injured.png differ
+diff --git a/public/fantasy-icons/not-selectable.png b/public/fantasy-icons/not-selectable.png
+new file mode 100644
+index 0000000..e8b4164
+Binary files /dev/null and b/public/fantasy-icons/not-selectable.png differ
+diff --git a/public/fantasy-icons/number-1.png b/public/fantasy-icons/number-1.png
+new file mode 100644
+index 0000000..2e51ab0
+Binary files /dev/null and b/public/fantasy-icons/number-1.png differ
+diff --git a/public/fantasy-icons/number-2.png b/public/fantasy-icons/number-2.png
+new file mode 100644
+index 0000000..296ec9c
+Binary files /dev/null and b/public/fantasy-icons/number-2.png differ
+diff --git a/public/fantasy-icons/number-3.png b/public/fantasy-icons/number-3.png
+new file mode 100644
+index 0000000..0485b03
+Binary files /dev/null and b/public/fantasy-icons/number-3.png differ
+diff --git a/public/fantasy-icons/number-4.png b/public/fantasy-icons/number-4.png
+new file mode 100644
+index 0000000..9f33e6a
+Binary files /dev/null and b/public/fantasy-icons/number-4.png differ
+diff --git a/public/fantasy-icons/number-5.png b/public/fantasy-icons/number-5.png
+new file mode 100644
+index 0000000..fa20d0b
+Binary files /dev/null and b/public/fantasy-icons/number-5.png differ
+diff --git a/public/fantasy-icons/number-6.png b/public/fantasy-icons/number-6.png
+new file mode 100644
+index 0000000..aff5eaf
+Binary files /dev/null and b/public/fantasy-icons/number-6.png differ
+diff --git a/public/fantasy-icons/number-7.png b/public/fantasy-icons/number-7.png
+new file mode 100644
+index 0000000..e00f58b
+Binary files /dev/null and b/public/fantasy-icons/number-7.png differ
+diff --git a/public/fantasy-icons/number-8.png b/public/fantasy-icons/number-8.png
+new file mode 100644
+index 0000000..bbef357
+Binary files /dev/null and b/public/fantasy-icons/number-8.png differ
+diff --git a/public/fantasy-icons/number-9.png b/public/fantasy-icons/number-9.png
+new file mode 100644
+index 0000000..1a9da82
+Binary files /dev/null and b/public/fantasy-icons/number-9.png differ
+diff --git a/public/fantasy-icons/out-of-squad.png b/public/fantasy-icons/out-of-squad.png
+new file mode 100644
+index 0000000..32985ed
+Binary files /dev/null and b/public/fantasy-icons/out-of-squad.png differ
+diff --git a/public/fantasy-icons/starting.png b/public/fantasy-icons/starting.png
+new file mode 100644
+index 0000000..d23f6fd
+Binary files /dev/null and b/public/fantasy-icons/starting.png differ
+diff --git a/public/fantasy-icons/substitute-in.png b/public/fantasy-icons/substitute-in.png
+new file mode 100644
+index 0000000..e6b5fa9
+Binary files /dev/null and b/public/fantasy-icons/substitute-in.png differ
+diff --git a/public/fantasy-icons/substitute-out.png b/public/fantasy-icons/substitute-out.png
+new file mode 100644
+index 0000000..00a52b9
+Binary files /dev/null and b/public/fantasy-icons/substitute-out.png differ
+diff --git a/public/fantasy-icons/suspended.png b/public/fantasy-icons/suspended.png
+new file mode 100644
+index 0000000..766776b
+Binary files /dev/null and b/public/fantasy-icons/suspended.png differ
+diff --git a/public/fantasy-icons/vice-captain.png b/public/fantasy-icons/vice-captain.png
+new file mode 100644
+index 0000000..573191d
+Binary files /dev/null and b/public/fantasy-icons/vice-captain.png differ
+diff --git a/src/app/(dashboard)/dashboard/page.tsx b/src/app/(dashboard)/dashboard/page.tsx
+index d64a833..4092e71 100644
+--- a/src/app/(dashboard)/dashboard/page.tsx
++++ b/src/app/(dashboard)/dashboard/page.tsx
+@@ -2,13 +2,13 @@ import type { Metadata } from "next";
+ import { redirect } from "next/navigation";
+ import { createClient } from "@/lib/supabase/server";
+ import { db } from "@/db";
+-import { users } from "@/db/schema";
+-import { eq } from "drizzle-orm";
+-import { LogOut, Trophy, Zap } from "lucide-react";
++import { users, players, gameweeks } from "@/db/schema";
++import { eq, asc, desc } from "drizzle-orm";
++import { SquadBuilderClient } from "@/components/features/SquadBuilderClient";
+ 
+ export const metadata: Metadata = {
+-  title: "Dashboard",
+-  description: "Your F26 Fantasy dashboard.",
++  title: "Squad Builder",
++  description: "Pick your 15-player squad for FIFA World Cup 2026 Fantasy.",
+ };
+ 
+ async function signOutAction() {
+@@ -26,96 +26,61 @@ export default async function DashboardPage() {
+ 
+   if (!user) redirect("/auth/login");
+ 
+-  // Fetch team name from our users table
++  // Fetch team name and user profile
+   const dbUser = await db.query.users.findFirst({
+     where: eq(users.id, user.id),
+   });
+ 
+-  const teamName = dbUser?.teamName ?? "Manager";
++  const teamName = dbUser?.teamName ?? "My Team";
++  const managerName = user.email ?? "Manager";
+ 
+-  return (
+-    <main className="min-h-screen bg-navy-gradient">
+-      {/* Nav */}
+-      <header className="border-b border-border/40 backdrop-blur-sm sticky top-0 z-40 bg-background/80">
+-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+-          <div className="flex items-center gap-2">
+-            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary">
+-              <Trophy size={16} className="text-primary-foreground" />
+-            </div>
+-            <span className="font-bold text-foreground">F26 Fantasy</span>
+-          </div>
++  // Fetch all available players, ordered by position then total points desc
++  const allPlayers = await db
++    .select()
++    .from(players)
++    .orderBy(asc(players.position), desc(players.totalPoints));
+ 
+-          <form action={signOutAction}>
+-            <button
+-              type="submit"
+-              id="btn-sign-out"
+-              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+-            >
+-              <LogOut size={15} />
+-              Sign out
+-            </button>
+-          </form>
+-        </div>
+-      </header>
++  // Fetch current gameweek and its fixtures to determine opponents
++  let currentGw = await db.query.gameweeks.findFirst({
++    where: eq(gameweeks.isCurrent, true),
++    with: { fixtures: true },
++  });
++  
++  if (!currentGw) {
++    currentGw = await db.query.gameweeks.findFirst({
++      with: { fixtures: true },
++      orderBy: asc(gameweeks.id),
++    });
++  }
+ 
+-      {/* Hero */}
+-      <section className="max-w-6xl mx-auto px-6 py-16">
+-        <div className="flex flex-col gap-2 mb-12">
+-          <p className="text-sm text-muted-foreground uppercase tracking-widest font-semibold">
+-            Welcome back
+-          </p>
+-          <h1 className="text-4xl font-bold text-foreground">
+-            {teamName} ≡ƒæï
+-          </h1>
+-          <p className="text-muted-foreground">
+-            FIFA World Cup 2026 starts June 11. Build your squad before the
+-            deadline!
+-          </p>
+-        </div>
++  const opponentMap: Record<string, string> = {};
++  if (currentGw && currentGw.fixtures) {
++    for (const f of currentGw.fixtures) {
++      opponentMap[f.homeNation] = getAcronym(f.awayNation);
++      opponentMap[f.awayNation] = getAcronym(f.homeNation);
++    }
++  }
+ 
+-        {/* Coming-soon cards */}
+-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+-          {[
+-            {
+-              icon: <Trophy size={20} className="text-primary" />,
+-              title: "My Squad",
+-              desc: "Pick your 15-player squad ΓÇö coming soon",
+-              cta: "Pick Squad",
+-              href: "/squad",
+-            },
+-            {
+-              icon: <Zap size={20} className="text-primary" />,
+-              title: "Leaderboard",
+-              desc: "See how you rank globally ΓÇö coming soon",
+-              cta: "View Leaderboard",
+-              href: "/leaderboard",
+-            },
+-            {
+-              icon: <Trophy size={20} className="text-primary" />,
+-              title: "Gameweeks",
+-              desc: "Track fixtures and points ΓÇö coming soon",
+-              cta: "View Fixtures",
+-              href: "/fixtures",
+-            },
+-          ].map((card) => (
+-            <div
+-              key={card.title}
+-              className="glass rounded-2xl p-6 flex flex-col gap-4 border border-border/30"
+-            >
+-              <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+-                {card.icon}
+-              </div>
+-              <div>
+-                <h2 className="font-semibold text-foreground">{card.title}</h2>
+-                <p className="text-sm text-muted-foreground mt-1">{card.desc}</p>
+-              </div>
+-              <span className="mt-auto inline-flex items-center gap-1 text-xs font-semibold text-primary/60 uppercase tracking-widest">
+-                {card.cta} ΓåÆ
+-              </span>
+-            </div>
+-          ))}
+-        </div>
+-      </section>
+-    </main>
++  return (
++    <SquadBuilderClient
++      players={allPlayers}
++      teamName={teamName}
++      managerName={managerName}
++      signOutAction={signOutAction}
++      opponentMap={opponentMap}
++    />
+   );
+ }
++
++function getAcronym(nation: string) {
++  if (nation === "United States") return "USA";
++  if (nation === "Congo DR") return "COD";
++  if (nation === "South Africa") return "RSA";
++  if (nation === "Cote d'Ivoire" || nation === "C├┤te d'Ivoire" || nation === "Ivory Coast") return "CIV";
++  if (nation === "South Korea") return "KOR";
++  if (nation === "Bosnia-Herzegovina") return "BIH";
++  if (nation === "New Zealand") return "NZL";
++  if (nation === "Saudi Arabia") return "KSA";
++  if (nation === "Cabo Verde") return "CPV";
++  return nation.substring(0, 3).toUpperCase();
++}
+diff --git a/src/app/globals.css b/src/app/globals.css
+index ed42099..13fa387 100644
+--- a/src/app/globals.css
++++ b/src/app/globals.css
+@@ -61,12 +61,17 @@
+     @apply scroll-smooth;
+   }
+ 
+-  body,
++  body {
++    @apply bg-background text-foreground antialiased;
++    font-family: var(--font-sans);
++    font-feature-settings: "cv11", "ss01";
++  }
++
+   button,
+   input,
+   select,
+   textarea {
+-    @apply bg-background text-foreground antialiased;
++    @apply bg-transparent text-inherit antialiased;
+     font-family: var(--font-sans);
+     font-feature-settings: "cv11", "ss01";
+   }
+@@ -875,4 +880,258 @@
+ .exact-pitch-player-slot:hover {
+   background: rgba(0, 140, 80, 0.85);
+   transform: scale(1.05);
++}
++
++
++/* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
++   Squad Builder ΓÇö Layout & Component Styles
++   ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
++
++/* ΓöÇΓöÇ Root shell ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
++.squad-builder-root {
++  display: flex;
++  flex-direction: column;
++  height: 100svh;
++  overflow: hidden;
++  background: #0f0c1a;
++}
++
++/* ΓöÇΓöÇ Sticky nav ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
++.squad-nav {
++  flex-shrink: 0;
++  height: 52px;
++  background: #100d1e;
++  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
++  position: sticky;
++  top: 0;
++  z-index: 40;
++}
++
++.squad-nav-inner {
++  max-width: 1600px;
++  margin-inline: auto;
++  padding-inline: 1.5rem;
++  height: 100%;
++  display: flex;
++  align-items: center;
++  justify-content: space-between;
++  gap: 1rem;
++}
++
++/* ΓöÇΓöÇ Two-panel body ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
++.squad-builder-body {
++  flex: 1;
++  display: grid;
++  grid-template-columns: 380px 1fr;
++  gap: 0;
++  overflow: hidden;
++  max-width: 1600px;
++  width: 100%;
++  margin-inline: auto;
++}
++
++.squad-builder-left {
++  border-right: 1px solid rgba(255, 255, 255, 0.07);
++  overflow: hidden;
++  display: flex;
++  flex-direction: column;
++}
++
++.squad-builder-right {
++  overflow: hidden;
++  display: flex;
++  flex-direction: column;
++}
++
++/* ΓöÇΓöÇ Squad panel (shared shell for both left and right) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
++.squad-panel {
++  background: #13102080;
++  backdrop-filter: blur(8px);
++  flex: 1;
++  display: flex;
++  flex-direction: column;
++  overflow: hidden;
++}
++
++/* ΓöÇΓöÇ Player list row ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
++.player-list-row {
++  display: flex;
++  align-items: center;
++  gap: 0.5rem;
++  padding: 0.375rem 0.75rem;
++  border-radius: 0.5rem;
++  transition: background 0.12s;
++  cursor: default;
++}
++
++.player-list-row:hover {
++  background: rgba(255, 255, 255, 0.04);
++}
++
++.player-list-row--selected {
++  background: rgba(10, 132, 255, 0.08);
++  border-left: 2px solid #0a84ff;
++}
++
++/* ΓöÇΓöÇ Pitch surface ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
++.pitch-surface {
++  background-image: repeating-linear-gradient(
++    to bottom,
++    #1a8f35 0%,
++    #1a8f35 12.5%,
++    #1c9d3b 12.5%,
++    #1c9d3b 25%
++  );
++  position: relative;
++  display: flex;
++  flex-direction: column;
++  overflow: hidden;
++}
++
++/* Pitch line markings overlaid as a pseudo-element */
++.pitch-surface::before {
++  content: "";
++  position: absolute;
++  inset: 0;
++  background-image:
++    /* Centre circle */
++    radial-gradient(circle at 50% 50%, transparent 12%, rgba(255,255,255,0.12) 12%, rgba(255,255,255,0.12) 12.6%, transparent 12.6%),
++    /* Centre spot */
++    radial-gradient(circle at 50% 50%, rgba(255,255,255,0.35) 1%, transparent 1%),
++    /* Half-way line */
++    linear-gradient(to bottom, transparent 49.5%, rgba(255,255,255,0.15) 49.5%, rgba(255,255,255,0.15) 50.5%, transparent 50.5%),
++    /* Penalty area top */
++    linear-gradient(to bottom, transparent 5%, rgba(255,255,255,0.1) 5%, rgba(255,255,255,0.1) 5.5%, transparent 5.5%);
++  pointer-events: none;
++  z-index: 0;
++}
++
++/* Pitch border lines */
++.pitch-surface::after {
++  content: "";
++  position: absolute;
++  inset: 0;
++  border: 1.5px solid rgba(255, 255, 255, 0.18);
++  pointer-events: none;
++  z-index: 0;
++}
++
++/* ΓöÇΓöÇ Pitch top banner ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
++.pitch-banner {
++  position: relative;
++  z-index: 10;
++  flex-shrink: 0;
++  display: flex;
++  align-items: stretch;
++  height: 40px;
++  margin: 0 10%;
++  border-radius: 0 0 4px 4px;
++  overflow: hidden;
++  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
++}
++
++.pitch-banner-left,
++.pitch-banner-right {
++  flex: 1;
++  display: flex;
++  align-items: center;
++  justify-content: center;
++  gap: 6px;
++  background: #036ee8;
++  padding: 0 12px;
++}
++
++.pitch-banner-label {
++  font-family: var(--font-display);
++  font-size: 0.75rem;
++  font-weight: 900;
++  color: #fff;
++  letter-spacing: 0.04em;
++}
++
++.pitch-banner-goal {
++  width: 80px;
++  flex-shrink: 0;
++  background: rgba(255, 255, 255, 0.92);
++  display: grid;
++  grid-template-columns: repeat(8, 1fr);
++  grid-template-rows: repeat(3, 1fr);
++  border-left: 1px solid #ccc;
++  border-right: 1px solid #ccc;
++}
++
++.pitch-banner-goal-cell {
++  border: 0.5px solid rgba(0, 0, 0, 0.12);
++}
++
++/* ΓöÇΓöÇ Player rows on pitch ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
++.pitch-players-grid {
++  flex: 1;
++  display: flex;
++  flex-direction: column;
++  justify-content: space-evenly;
++  align-items: stretch;
++  padding: 12px 16px 8px;
++  position: relative;
++  z-index: 5;
++  gap: 6px;
++}
++
++/* ΓöÇΓöÇ Individual pitch slot ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
++.pitch-slot {
++  position: relative;
++  display: flex;
++  flex-direction: column;
++  align-items: center;
++  justify-content: center;
++  gap: 3px;
++  padding: 6px 4px 5px;
++  border-radius: 6px;
++  width: clamp(52px, 9%, 72px);
++  min-height: 64px;
++  backdrop-filter: blur(3px);
++  transition: transform 0.15s, box-shadow 0.15s;
++  cursor: pointer;
++}
++
++.pitch-slot--empty {
++  background: rgba(0, 80, 40, 0.55);
++  border: 1.5px dashed rgba(255, 255, 255, 0.25);
++}
++
++.pitch-slot--filled {
++  background: rgba(0, 60, 30, 0.72);
++  border: 1.5px solid rgba(255, 255, 255, 0.2);
++  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
++}
++
++.pitch-slot--filled:hover {
++  transform: scale(1.06);
++  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
++}
++
++/* ΓöÇΓöÇ Responsive: tablet / mobile ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
++@media (max-width: 900px) {
++  .squad-builder-body {
++    grid-template-columns: 1fr;
++    grid-template-rows: 1fr 1fr;
++    overflow: auto;
++  }
++
++  .squad-builder-left,
++  .squad-builder-right {
++    min-height: 50svh;
++    border-right: none;
++    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
++  }
++}
++
++@media (max-width: 480px) {
++  .squad-nav-inner {
++    padding-inline: 1rem;
++  }
++
++  .squad-builder-body {
++    grid-template-rows: auto auto;
++  }
+ }
+\ No newline at end of file
+diff --git a/src/app/page.tsx b/src/app/page.tsx
+index f7eaa5c..bf25ffb 100644
+--- a/src/app/page.tsx
++++ b/src/app/page.tsx
+@@ -14,7 +14,7 @@ const features = [
+     id: "feature-build-team",
+     icon: Users,
+     title: "Build Your Team",
+-    description: "Select 15 players with your ┬ú100m budget",
++    description: "Select 15 players with your $100m budget",
+   },
+   {
+     id: "feature-performance",
+diff --git a/src/components/features/PlayerSelectionPanel.tsx b/src/components/features/PlayerSelectionPanel.tsx
+new file mode 100644
+index 0000000..0580f47
+--- /dev/null
++++ b/src/components/features/PlayerSelectionPanel.tsx
+@@ -0,0 +1,479 @@
++"use client";
++
++/**
++ * src/components/features/PlayerSelectionPanel.tsx
++ *
++ * Left panel of the Squad Builder.
++ * Shows a filterable, searchable, paginated list of all players grouped by position.
++ * Communicates add/remove actions via the Zustand squadStore.
++ */
++
++import { useState, useMemo, useCallback } from "react";
++import Image from "next/image";
++import { motion, AnimatePresence } from "framer-motion";
++import {
++  Search,
++  RotateCcw,
++  ChevronDown,
++  Plus,
++  Minus,
++  Info,
++  ChevronLeft,
++  ChevronRight,
++  SlidersHorizontal,
++} from "lucide-react";
++import { cn } from "@/lib/utils";
++import { useSquadStore } from "@/store/squadStore";
++import type { Player } from "@/db/schema";
++
++// ΓöÇΓöÇ Constants ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++
++const ITEMS_PER_PAGE = 30;
++
++// ΓöÇΓöÇ Helpers ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++
++/** Converts "South Africa" ΓåÆ "south-africa" for flag image paths */
++function nationToSlug(nation: string): string {
++  if (nation === "United States") return "usa";
++  if (nation === "Cote d'Ivoire" || nation === "C├┤te d'Ivoire" || nation === "Ivory Coast") return "cote-d'ivoire";
++  if (nation === "Cape Verde" || nation === "Cabo Verde") return "cabo-verde";
++
++  return nation
++    .toLowerCase()
++    .normalize("NFD")
++    .replace(/[\u0300-\u036f]/g, "")
++    .replace(/[^a-z0-9]+/g, "-")
++    .replace(/^-+|-+$/g, "");
++}
++
++const POSITION_LABELS: Record<string, string> = {
++  GK: "Goalkeepers",
++  DEF: "Defenders",
++  MID: "Midfielders",
++  FWD: "Forwards",
++};
++
++const POSITION_ORDER = ["GK", "DEF", "MID", "FWD"];
++
++// ΓöÇΓöÇ Sub-components ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++
++interface PlayerRowProps {
++  player: Player;
++  isSelected: boolean;
++  onAdd: () => void;
++  onRemove: () => void;
++}
++
++function PlayerRow({ player, isSelected, onAdd, onRemove }: PlayerRowProps) {
++  const slug = nationToSlug(player.nation);
++  const displayName = player.lastName || player.firstName;
++
++  return (
++    <div
++      className={cn(
++        "player-list-row group",
++        isSelected && "player-list-row--selected"
++      )}
++    >
++      {/* Info icon */}
++      <button
++        aria-label={`Info about ${displayName}`}
++        className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-white/40 hover:text-white/80 hover:bg-white/10 transition-colors"
++      >
++        <Info size={12} />
++      </button>
++
++      {/* Flag */}
++      <div className="relative w-8 h-8 rounded-md overflow-hidden flex-shrink-0 bg-white/10">
++        <Image
++          src={`/images/nations/${slug}.png`}
++          alt={player.nation}
++          fill
++          className="object-cover object-top"
++          sizes="32px"
++        />
++      </div>
++
++      {/* Name + nation meta */}
++      <div className="flex-1 min-w-0">
++        <p className="text-sm font-bold text-white truncate leading-none mb-0.5">
++          {displayName}
++        </p>
++        <p className="text-xs text-white/40 truncate leading-none">
++          {/* Nation instead of club */}
++          {player.nation}
++          <span className="ml-1.5 px-1 py-0 rounded text-[9px] font-bold uppercase tracking-wide bg-white/10 text-white/60">
++            {player.position}
++          </span>
++          {!player.isAvailable && (
++            <span className="ml-1 text-red-400">ΓùÅ</span>
++          )}
++        </p>
++      </div>
++
++      {/* Price */}
++      <div className="text-right flex-shrink-0 w-14">
++        <p className="text-xs font-semibold text-white/80">
++          ${player.price}m
++        </p>
++      </div>
++
++      {/* Total points */}
++      <div className="text-right flex-shrink-0 w-10">
++        <p className="text-xs font-bold text-[#c8f000]">
++          {player.totalPoints}
++        </p>
++      </div>
++
++      {/* Add / Remove button */}
++      <button
++        id={`btn-player-${player.id}`}
++        aria-label={isSelected ? `Remove ${displayName}` : `Add ${displayName}`}
++        onClick={isSelected ? onRemove : onAdd}
++        className={cn(
++          "flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center font-bold transition-all duration-150 text-white",
++          isSelected
++            ? "bg-secondaryRed-600 hover:bg-secondaryRed-500"
++            : "bg-primaryBrand-600 hover:bg-primaryBrand-500"
++        )}
++      >
++        {isSelected ? <Minus size={13} /> : <Plus size={13} />}
++      </button>
++    </div>
++  );
++}
++
++// ΓöÇΓöÇ Pagination controls ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++
++interface PaginationProps {
++  currentPage: number;
++  totalPages: number;
++  onPrev: () => void;
++  onNext: () => void;
++  startItem: number;
++  endItem: number;
++  total: number;
++}
++
++function Pagination({
++  currentPage,
++  totalPages,
++  onPrev,
++  onNext,
++  startItem,
++  endItem,
++  total,
++}: PaginationProps) {
++  return (
++    <div className="flex-shrink-0 flex items-center justify-between px-4 py-2.5 border-t border-white/10 bg-white/2">
++      <span className="text-[11px] text-white/40 font-medium">
++        {startItem}ΓÇô{endItem} of {total} players
++      </span>
++      <div className="flex items-center gap-1">
++        <button
++          id="btn-page-prev"
++          onClick={onPrev}
++          disabled={currentPage === 1}
++          aria-label="Previous page"
++          className="w-7 h-7 rounded-md flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
++        >
++          <ChevronLeft size={14} />
++        </button>
++        <span className="text-[11px] font-bold text-white/60 px-2">
++          {currentPage} / {totalPages}
++        </span>
++        <button
++          id="btn-page-next"
++          onClick={onNext}
++          disabled={currentPage === totalPages}
++          aria-label="Next page"
++          className="w-7 h-7 rounded-md flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
++        >
++          <ChevronRight size={14} />
++        </button>
++      </div>
++    </div>
++  );
++}
++
++// ΓöÇΓöÇ Main component ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++
++interface PlayerSelectionPanelProps {
++  players: Player[];
++}
++
++export function PlayerSelectionPanel({ players }: PlayerSelectionPanelProps) {
++  const [search, setSearch] = useState("");
++  const [posFilter, setPosFilter] = useState("All");
++  const [nationFilter, setNationFilter] = useState("All");
++  const [sortBy, setSortBy] = useState<"totalPoints" | "price">("totalPoints");
++  const [page, setPage] = useState(1);
++  const [showFilters, setShowFilters] = useState(true);
++
++  // True when any filter deviates from its default value
++  const hasActiveFilters =
++    posFilter !== "All" || nationFilter !== "All" || sortBy !== "totalPoints";
++
++  const { selectedPlayers, addPlayer, removePlayer } = useSquadStore();
++  const selectedIds = new Set(selectedPlayers.map((p) => p.id));
++
++  // Derive unique nation list
++  const nations = useMemo(() => {
++    const set = new Set(players.map((p) => p.nation));
++    return ["All", ...Array.from(set).sort()];
++  }, [players]);
++
++  // Filter + sort (reset page when filters change)
++  const filtered = useMemo(() => {
++    return players
++      .filter((p) => {
++        const nameMatch =
++          search === "" ||
++          `${p.firstName} ${p.lastName}`
++            .toLowerCase()
++            .includes(search.toLowerCase());
++        const posMatch = posFilter === "All" || p.position === posFilter;
++        const natMatch = nationFilter === "All" || p.nation === nationFilter;
++        return nameMatch && posMatch && natMatch;
++      })
++      .sort((a, b) =>
++        sortBy === "totalPoints"
++          ? b.totalPoints - a.totalPoints
++          : b.price - a.price
++      );
++  }, [players, search, posFilter, nationFilter, sortBy]);
++
++  // Pagination derived values
++  const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
++  const safePage = Math.min(page, totalPages);
++  const pageStart = (safePage - 1) * ITEMS_PER_PAGE;
++  const pageEnd = pageStart + ITEMS_PER_PAGE;
++  const paginated = filtered.slice(pageStart, pageEnd);
++
++  // Group paginated results by position
++  const grouped = useMemo(() => {
++    const map: Record<string, Player[]> = { GK: [], DEF: [], MID: [], FWD: [] };
++    for (const p of paginated) {
++      if (map[p.position]) map[p.position].push(p);
++    }
++    return map;
++  }, [paginated]);
++
++  // Reset page whenever filters change
++  const resetPage = useCallback(() => setPage(1), []);
++
++  const handleFilterChange = <T,>(setter: (v: T) => void) => (v: T) => {
++    setter(v);
++    resetPage();
++  };
++
++  const handleAdd = (player: Player) => {
++    const result = addPlayer(player);
++    if (!result.ok && result.reason) {
++      console.warn(result.reason);
++    }
++  };
++
++  return (
++    <aside className="squad-panel flex flex-col h-full overflow-hidden">
++      {/* ΓöÇΓöÇ Panel header ΓöÇΓöÇ */}
++      <div className="flex-shrink-0 px-4 pt-4 pb-3 border-b border-white/10">
++        {/* Row 1: title + filters toggle */}
++        <div className="flex items-center justify-between mb-3">
++          <h2 className="text-base font-display font-black text-white">
++            Player Selection
++          </h2>
++
++          <button
++            id="btn-toggle-filters"
++            onClick={() => setShowFilters((v) => !v)}
++            aria-expanded={showFilters}
++            aria-controls="player-filters-panel"
++            className="relative flex-shrink-0 flex items-center gap-1 h-8 px-2.5 rounded-lg text-[11px] font-bold transition-all duration-150 border"
++            style={{
++              background: showFilters ? "rgba(10,132,255,0.15)" : "rgba(255,255,255,0.05)",
++              borderColor: showFilters ? "rgba(10,132,255,0.4)" : "rgba(255,255,255,0.12)",
++              color: showFilters ? "#50c3ff" : "rgba(255,255,255,0.5)",
++            }}
++          >
++            <SlidersHorizontal size={12} />
++            <span>{showFilters ? "Hide" : "Filters"}</span>
++            {hasActiveFilters && !showFilters && (
++              <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-primaryBrand-400 border border-[#0f0c1a]" />
++            )}
++          </button>
++        </div>
++
++        {/* Row 2: full-width search */}
++        <div className="relative mb-2">
++          <Search
++            size={14}
++            className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none"
++          />
++          <input
++            id="player-search"
++            type="text"
++            placeholder="Search by nameΓÇª"
++            value={search}
++            onChange={(e) => {
++              setSearch(e.target.value);
++              resetPage();
++            }}
++            className="w-full h-9 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm pl-9 pr-4 focus:outline-none focus:ring-1 focus:ring-primaryBrand-500 focus:border-primaryBrand-500 transition-all"
++          />
++        </div>
++
++        {/* ΓöÇΓöÇ Collapsible filter panel ΓöÇΓöÇ */}
++        <AnimatePresence initial={false}>
++          {showFilters && (
++            <motion.div
++              id="player-filters-panel"
++              key="filters"
++              initial={{ height: 0, opacity: 0 }}
++              animate={{ height: "auto", opacity: 1 }}
++              exit={{ height: 0, opacity: 0 }}
++              transition={{ duration: 0.22, ease: "easeInOut" }}
++              className="overflow-hidden"
++            >
++              <div className="pt-1 pb-0">
++                {/* Filter row ΓÇö single line, no wrap */}
++                <div className="flex items-center gap-1.5">
++                  {/* Position filter */}
++                  <div className="relative flex-1 min-w-0">
++                    <select
++                      id="filter-position"
++                      value={posFilter}
++                      onChange={(e) => handleFilterChange(setPosFilter)(e.target.value)}
++                      className="appearance-none w-full h-8 rounded-lg bg-white/5 border border-white/15 text-white text-xs font-semibold pl-2.5 pr-6 focus:outline-none focus:ring-1 focus:ring-primaryBrand-500 cursor-pointer hover:bg-white/10 transition-colors truncate"
++                    >
++                      <option value="All" className="bg-[#1a1733] text-white">All</option>
++                      <option value="GK" className="bg-[#1a1733] text-white">GK</option>
++                      <option value="DEF" className="bg-[#1a1733] text-white">DEF</option>
++                      <option value="MID" className="bg-[#1a1733] text-white">MID</option>
++                      <option value="FWD" className="bg-[#1a1733] text-white">FWD</option>
++                    </select>
++                    <ChevronDown size={10} className="absolute right-2 top-1/2 -translate-y-1/2 text-white/50 pointer-events-none" />
++                  </div>
++
++                  {/* Sort filter */}
++                  <div className="relative flex-1 min-w-0">
++                    <select
++                      id="filter-sort"
++                      value={sortBy}
++                      onChange={(e) =>
++                        handleFilterChange(setSortBy)(e.target.value as "totalPoints" | "price")
++                      }
++                      className="appearance-none w-full h-8 rounded-lg bg-white/5 border border-white/15 text-white text-xs font-semibold pl-2.5 pr-6 focus:outline-none focus:ring-1 focus:ring-primaryBrand-500 cursor-pointer hover:bg-white/10 transition-colors truncate"
++                    >
++                      <option value="totalPoints" className="bg-[#1a1733] text-white">Points</option>
++                      <option value="price" className="bg-[#1a1733] text-white">Price</option>
++                    </select>
++                    <ChevronDown size={10} className="absolute right-2 top-1/2 -translate-y-1/2 text-white/50 pointer-events-none" />
++                  </div>
++
++                  {/* Nation filter */}
++                  <div className="relative flex-1 min-w-0">
++                    <select
++                      id="filter-nation"
++                      value={nationFilter}
++                      onChange={(e) => handleFilterChange(setNationFilter)(e.target.value)}
++                      className="appearance-none w-full h-8 rounded-lg bg-white/5 border border-white/15 text-white text-xs font-semibold pl-2.5 pr-6 focus:outline-none focus:ring-1 focus:ring-primaryBrand-500 cursor-pointer hover:bg-white/10 transition-colors truncate"
++                    >
++                      {nations.map((n) => (
++                        <option key={n} value={n} className="bg-[#1a1733] text-white">
++                          {n}
++                        </option>
++                      ))}
++                    </select>
++                    <ChevronDown size={10} className="absolute right-2 top-1/2 -translate-y-1/2 text-white/50 pointer-events-none" />
++                  </div>
++
++                  {/* Reset ΓÇö icon only */}
++                  <button
++                    id="btn-reset-filters"
++                    onClick={() => {
++                      setSearch("");
++                      setPosFilter("All");
++                      setNationFilter("All");
++                      setSortBy("totalPoints");
++                      resetPage();
++                    }}
++                    aria-label="Reset filters"
++                    title="Reset filters"
++                    className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-lg bg-white/5 border border-white/15 text-white/60 hover:bg-white/10 hover:text-white transition-colors"
++                  >
++                    <RotateCcw size={12} />
++                  </button>
++                </div>
++
++                {/* Count bar */}
++                <div className="mt-3 rounded-lg bg-primaryBrand-700/50 border border-primaryBrand-500/30 px-3 py-1.5 text-center">
++                  <span className="text-xs font-bold text-primaryBrand-300">
++                    {filtered.length} player{filtered.length !== 1 ? "s" : ""} shown
++                  </span>
++                </div>
++              </div>
++            </motion.div>
++          )}
++        </AnimatePresence>
++      </div>
++
++      {/* ΓöÇΓöÇ Player list (scrollable) ΓöÇΓöÇ */}
++      <div className="flex-1 overflow-y-auto px-2 py-2 space-y-4">
++        {POSITION_ORDER.map((pos) => {
++          const group = grouped[pos];
++          if (!group || group.length === 0) return null;
++          return (
++            <section key={pos}>
++              <h3 className="px-3 py-1.5 text-xs font-black text-white/70 uppercase tracking-widest">
++                {POSITION_LABELS[pos]}
++              </h3>
++              <div className="space-y-0.5">
++                {group.map((player) => (
++                  <PlayerRow
++                    key={player.id}
++                    player={player}
++                    isSelected={selectedIds.has(player.id)}
++                    onAdd={() => handleAdd(player)}
++                    onRemove={() => removePlayer(player.id)}
++                  />
++                ))}
++              </div>
++            </section>
++          );
++        })}
++
++        {filtered.length === 0 && (
++          <div className="flex flex-col items-center justify-center py-16 text-center">
++            <Search size={32} className="text-white/20 mb-3" />
++            <p className="text-sm text-white/40">No players match your filters.</p>
++            <button
++              onClick={() => {
++                setSearch("");
++                setPosFilter("All");
++                setNationFilter("All");
++                resetPage();
++              }}
++              className="mt-3 text-xs text-primaryBrand-400 hover:text-primaryBrand-300 underline underline-offset-2"
++            >
++              Clear filters
++            </button>
++          </div>
++        )}
++      </div>
++
++      {/* ΓöÇΓöÇ Pagination ΓöÇΓöÇ */}
++      {filtered.length > 0 && (
++        <Pagination
++          currentPage={safePage}
++          totalPages={totalPages}
++          onPrev={() => setPage((p) => Math.max(1, p - 1))}
++          onNext={() => setPage((p) => Math.min(totalPages, p + 1))}
++          startItem={pageStart + 1}
++          endItem={Math.min(pageEnd, filtered.length)}
++          total={filtered.length}
++        />
++      )}
++    </aside>
++  );
++}
+diff --git a/src/components/features/SquadBuilderClient.tsx b/src/components/features/SquadBuilderClient.tsx
+new file mode 100644
+index 0000000..510d75e
+--- /dev/null
++++ b/src/components/features/SquadBuilderClient.tsx
+@@ -0,0 +1,144 @@
++"use client";
++
++/**
++ * src/components/features/SquadBuilderClient.tsx
++ *
++ * Top-level Client Component for the Squad Builder page.
++ * Renders the nav bar, the two-panel layout, and handles
++ * the "Enter Squad" action (placeholder toast for now).
++ */
++
++import { useState } from "react";
++import { LogOut, CheckCircle2, X } from "lucide-react";
++import { motion, AnimatePresence } from "framer-motion";
++import { PlayerSelectionPanel } from "@/components/features/PlayerSelectionPanel";
++import { SquadSelectionPanel } from "@/components/features/SquadSelectionPanel";
++import type { Player } from "@/db/schema";
++
++interface SquadBuilderClientProps {
++  players: Player[];
++  teamName: string;
++  managerName: string;
++  signOutAction: () => Promise<void>;
++  opponentMap?: Record<string, string>;
++}
++
++// ΓöÇΓöÇ Toast component ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++
++function Toast({
++  message,
++  onClose,
++}: {
++  message: string;
++  onClose: () => void;
++}) {
++  return (
++    <motion.div
++      initial={{ opacity: 0, y: 24, scale: 0.95 }}
++      animate={{ opacity: 1, y: 0, scale: 1 }}
++      exit={{ opacity: 0, y: 16, scale: 0.95 }}
++      className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-5 py-3.5 rounded-xl bg-secondaryGreen-700 border border-secondaryGreen-500/40 shadow-2xl shadow-black/50 text-white text-sm font-semibold max-w-sm"
++    >
++      <CheckCircle2 size={18} className="text-secondaryGreen-300 flex-shrink-0" />
++      <span className="flex-1">{message}</span>
++      <button
++        onClick={onClose}
++        className="flex-shrink-0 hover:text-white/70 transition-colors"
++        aria-label="Close notification"
++      >
++        <X size={15} />
++      </button>
++    </motion.div>
++  );
++}
++
++// ΓöÇΓöÇ Main component ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++
++export function SquadBuilderClient({
++  players,
++  teamName,
++  managerName,
++  signOutAction,
++  opponentMap,
++}: SquadBuilderClientProps) {
++  const [toast, setToast] = useState<string | null>(null);
++
++  const showToast = (msg: string) => {
++    setToast(msg);
++    setTimeout(() => setToast(null), 4000);
++  };
++
++  const handleEnterSquad = () => {
++    showToast(
++      "Squad submitted! Save functionality coming in the next feature update."
++    );
++  };
++
++  return (
++    <div className="squad-builder-root">
++      {/* ΓöÇΓöÇ Sticky top nav ΓöÇΓöÇ */}
++      <header className="squad-nav">
++        <div className="squad-nav-inner">
++          {/* Wordmark */}
++          <div className="flex items-center">
++            <span className="font-display font-black text-white text-sm tracking-widest uppercase">
++              F26 Fantasy
++            </span>
++          </div>
++
++          {/* Nav links */}
++          <nav className="hidden md:flex items-center gap-6">
++            {["My Squad", "Fixtures", "Leaderboard", "How to Play"].map(
++              (link) => (
++                <button
++                  key={link}
++                  className="text-xs font-bold text-white/60 hover:text-white transition-colors uppercase tracking-wide"
++                >
++                  {link}
++                </button>
++              )
++            )}
++          </nav>
++
++          {/* Sign out */}
++          <form action={signOutAction}>
++            <button
++              type="submit"
++              id="btn-sign-out"
++              className="flex items-center gap-2 text-xs font-semibold text-white/50 hover:text-white transition-colors"
++            >
++              <LogOut size={14} />
++              Sign out
++            </button>
++          </form>
++        </div>
++      </header>
++
++      {/* ΓöÇΓöÇ Two-panel layout ΓöÇΓöÇ */}
++      <main className="squad-builder-body" id="squad-builder-main">
++        {/* Left: Player Selection */}
++        <div className="squad-builder-left">
++          <PlayerSelectionPanel players={players} />
++        </div>
++
++        {/* Right: Squad Selection */}
++        <div className="squad-builder-right">
++          <SquadSelectionPanel
++            teamName={teamName}
++            managerName={managerName}
++            allPlayers={players}
++            onEnterSquad={handleEnterSquad}
++            opponentMap={opponentMap}
++          />
++        </div>
++      </main>
++
++      {/* ΓöÇΓöÇ Toast notifications ΓöÇΓöÇ */}
++      <AnimatePresence>
++        {toast && (
++          <Toast message={toast} onClose={() => setToast(null)} />
++        )}
++      </AnimatePresence>
++    </div>
++  );
++}
+diff --git a/src/components/features/SquadSelectionPanel.tsx b/src/components/features/SquadSelectionPanel.tsx
+new file mode 100644
+index 0000000..d43e511
+--- /dev/null
++++ b/src/components/features/SquadSelectionPanel.tsx
+@@ -0,0 +1,589 @@
++"use client";
++
++/**
++ * src/components/features/SquadSelectionPanel.tsx
++ *
++ * Right panel of the Squad Builder.
++ *
++ * Displays:
++ *  - Team info header (team name, manager, players count, budget)
++ *  - Pitch View / List View toggle
++ *  - Pitch with position slot placeholders (or selected players)
++ *  - Auto Pick, Reset, Enter Squad action buttons
++ */
++
++import { useState } from "react";
++import Image from "next/image";
++import { UserCircle2, Minus } from "lucide-react";
++import { motion, AnimatePresence } from "framer-motion";
++import { cn } from "@/lib/utils";
++import {
++  useSquadStore,
++  MAX_SQUAD_SIZE,
++} from "@/store/squadStore";
++import type { Player } from "@/db/schema";
++
++// ΓöÇΓöÇ Types ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++
++type ViewMode = "pitch" | "list";
++
++interface SquadSelectionPanelProps {
++  teamName: string;
++  managerName: string;
++  allPlayers: Player[];
++  onEnterSquad: () => void;
++  opponentMap?: Record<string, string>;
++}
++
++// ΓöÇΓöÇ Pitch slot definitions ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++
++// Starting XI layout: 1 GK, 4 DEF, 4 MID, 2 FWD  (display formation)
++// We show ALL selected players in their position rows.
++// The bench (slots 12-15) appears below.
++
++// ΓöÇΓöÇ Sub-components ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++
++/** A single slot on the pitch ΓÇö empty or filled */
++function PitchSlot({
++  player,
++  pos,
++  onRemove,
++  opponentMap,
++}: {
++  player?: Player;
++  pos: string;
++  onRemove?: () => void;
++  opponentMap?: Record<string, string>;
++}) {
++  const slug = player
++    ? (() => {
++      if (player.nation === "United States") return "usa";
++      if (player.nation === "Cote d'Ivoire" || player.nation === "C├┤te d'Ivoire" || player.nation === "Ivory Coast") return "cote-d'ivoire";
++      if (player.nation === "Cape Verde" || player.nation === "Cabo Verde") return "cabo-verde";
++      return player.nation
++        .toLowerCase()
++        .normalize("NFD")
++        .replace(/[\u0300-\u036f]/g, "")
++        .replace(/[^a-z0-9]+/g, "-")
++        .replace(/^-+|-+$/g, "");
++    })()
++    : null;
++
++  const opponentAcronym = player && opponentMap ? opponentMap[player.nation] : null;
++
++  return (
++    <motion.div
++      layout
++      initial={{ opacity: 0, scale: 0.85 }}
++      animate={{ opacity: 1, scale: 1 }}
++      className={cn(
++        "pitch-slot",
++        player ? "pitch-slot--filled !bg-transparent !border-transparent !p-0" : "pitch-slot--empty"
++      )}
++    >
++      {player ? (
++        <div className="relative flex flex-col items-center w-[54px]">
++          {/* Nation kit image */}
++          <div className="relative w-11 h-11 z-10 -mb-1 flex-shrink-0 drop-shadow-md">
++            <Image
++              src={`/images/nations/${slug}.png`}
++              alt={player.nation}
++              fill
++              className="object-contain object-bottom"
++              sizes="44px"
++            />
++          </div>
++          {/* Card body */}
++          <div className="w-full bg-[#111] border-[1.5px] border-white rounded-md flex flex-col overflow-hidden relative z-0">
++            <div className="bg-white px-0.5 py-[2px] text-center">
++              <span className="block text-[9px] font-bold text-black truncate w-full">
++                {player.lastName || player.firstName}
++              </span>
++            </div>
++            <div className="bg-[#111] px-0.5 py-[2px] text-center flex items-center justify-center gap-[2px]">
++              <span className="text-[8px] font-bold text-white">v</span>
++              <span className="text-[9px] font-black text-[#cca64f]">{opponentAcronym || "TBD"}</span>
++            </div>
++          </div>
++          {/* Remove button */}
++          <button
++            onClick={onRemove}
++            aria-label={`Remove ${player.lastName || player.firstName}`}
++            className="absolute -top-1 -right-2 z-20 w-5 h-5 rounded-full bg-secondaryRed-600 flex items-center justify-center opacity-0 group-hover/slot:opacity-100 transition-opacity shadow-lg"
++          >
++            <Minus size={9} className="text-white" />
++          </button>
++        </div>
++      ) : (
++        <>
++          {/* Empty slot icon */}
++          <div className="w-8 h-8 rounded-full border-2 border-dashed border-white/30 flex items-center justify-center mb-1">
++            <UserCircle2 size={16} className="text-white/30" />
++          </div>
++          <span className="text-[9px] font-bold text-white/40 uppercase tracking-wide">
++            {pos}
++          </span>
++        </>
++      )}
++    </motion.div>
++  );
++}
++
++/** Pitch view ΓÇö renders position rows over the football pitch */
++function PitchView({
++  selectedPlayers,
++  onRemove,
++  opponentMap,
++}: {
++  selectedPlayers: Player[];
++  onRemove: (id: number) => void;
++  opponentMap?: Record<string, string>;
++}) {
++  const byPos: Record<string, Player[]> = { GK: [], DEF: [], MID: [], FWD: [] };
++  for (const p of selectedPlayers) {
++    if (byPos[p.position]) byPos[p.position].push(p);
++  }
++
++  // Bench = players beyond the starting XI quotas
++  const startingGK = byPos.GK.slice(0, 1);
++  const startingDEF = byPos.DEF.slice(0, 4);
++  const startingMID = byPos.MID.slice(0, 4);
++  const startingFWD = byPos.FWD.slice(0, 2);
++
++  const bench = [
++    ...byPos.GK.slice(1),
++    ...byPos.DEF.slice(4),
++    ...byPos.MID.slice(4),
++    ...byPos.FWD.slice(2),
++  ];
++
++  const renderRow = (
++    pos: string,
++    starters: Player[],
++    totalSlots: number,
++    rowClass?: string
++  ) => {
++    const slots: (Player | undefined)[] = [...starters];
++    while (slots.length < totalSlots) slots.push(undefined);
++    return (
++      <div
++        key={pos}
++        className={cn("exact-pitch-row", rowClass)}
++      >
++        {slots.map((p, i) => (
++          <div key={p?.id ?? `${pos}-${i}`} className="group/slot relative">
++            <PitchSlot
++              player={p}
++              pos={pos}
++              onRemove={p ? () => onRemove(p.id) : undefined}
++              opponentMap={opponentMap}
++            />
++          </div>
++        ))}
++      </div>
++    );
++  };
++
++  return (
++    <div className="flex-1 flex flex-col min-h-0 overflow-hidden bg-[#100d1e]">
++      <div className="flex-1 overflow-y-auto pb-6">
++        <div className="flex flex-col items-center pt-6 pb-4 w-full px-2">
++          {/* Exact Pitch Recreation */}
++          <div className="exact-pitch-container w-full">
++            {/* 3D Pitch Background */}
++            <div className="exact-pitch-3d">
++              <svg viewBox="0 0 100 120" preserveAspectRatio="none" className="exact-pitch-svg">
++                {/* Outer line */}
++                <rect x="5" y="5" width="90" height="115" stroke="white" strokeWidth="0.5" fill="none" />
++                {/* Penalty Box */}
++                <rect x="25" y="5" width="50" height="20" stroke="white" strokeWidth="0.5" fill="none" />
++                {/* Goal Area */}
++                <rect x="38" y="5" width="24" height="6" stroke="white" strokeWidth="0.5" fill="none" />
++                {/* Penalty Arc */}
++                <path d="M 40 25 A 10 10 0 0 0 60 25" stroke="white" strokeWidth="0.5" fill="none" />
++                {/* Penalty Spot */}
++                <circle cx="50" cy="18" r="0.5" fill="white" />
++                {/* Halfway Line (bottom) */}
++                <line x1="5" y1="100" x2="95" y2="100" stroke="white" strokeWidth="0.5" />
++                {/* Center Circle (bottom) */}
++                <circle cx="50" cy="100" r="15" stroke="white" strokeWidth="0.5" fill="none" />
++                {/* Center Spot */}
++                <circle cx="50" cy="100" r="0.8" fill="white" />
++                {/* Corner Arcs */}
++                <path d="M 5 9 A 4 4 0 0 0 9 5" stroke="white" strokeWidth="0.5" fill="none" />
++                <path d="M 95 9 A 4 4 0 0 1 91 5" stroke="white" strokeWidth="0.5" fill="none" />
++              </svg>
++            </div>
++
++            {/* Top Banner & Goal */}
++            <div className="exact-pitch-banner">
++              <div className="exact-pitch-banner-left">
++                <span className="mr-1 mt-[2px]">
++                  <Image src="/assets/logo-black.png" alt="Logo" width={12} height={16} className="object-contain" />
++                </span> FANTASY
++              </div>
++
++              <div className="exact-pitch-banner-right">
++                <span className="mr-1 mt-[2px]">
++                  <Image src="/assets/logo-white.png" alt="Logo" width={12} height={16} className="object-contain" />
++                </span> FANTASY
++              </div>
++            </div>
++
++            {/* Player Slots Layer */}
++            <div className="exact-pitch-players">
++              {renderRow("GK", startingGK, 1, "center")}
++              {renderRow("DEF", startingDEF, 4)}
++              {renderRow("MID", startingMID, 4)}
++              {renderRow("FWD", startingFWD, 2, "center fwd")}
++            </div>
++          </div>
++        </div>
++
++        {/* Bench */}
++        {bench.length > 0 && (
++          <div className="flex-shrink-0 flex items-center justify-center gap-2 py-4 mt-2 bg-black/20 border-y border-white/10 w-full px-4">
++            <span className="text-[10px] text-white/40 font-bold uppercase tracking-widest mr-1">
++              Bench
++            </span>
++            {bench.map((p) => (
++              <div key={p.id} className="group/slot relative">
++                <PitchSlot
++                  player={p}
++                  pos={p.position}
++                  onRemove={() => onRemove(p.id)}
++                  opponentMap={opponentMap}
++                />
++              </div>
++            ))}
++            {/* Empty bench slots up to 4 */}
++            {Array.from({ length: Math.max(0, 4 - bench.length) }).map((_, i) => (
++              <div key={`bench-empty-${i}`} className="group/slot relative">
++                <PitchSlot pos="?" />
++              </div>
++            ))}
++          </div>
++        )}
++
++        <SquadKey />
++      </div>
++    </div>
++  );
++}
++
++function SquadKey() {
++  const iconProps = { width: 24, height: 24, className: "object-contain" };
++
++  return (
++    <div className="mx-4 mt-6 bg-[#0f0c1a] rounded-xl border border-white/10 p-4">
++      <h3 className="text-white text-sm font-bold mb-3">Key</h3>
++      <div className="h-px w-full bg-white/10 mb-4" />
++
++      <div className="flex flex-wrap items-center gap-x-6 gap-y-4 px-2">
++        <div className="flex items-center gap-2">
++          <Image src="/fantasy-icons/captain.png" alt="Captain" {...iconProps} />
++          <span className="text-white text-xs font-semibold">Captain</span>
++        </div>
++
++        <div className="flex items-center gap-2">
++          <Image src="/fantasy-icons/vice-captain.png" alt="Vice Captain" {...iconProps} />
++          <span className="text-white text-xs font-semibold">Vice Captain</span>
++        </div>
++
++        <div className="flex items-center gap-2">
++          <Image src="/fantasy-icons/injured.png" alt="Injured" {...iconProps} />
++          <span className="text-white text-xs font-semibold">Injured</span>
++        </div>
++
++        <div className="flex items-center gap-2">
++          <Image src="/fantasy-icons/suspended.png" alt="Suspended" {...iconProps} />
++          <span className="text-white text-xs font-semibold">Suspended</span>
++        </div>
++
++        <div className="flex items-center gap-2">
++          <Image src="/fantasy-icons/eliminated.png" alt="Eliminated" {...iconProps} />
++          <span className="text-white text-xs font-semibold">Eliminated</span>
++        </div>
++
++        <div className="flex items-center gap-2">
++          <Image src="/fantasy-icons/starting.png" alt="Starting" {...iconProps} />
++          <span className="text-white text-xs font-semibold">Starting</span>
++        </div>
++
++        <div className="flex items-center gap-2">
++          <Image src="/fantasy-icons/out-of-squad.png" alt="Out of squad" {...iconProps} />
++          <span className="text-white text-xs font-semibold">Out of squad</span>
++        </div>
++
++        <div className="flex items-center gap-2">
++          <Image src="/fantasy-icons/bench.png" alt="Bench" {...iconProps} />
++          <span className="text-white text-xs font-semibold">Bench</span>
++        </div>
++
++        <div className="flex items-center gap-2">
++          <Image src="/fantasy-icons/substitute-in.png" alt="Substitute In" {...iconProps} />
++          <span className="text-white text-xs font-semibold">Subs In</span>
++        </div>
++
++        <div className="flex items-center gap-2">
++          <Image src="/fantasy-icons/substitute-out.png" alt="Substitute out" {...iconProps} />
++          <span className="text-white text-xs font-semibold">Sub Out</span>
++        </div>
++
++        <div className="flex items-center gap-2">
++          <Image src="/fantasy-icons/boosters.png" alt="Boosters" {...iconProps} />
++          <span className="text-white text-xs font-semibold">Boosters</span>
++        </div>
++
++        <div className="flex items-center gap-2">
++          <Image src="/fantasy-icons/bench-swap.png" alt="Bench swap" {...iconProps} />
++          <span className="text-white text-xs font-semibold">Bench swap</span>
++        </div>
++
++      </div>
++    </div>
++  );
++}
++
++/** List view ΓÇö flat table of selected players */
++function ListView({
++  selectedPlayers,
++  onRemove,
++}: {
++  selectedPlayers: Player[];
++  onRemove: (id: number) => void;
++}) {
++  if (selectedPlayers.length === 0) {
++    return (
++      <div className="flex-1 flex items-center justify-center text-white/30 text-sm">
++        No players selected yet.
++      </div>
++    );
++  }
++
++  return (
++    <div className="flex-1 overflow-y-auto px-4 py-3 space-y-1">
++      {selectedPlayers.map((p) => (
++        <div
++          key={p.id}
++          className="flex items-center gap-3 px-3 py-2 rounded-lg bg-white/5 hover:bg-white/8 transition-colors"
++        >
++          <span
++            className={cn(
++              "text-[9px] font-black px-1.5 py-0.5 rounded uppercase tracking-wide",
++              p.position === "GK" && "bg-yellow-500/20 text-yellow-400",
++              p.position === "DEF" && "bg-green-500/20 text-green-400",
++              p.position === "MID" && "bg-blue-500/20 text-blue-400",
++              p.position === "FWD" && "bg-red-500/20 text-red-400"
++            )}
++          >
++            {p.position}
++          </span>
++          <span className="flex-1 text-sm font-semibold text-white truncate">
++            {p.firstName} {p.lastName}
++          </span>
++          <span className="text-xs text-white/50">{p.club ?? p.nation}</span>
++          <span className="text-xs font-semibold text-white/70 w-12 text-right">
++            ${p.price}m
++          </span>
++          <button
++            onClick={() => onRemove(p.id)}
++            aria-label={`Remove ${p.lastName || p.firstName}`}
++            className="w-6 h-6 rounded-full bg-white/10 hover:bg-secondaryRed-600 flex items-center justify-center transition-colors"
++          >
++            <Minus size={11} className="text-white" />
++          </button>
++        </div>
++      ))}
++    </div>
++  );
++}
++
++// ΓöÇΓöÇ Main component ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++
++export function SquadSelectionPanel({
++  teamName,
++  managerName,
++  allPlayers,
++  onEnterSquad,
++  opponentMap,
++}: SquadSelectionPanelProps) {
++  const [view, setView] = useState<ViewMode>("pitch");
++  const { selectedPlayers, reset, autoPick, removePlayer, budgetRemaining } =
++    useSquadStore();
++
++  const count = selectedPlayers.length;
++  const isFull = count >= MAX_SQUAD_SIZE;
++  const remaining = budgetRemaining();
++
++  return (
++    <section className="squad-panel flex flex-col h-full overflow-hidden">
++      {/* ΓöÇΓöÇ Panel header ΓöÇΓöÇ */}
++      <div className="flex-shrink-0 px-5 pt-5 pb-3 border-b border-white/10">
++        <div className="flex items-start justify-between gap-4">
++          {/* Left: title + meta */}
++          <div>
++            <h2 className="text-lg font-display font-black text-white mb-0.5">
++              Squad Selection
++            </h2>
++            <p className="text-xs text-white/50">
++              Select a maximum of 3 players from a single nation or &apos;Auto
++              Pick&apos; if you&apos;re short of time.
++            </p>
++          </div>
++
++          {/* Right: view toggle */}
++          <div className="flex-shrink-0 flex items-center bg-white/5 border border-white/10 rounded-lg p-0.5 mt-1">
++            <button
++              id="btn-pitch-view"
++              onClick={() => setView("pitch")}
++              className={cn(
++                "px-3 py-1.5 rounded-md text-xs font-bold transition-all duration-150",
++                view === "pitch"
++                  ? "bg-primaryBrand-600 text-white shadow-sm"
++                  : "text-white/50 hover:text-white/80"
++              )}
++            >
++              Pitch View
++            </button>
++            <button
++              id="btn-list-view"
++              onClick={() => setView("list")}
++              className={cn(
++                "px-3 py-1.5 rounded-md text-xs font-bold transition-all duration-150",
++                view === "list"
++                  ? "bg-primaryBrand-600 text-white shadow-sm"
++                  : "text-white/50 hover:text-white/80"
++              )}
++            >
++              List View
++            </button>
++          </div>
++        </div>
++
++        {/* Team meta row */}
++        <div className="flex items-center gap-4 mt-4">
++          {/* Team name + manager */}
++          <div className="flex-1">
++            <p className="text-xs font-black text-white uppercase tracking-wide">
++              {teamName}
++            </p>
++            <div className="flex items-center gap-1 mt-0.5">
++              {/* South Africa flag placeholder for manager */}
++              <div className="relative w-4 h-4 rounded-sm overflow-hidden">
++                <Image
++                  src="/images/nations/south-africa.png"
++                  alt="Manager flag"
++                  fill
++                  className="object-cover"
++                  sizes="16px"
++                />
++              </div>
++              <p className="text-xs text-white/50">{managerName}</p>
++            </div>
++          </div>
++
++          {/* Players selected badge */}
++          <div className="flex flex-col items-center">
++            <div
++              className={cn(
++                "px-3 py-1 rounded-md text-sm font-black text-white transition-colors",
++                isFull ? "bg-secondaryGreen-600" : "bg-secondaryRed-600"
++              )}
++            >
++              {count} / {MAX_SQUAD_SIZE}
++            </div>
++            <p className="text-[10px] text-white/40 mt-1">Players selected</p>
++          </div>
++
++          {/* Budget badge */}
++          <div className="flex flex-col items-center">
++            <div
++              className={cn(
++                "px-3 py-1 rounded-md text-sm font-black text-white transition-colors",
++                remaining < 5
++                  ? "bg-secondaryRed-600"
++                  : remaining < 20
++                    ? "bg-secondaryYellow-600"
++                    : "bg-secondaryGreen-600"
++              )}
++            >
++              ${remaining.toFixed(1)}m
++            </div>
++            <p className="text-[10px] text-white/40 mt-1">Bank</p>
++          </div>
++        </div>
++      </div>
++
++      {/* ΓöÇΓöÇ Pitch / List area ΓöÇΓöÇ */}
++      <div className="flex-1 min-h-0 flex flex-col">
++        <AnimatePresence mode="wait">
++          {view === "pitch" ? (
++            <motion.div
++              key="pitch"
++              initial={{ opacity: 0 }}
++              animate={{ opacity: 1 }}
++              exit={{ opacity: 0 }}
++              transition={{ duration: 0.2 }}
++              className="flex-1 flex flex-col min-h-0"
++            >
++              <PitchView
++                selectedPlayers={selectedPlayers}
++                onRemove={removePlayer}
++                opponentMap={opponentMap}
++              />
++            </motion.div>
++          ) : (
++            <motion.div
++              key="list"
++              initial={{ opacity: 0 }}
++              animate={{ opacity: 1 }}
++              exit={{ opacity: 0 }}
++              transition={{ duration: 0.2 }}
++              className="flex-1 flex flex-col min-h-0"
++            >
++              <ListView
++                selectedPlayers={selectedPlayers}
++                onRemove={removePlayer}
++              />
++            </motion.div>
++          )}
++        </AnimatePresence>
++      </div>
++
++      {/* ΓöÇΓöÇ Footer actions ΓöÇΓöÇ */}
++      <div className="flex-shrink-0 grid grid-cols-3 border-t border-white/10">
++        <button
++          id="btn-auto-pick"
++          onClick={() => autoPick(allPlayers)}
++          className="flex items-center justify-center gap-2 py-4 text-sm font-bold text-white/70 hover:text-white hover:bg-white/5 transition-all border-r border-white/10"
++        >
++          Auto Pick
++        </button>
++
++        <button
++          id="btn-reset-squad"
++          onClick={reset}
++          disabled={count === 0}
++          className="flex items-center justify-center gap-2 py-4 text-sm font-bold text-white/70 hover:text-white hover:bg-white/5 transition-all border-r border-white/10 disabled:opacity-40 disabled:cursor-not-allowed"
++        >
++          Reset
++        </button>
++
++        <button
++          id="btn-enter-squad"
++          onClick={onEnterSquad}
++          disabled={count < MAX_SQUAD_SIZE}
++          className={cn(
++            "flex items-center justify-center gap-2 py-4 text-sm font-bold transition-all",
++            count >= MAX_SQUAD_SIZE
++              ? "text-white bg-primaryBrand-600 hover:bg-primaryBrand-500"
++              : "text-white/40 cursor-not-allowed"
++          )}
++        >
++          Enter Squad
++        </button>
++      </div>
++    </section>
++  );
++}
+diff --git a/src/db/seeds/fixtures.ts b/src/db/seeds/fixtures.ts
+index 91ba169..4a9ae07 100644
+--- a/src/db/seeds/fixtures.ts
++++ b/src/db/seeds/fixtures.ts
+@@ -11,9 +11,9 @@ export const fixtures: NewFixture[] = [
+   { gameweekId: 1, homeNation: "Australia", awayNation: "T├╝rkiye", kickoffTime: new Date("2026-06-14T06:00:00Z"), status: "UPCOMING" },
+   { gameweekId: 1, homeNation: "Germany", awayNation: "Curacao", kickoffTime: new Date("2026-06-14T19:00:00Z"), status: "UPCOMING" },
+   { gameweekId: 1, homeNation: "Netherlands", awayNation: "Japan", kickoffTime: new Date("2026-06-14T22:00:00Z"), status: "UPCOMING" },
+-  { gameweekId: 1, homeNation: "Ivory Coast", awayNation: "Ecuador", kickoffTime: new Date("2026-06-15T01:00:00Z"), status: "UPCOMING" },
++  { gameweekId: 1, homeNation: "C├┤te d'Ivoire", awayNation: "Ecuador", kickoffTime: new Date("2026-06-15T01:00:00Z"), status: "UPCOMING" },
+   { gameweekId: 1, homeNation: "Sweden", awayNation: "Tunisia", kickoffTime: new Date("2026-06-15T04:00:00Z"), status: "UPCOMING" },
+-  { gameweekId: 1, homeNation: "Spain", awayNation: "Cape Verde", kickoffTime: new Date("2026-06-15T18:00:00Z"), status: "UPCOMING" },
++  { gameweekId: 1, homeNation: "Spain", awayNation: "Cabo Verde", kickoffTime: new Date("2026-06-15T18:00:00Z"), status: "UPCOMING" },
+   { gameweekId: 1, homeNation: "Belgium", awayNation: "Egypt", kickoffTime: new Date("2026-06-15T21:00:00Z"), status: "UPCOMING" },
+   { gameweekId: 1, homeNation: "Saudi Arabia", awayNation: "Uruguay", kickoffTime: new Date("2026-06-16T00:00:00Z"), status: "UPCOMING" },
+   { gameweekId: 1, homeNation: "Iran", awayNation: "New Zealand", kickoffTime: new Date("2026-06-16T03:00:00Z"), status: "UPCOMING" },
+diff --git a/src/db/seeds/players.ts b/src/db/seeds/players.ts
+index c0e9a2b..9ce0fb6 100644
+--- a/src/db/seeds/players.ts
++++ b/src/db/seeds/players.ts
+@@ -861,33 +861,33 @@ export const ALL_PLAYERS: RawPlayer[] = [
+   p("Borja Iglesias", "FWD", "Spain", "Celta Vigo", 7.0),
+   p("V├¡ctor Mu├▒oz", "FWD", "Spain", "Osasuna", 5.5),
+ 
+-  // Cape Verde
+-  p("Vozinha", "GK", "Cape Verde", "Chaves", 5.0),
+-  p("Marcio Rosa", "GK", "Cape Verde", "Montana", 4.5),
+-  p("CJ dos Santos", "GK", "Cape Verde", "San Diego FC", 4.5),
+-  p("Steven Moreira", "DEF", "Cape Verde", "Columbus Crew", 5.5),
+-  p("Wagner Pina", "DEF", "Cape Verde", "Trabzonspor", 5.5),
+-  p("Joao Paulo", "DEF", "Cape Verde", "FCSB", 5.0),
+-  p("Sidny Lopes Cabral", "DEF", "Cape Verde", "Benfica", 5.5),
+-  p("Logan Costa", "DEF", "Cape Verde", "Villarreal", 6.5),
+-  p("Pico", "DEF", "Cape Verde", "Shamrock Rovers", 4.5),
+-  p("Kelvin Pires", "DEF", "Cape Verde", "SJK", 4.5),
+-  p("Stopira", "DEF", "Cape Verde", "Torreense", 5.0),
+-  p("Diney", "DEF", "Cape Verde", "Al Bataeh", 4.5),
+-  p("Jamiro Monteiro", "MID", "Cape Verde", "PEC Zwolle", 6.0),
+-  p("Telmo Arcanjo", "MID", "Cape Verde", "Vitoria Guimaraes", 5.5),
+-  p("Yannick Semedo", "MID", "Cape Verde", "Farense", 5.0),
+-  p("Laros Duarte", "MID", "Cape Verde", "Puskas Akademia", 5.5),
+-  p("Deroy Duarte", "MID", "Cape Verde", "Ludogorets Razgrad", 5.5),
+-  p("Kevin Pina", "MID", "Cape Verde", "Krasnodar", 5.5),
+-  p("Ryan Mendes", "FWD", "Cape Verde", "Igdir", 6.0),
+-  p("Willy Semedo", "FWD", "Cape Verde", "Omonia", 5.5),
+-  p("Garry Rodrigues", "FWD", "Cape Verde", "Apollon Limassol", 6.0),
+-  p("Jovane Cabral", "FWD", "Cape Verde", "Estrela Amadora", 6.5),
+-  p("Nuno da Costa", "FWD", "Cape Verde", "Istanbul Basaksehir", 6.5),
+-  p("Dailon Livramento", "FWD", "Cape Verde", "Casa Pia", 5.0),
+-  p("Gilson Benchimol", "FWD", "Cape Verde", "Akron Tolyatti", 4.5),
+-  p("Helio Varela", "FWD", "Cape Verde", "Maccabi Tel Aviv", 5.0),
++  // Cabo Verde
++  p("Vozinha", "GK", "Cabo Verde", "Chaves", 5.0),
++  p("Marcio Rosa", "GK", "Cabo Verde", "Montana", 4.5),
++  p("CJ dos Santos", "GK", "Cabo Verde", "San Diego FC", 4.5),
++  p("Steven Moreira", "DEF", "Cabo Verde", "Columbus Crew", 5.5),
++  p("Wagner Pina", "DEF", "Cabo Verde", "Trabzonspor", 5.5),
++  p("Joao Paulo", "DEF", "Cabo Verde", "FCSB", 5.0),
++  p("Sidny Lopes Cabral", "DEF", "Cabo Verde", "Benfica", 5.5),
++  p("Logan Costa", "DEF", "Cabo Verde", "Villarreal", 6.5),
++  p("Pico", "DEF", "Cabo Verde", "Shamrock Rovers", 4.5),
++  p("Kelvin Pires", "DEF", "Cabo Verde", "SJK", 4.5),
++  p("Stopira", "DEF", "Cabo Verde", "Torreense", 5.0),
++  p("Diney", "DEF", "Cabo Verde", "Al Bataeh", 4.5),
++  p("Jamiro Monteiro", "MID", "Cabo Verde", "PEC Zwolle", 6.0),
++  p("Telmo Arcanjo", "MID", "Cabo Verde", "Vitoria Guimaraes", 5.5),
++  p("Yannick Semedo", "MID", "Cabo Verde", "Farense", 5.0),
++  p("Laros Duarte", "MID", "Cabo Verde", "Puskas Akademia", 5.5),
++  p("Deroy Duarte", "MID", "Cabo Verde", "Ludogorets Razgrad", 5.5),
++  p("Kevin Pina", "MID", "Cabo Verde", "Krasnodar", 5.5),
++  p("Ryan Mendes", "FWD", "Cabo Verde", "Igdir", 6.0),
++  p("Willy Semedo", "FWD", "Cabo Verde", "Omonia", 5.5),
++  p("Garry Rodrigues", "FWD", "Cabo Verde", "Apollon Limassol", 6.0),
++  p("Jovane Cabral", "FWD", "Cabo Verde", "Estrela Amadora", 6.5),
++  p("Nuno da Costa", "FWD", "Cabo Verde", "Istanbul Basaksehir", 6.5),
++  p("Dailon Livramento", "FWD", "Cabo Verde", "Casa Pia", 5.0),
++  p("Gilson Benchimol", "FWD", "Cabo Verde", "Akron Tolyatti", 4.5),
++  p("Helio Varela", "FWD", "Cabo Verde", "Maccabi Tel Aviv", 5.0),
+ 
+   // Uruguay
+   p("Fernando Muslera", "GK", "Uruguay", "Estudiantes de La Plata", 5.5),
+diff --git a/src/store/squadStore.ts b/src/store/squadStore.ts
+new file mode 100644
+index 0000000..0084590
+--- /dev/null
++++ b/src/store/squadStore.ts
+@@ -0,0 +1,160 @@
++/**
++ * src/store/squadStore.ts
++ *
++ * Zustand store for live squad-builder state.
++ * This is client-side only ΓÇö never import in Server Components.
++ *
++ * Squad rules enforced here:
++ *  - Max 15 players total
++ *  - Composition: 2 GK, 5 DEF, 5 MID, 3 FWD
++ *  - Budget cap: $100m
++ */
++
++import { create } from "zustand";
++import type { Player } from "@/db/schema";
++
++// ΓöÇΓöÇ Constants ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++
++export const BUDGET_LIMIT = 100; // $m
++export const MAX_SQUAD_SIZE = 15;
++
++const POSITION_LIMITS: Record<string, number> = {
++  GK: 2,
++  DEF: 5,
++  MID: 5,
++  FWD: 3,
++};
++
++// ΓöÇΓöÇ Types ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++
++export interface SquadState {
++  /** All players currently selected in the squad */
++  selectedPlayers: Player[];
++
++  /** Add a player ΓÇö validates composition + budget rules */
++  addPlayer: (player: Player) => { ok: boolean; reason?: string };
++
++  /** Remove a player by id */
++  removePlayer: (playerId: number) => void;
++
++  /** Clear the entire squad */
++  reset: () => void;
++
++  /**
++   * Auto-pick a valid 15-player squad from the provided pool.
++   * Strategy: pick highest total-points players within budget,
++   * respecting position quotas.
++   */
++  autoPick: (allPlayers: Player[]) => void;
++
++  // ΓöÇΓöÇ Derived helpers (computed inline) ΓöÇΓöÇ
++  /** $m spent so far */
++  budget: () => number;
++  /** $m remaining */
++  budgetRemaining: () => number;
++  /** Count of selected players per position */
++  positionCounts: () => Record<string, number>;
++}
++
++// ΓöÇΓöÇ Store ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++
++export const useSquadStore = create<SquadState>((set, get) => ({
++  selectedPlayers: [],
++
++  // ΓöÇΓöÇ Add ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++  addPlayer: (player) => {
++    const { selectedPlayers } = get();
++
++    // Already selected
++    if (selectedPlayers.some((p) => p.id === player.id)) {
++      return { ok: false, reason: "Player already in squad" };
++    }
++
++    // Max squad size
++    if (selectedPlayers.length >= MAX_SQUAD_SIZE) {
++      return { ok: false, reason: "Squad is full (15 players max)" };
++    }
++
++    // Position quota
++    const posCount = selectedPlayers.filter(
++      (p) => p.position === player.position
++    ).length;
++    const limit = POSITION_LIMITS[player.position] ?? 0;
++    if (posCount >= limit) {
++      return {
++        ok: false,
++        reason: `Max ${limit} ${player.position} players allowed`,
++      };
++    }
++
++    // Budget check
++    const spent = selectedPlayers.reduce((sum, p) => sum + p.price, 0);
++    if (spent + player.price > BUDGET_LIMIT) {
++      return { ok: false, reason: "Exceeds $100m budget" };
++    }
++
++    set({ selectedPlayers: [...selectedPlayers, player] });
++    return { ok: true };
++  },
++
++  // ΓöÇΓöÇ Remove ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++  removePlayer: (playerId) => {
++    set((s) => ({
++      selectedPlayers: s.selectedPlayers.filter((p) => p.id !== playerId),
++    }));
++  },
++
++  // ΓöÇΓöÇ Reset ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++  reset: () => set({ selectedPlayers: [] }),
++
++  // ΓöÇΓöÇ Auto Pick ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++  autoPick: (allPlayers) => {
++    // Sort each position group by totalPoints desc
++    const byPosition: Record<string, Player[]> = { GK: [], DEF: [], MID: [], FWD: [] };
++    for (const p of allPlayers) {
++      if (p.isAvailable && byPosition[p.position]) {
++        byPosition[p.position].push(p);
++      }
++    }
++    for (const pos of Object.keys(byPosition)) {
++      byPosition[pos].sort((a, b) => b.totalPoints - a.totalPoints);
++    }
++
++    const picked: Player[] = [];
++    let spent = 0;
++
++    const tryPick = (pos: string, count: number) => {
++      let taken = 0;
++      for (const p of byPosition[pos]) {
++        if (taken >= count) break;
++        if (spent + p.price <= BUDGET_LIMIT && !picked.some((x) => x.id === p.id)) {
++          picked.push(p);
++          spent += p.price;
++          taken++;
++        }
++      }
++    };
++
++    tryPick("GK", 2);
++    tryPick("DEF", 5);
++    tryPick("MID", 5);
++    tryPick("FWD", 3);
++
++    set({ selectedPlayers: picked });
++  },
++
++  // ΓöÇΓöÇ Derived ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++  budget: () =>
++    get().selectedPlayers.reduce((sum, p) => sum + p.price, 0),
++
++  budgetRemaining: () =>
++    BUDGET_LIMIT - get().selectedPlayers.reduce((sum, p) => sum + p.price, 0),
++
++  positionCounts: () => {
++    const counts: Record<string, number> = { GK: 0, DEF: 0, MID: 0, FWD: 0 };
++    for (const p of get().selectedPlayers) {
++      counts[p.position] = (counts[p.position] ?? 0) + 1;
++    }
++    return counts;
++  },
++}));

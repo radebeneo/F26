@@ -47,6 +47,8 @@ export const users = pgTable("users", {
   id: uuid("id").defaultRandom().primaryKey(),
   email: text("email").notNull().unique(),
   teamName: text("team_name").notNull().unique(),
+  managerName: text("manager_name").notNull().default(''),
+  favoriteCountry: text("favorite_country").notNull().default(''),
 });
 
 export const usersRelations = relations(users, ({ many }) => ({

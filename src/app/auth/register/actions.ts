@@ -12,6 +12,8 @@ export async function registerAction(
   formData: FormData
 ): Promise<FormState> {
   const teamName = (formData.get("teamName") as string)?.trim();
+  const managerName = (formData.get("managerName") as string)?.trim();
+  const favoriteCountry = (formData.get("favoriteCountry") as string)?.trim();
   const email = (formData.get("email") as string)?.trim();
   const password = formData.get("password") as string;
   const confirmPassword = formData.get("confirmPassword") as string;
@@ -19,6 +21,12 @@ export async function registerAction(
   // Client-side validation mirrors
   if (!teamName || teamName.length < 2) {
     return { error: "Team name must be at least 2 characters." };
+  }
+  if (!managerName || managerName.length < 2) {
+    return { error: "Manager name must be at least 2 characters." };
+  }
+  if (!favoriteCountry) {
+    return { error: "Please select a favorite country." };
   }
   if (password !== confirmPassword) {
     return { error: "Passwords do not match." };
@@ -50,6 +58,8 @@ export async function registerAction(
       id: userId,
       email,
       teamName,
+      managerName,
+      favoriteCountry,
     });
   } catch {
     // If team name already taken, the unique constraint fires
