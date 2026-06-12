@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
-import { Users, TrendingUp, Trophy } from "lucide-react";
+import { Users, TrendingUp, Trophy, UserCircle2 } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Home | F26 Fantasy",
@@ -246,21 +246,15 @@ export default function HomePage() {
   );
 }
 
-/* ─── Player slot card ─────────────────────────────────────────
-   Matches the reference: semi-transparent dark-green card with
-   a person silhouette, a "+" add badge, and a position label.
-   ─────────────────────────────────────────────────────────── */
 function PlayerSlot({ pos }: { pos: string }) {
   return (
-    <div className="exact-pitch-player-slot">
-      <div className="homepage-slot-icon">
-        <span className="homepage-slot-plus">+</span>
-        <svg viewBox="0 0 24 24" fill="white" className="homepage-slot-person">
-          <circle cx="12" cy="7" r="4" />
-          <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
-        </svg>
+    <div className="pitch-slot pitch-slot--empty">
+      <div className="w-8 h-8 rounded-full border-2 border-dashed border-white/30 flex items-center justify-center mb-1">
+        <UserCircle2 size={16} className="text-white/30" />
       </div>
-      <span className="homepage-slot-pos">{pos}</span>
+      <span className="text-[9px] font-bold text-white/40 uppercase tracking-wide">
+        {pos}
+      </span>
     </div>
   );
 }

@@ -64,7 +64,7 @@ const fwcUltraCondensed = localFont({
 
 export const metadata: Metadata = {
   title: {
-    default: "F26 Fantasy | FIFA World Cup 2026",
+    default: "FWC26 Fantasy | FIFA World Cup 2026",
     template: "%s | F26 Fantasy",
   },
   description:
