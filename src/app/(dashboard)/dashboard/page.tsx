@@ -28,11 +28,12 @@ export default async function DashboardPage() {
 
   // Fetch team name and user profile
   const dbUser = await db.query.users.findFirst({
-    where: eq(users.id, user.id),
+    where: eq(users.email, user.email as string),
   });
 
   const teamName = dbUser?.teamName ?? "My Team";
-  const managerName = user.email ?? "Manager";
+  const managerName = dbUser?.managerName || user.email || "Manager";
+  const favoriteCountry = dbUser?.favoriteCountry ?? "South Africa";
 
   // Fetch all available players, ordered by position then total points desc
   const allPlayers = await db
@@ -66,6 +67,7 @@ export default async function DashboardPage() {
       players={allPlayers}
       teamName={teamName}
       managerName={managerName}
+      favoriteCountry={favoriteCountry}
       signOutAction={signOutAction}
       opponentMap={opponentMap}
     />

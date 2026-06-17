@@ -30,6 +30,7 @@ type ViewMode = "pitch" | "list";
 interface SquadSelectionPanelProps {
   teamName: string;
   managerName: string;
+  favoriteCountry: string;
   allPlayers: Player[];
   onEnterSquad: () => void;
   opponentMap?: Record<string, string>;
@@ -43,6 +44,19 @@ interface SquadSelectionPanelProps {
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
+export function getCountrySlug(nation: string) {
+  if (!nation) return "south-africa";
+  if (nation === "United States") return "usa";
+  if (nation === "Cote d'Ivoire" || nation === "Côte d'Ivoire" || nation === "Ivory Coast") return "cote-d'ivoire";
+  if (nation === "Cape Verde" || nation === "Cabo Verde") return "cabo-verde";
+  return nation
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 /** A single slot on the pitch — empty or filled */
 function PitchSlot({
   player,
@@ -55,19 +69,7 @@ function PitchSlot({
   onRemove?: () => void;
   opponentMap?: Record<string, string>;
 }) {
-  const slug = player
-    ? (() => {
-      if (player.nation === "United States") return "usa";
-      if (player.nation === "Cote d'Ivoire" || player.nation === "Côte d'Ivoire" || player.nation === "Ivory Coast") return "cote-d'ivoire";
-      if (player.nation === "Cape Verde" || player.nation === "Cabo Verde") return "cabo-verde";
-      return player.nation
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-+|-+$/g, "");
-    })()
-    : null;
+  const slug = player ? getCountrySlug(player.nation) : null;
 
   const opponentAcronym = player && opponentMap ? opponentMap[player.nation] : null;
 
@@ -86,7 +88,7 @@ function PitchSlot({
           {/* Nation kit image */}
           <div className="relative w-11 h-11 z-10 -mb-1 flex-shrink-0 drop-shadow-md">
             <Image
-              src={`/images/nations/${slug}.png`}
+              src={`/images/kits/${slug}.png`}
               alt={player.nation}
               fill
               className="object-contain object-bottom"
@@ -404,6 +406,7 @@ function ListView({
 export function SquadSelectionPanel({
   teamName,
   managerName,
+  favoriteCountry,
   allPlayers,
   onEnterSquad,
   opponentMap,
@@ -469,13 +472,12 @@ export function SquadSelectionPanel({
               {teamName}
             </p>
             <div className="flex items-center gap-1 mt-0.5">
-              {/* South Africa flag placeholder for manager */}
-              <div className="relative w-4 h-4 rounded-sm overflow-hidden">
+              <div className="relative w-4 h-4 drop-shadow-md">
                 <Image
-                  src="/images/nations/south-africa.png"
-                  alt="Manager flag"
+                  src={`/images/flags/${getCountrySlug(favoriteCountry)}.png`}
+                  alt={`${favoriteCountry} flag`}
                   fill
-                  className="object-cover"
+                  className="object-contain object-bottom"
                   sizes="16px"
                 />
               </div>

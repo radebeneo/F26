@@ -19,6 +19,7 @@ interface SquadBuilderClientProps {
   players: Player[];
   teamName: string;
   managerName: string;
+  favoriteCountry: string;
   signOutAction: () => Promise<void>;
   opponentMap?: Record<string, string>;
 }
@@ -58,6 +59,7 @@ export function SquadBuilderClient({
   players,
   teamName,
   managerName,
+  favoriteCountry,
   signOutAction,
   opponentMap,
 }: SquadBuilderClientProps) {
@@ -82,7 +84,7 @@ export function SquadBuilderClient({
           {/* Wordmark */}
           <div className="flex items-center">
             <span className="font-display font-black text-white text-sm tracking-widest uppercase">
-              F26 Fantasy
+              FWC26 Fantasy
             </span>
           </div>
 
@@ -126,6 +128,7 @@ export function SquadBuilderClient({
           <SquadSelectionPanel
             teamName={teamName}
             managerName={managerName}
+            favoriteCountry={favoriteCountry}
             allPlayers={players}
             onEnterSquad={handleEnterSquad}
             opponentMap={opponentMap}

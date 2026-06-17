@@ -86,7 +86,7 @@ function PlayerRow({ player, isSelected, onAdd, onRemove }: PlayerRowProps) {
       {/* Flag */}
       <div className="relative w-8 h-8 rounded-md overflow-hidden flex-shrink-0 bg-white/10">
         <Image
-          src={`/images/nations/${slug}.png`}
+          src={`/images/kits/${slug}.png`}
           alt={player.nation}
           fill
           className="object-cover object-top"

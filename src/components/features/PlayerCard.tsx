@@ -23,21 +23,21 @@ export function formatNationForUrl(nation: string) {
 
 export function PlayerCard({ player, className }: PlayerCardProps) {
   const formattedNation = formatNationForUrl(player.nation);
-  
+
   // Format price (e.g. 10 -> $10m, 10.5 -> $10.5m)
   const formattedPrice = `$${player.price}m`;
 
   return (
-    <div 
+    <div
       className={cn(
-        "relative w-[180px] h-[220px] rounded-2xl overflow-hidden shadow-lg flex flex-col bg-[#8c8c8c]", 
+        "relative w-[180px] h-[220px] rounded-2xl overflow-hidden shadow-lg flex flex-col bg-[#8c8c8c]",
         className
       )}
     >
       {/* Top section: Nation background image */}
       <div className="relative flex-1 w-full bg-[#8c8c8c]">
         <Image
-          src={`/images/nations/${formattedNation}.png`}
+          src={`/images/kits/${formattedNation}.png`}
           alt={`${player.nation} kit`}
           fill
           className="object-cover object-top"
