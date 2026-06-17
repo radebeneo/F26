@@ -11,9 +11,13 @@
 import { useState } from "react";
 import { LogOut, CheckCircle2, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 import { PlayerSelectionPanel } from "@/components/features/PlayerSelectionPanel";
 import { SquadSelectionPanel } from "@/components/features/SquadSelectionPanel";
+import { MySquadView } from "@/components/features/MySquadView";
 import type { Player } from "@/db/schema";
+
+type ViewMode = "builder" | "mySquad";
 
 interface SquadBuilderClientProps {
   players: Player[];
@@ -64,6 +68,7 @@ export function SquadBuilderClient({
   opponentMap,
 }: SquadBuilderClientProps) {
   const [toast, setToast] = useState<string | null>(null);
+  const [view, setView] = useState<ViewMode>("builder");
 
   const showToast = (msg: string) => {
     setToast(msg);
@@ -71,9 +76,8 @@ export function SquadBuilderClient({
   };
 
   const handleEnterSquad = () => {
-    showToast(
-      "Squad submitted! Save functionality coming in the next feature update."
-    );
+    setView("mySquad");
+    showToast("Squad entered successfully!");
   };
 
   return (
@@ -90,16 +94,26 @@ export function SquadBuilderClient({
 
           {/* Nav links */}
           <nav className="hidden md:flex items-center gap-6">
-            {["My Squad", "Fixtures", "Leaderboard", "How to Play"].map(
-              (link) => (
-                <button
-                  key={link}
-                  className="text-xs font-bold text-white/60 hover:text-white transition-colors uppercase tracking-wide"
-                >
-                  {link}
-                </button>
-              )
-            )}
+            {[
+              { label: "Squad Builder", target: "builder" as ViewMode },
+              { label: "My Squad", target: "mySquad" as ViewMode },
+              { label: "Fixtures", target: null },
+              { label: "Leaderboard", target: null },
+              { label: "How to Play", target: null },
+            ].map(({ label, target }) => (
+              <button
+                key={label}
+                onClick={() => target && setView(target)}
+                className={cn(
+                  "text-xs font-bold transition-colors uppercase tracking-wide",
+                  target && view === target
+                    ? "text-[#c8f000]"
+                    : "text-white/60 hover:text-white"
+                )}
+              >
+                {label}
+              </button>
+            ))}
           </nav>
 
           {/* Sign out */}
@@ -116,25 +130,55 @@ export function SquadBuilderClient({
         </div>
       </header>
 
-      {/* ── Two-panel layout ── */}
-      <main className="squad-builder-body" id="squad-builder-main">
-        {/* Left: Player Selection */}
-        <div className="squad-builder-left">
-          <PlayerSelectionPanel players={players} />
-        </div>
+      {/* ── View content ── */}
+      <AnimatePresence mode="wait">
+        {view === "builder" ? (
+          <motion.div
+            key="builder-view"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="flex-1 flex flex-col min-h-0 h-full w-full"
+          >
+            <main className="squad-builder-body" id="squad-builder-main">
+              {/* Left: Player Selection */}
+              <div className="squad-builder-left">
+                <PlayerSelectionPanel players={players} />
+              </div>
 
-        {/* Right: Squad Selection */}
-        <div className="squad-builder-right">
-          <SquadSelectionPanel
-            teamName={teamName}
-            managerName={managerName}
-            favoriteCountry={favoriteCountry}
-            allPlayers={players}
-            onEnterSquad={handleEnterSquad}
-            opponentMap={opponentMap}
-          />
-        </div>
-      </main>
+              {/* Right: Squad Selection */}
+              <div className="squad-builder-right">
+                <SquadSelectionPanel
+                  teamName={teamName}
+                  managerName={managerName}
+                  favoriteCountry={favoriteCountry}
+                  allPlayers={players}
+                  onEnterSquad={handleEnterSquad}
+                  opponentMap={opponentMap}
+                />
+              </div>
+            </main>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="my-squad-view"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="flex-1 flex flex-col min-h-0 h-full w-full"
+          >
+            <MySquadView
+              teamName={teamName}
+              managerName={managerName}
+              favoriteCountry={favoriteCountry}
+              allPlayers={players}
+              opponentMap={opponentMap}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ── Toast notifications ── */}
       <AnimatePresence>

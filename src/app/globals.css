@@ -943,6 +943,18 @@
   flex-direction: column;
 }
 
+/* ── My Squad view — left panel wider than right ─────────────────────────── */
+.my-squad-body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 0;
+  overflow: hidden;
+  max-width: 1600px;
+  width: 100%;
+  margin-inline: auto;
+}
+
 /* ── Squad panel (shared shell for both left and right) ──────────────────── */
 .squad-panel {
   background: #13102080;
@@ -1118,6 +1130,12 @@
     overflow: auto;
   }
 
+  .my-squad-body {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+    overflow: auto;
+  }
+
   .squad-builder-left,
   .squad-builder-right {
     min-height: 50svh;
@@ -1134,4 +1152,52 @@
   .squad-builder-body {
     grid-template-rows: auto auto;
   }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   Booster Modal — diagonal background header
+   ══════════════════════════════════════════════════════════════ */
+
+.booster-modal {
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.booster-modal-header {
+  background:
+    linear-gradient(135deg, #0057b8 0%, #0057b8 55%, #009639 55%, #009639 100%);
+  position: relative;
+}
+
+.booster-modal-header::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background: white;
+  clip-path: ellipse(55% 100% at 50% 100%);
+}
+
+.booster-card {
+  cursor: pointer;
+  user-select: none;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   How to Score — dark panel
+   ══════════════════════════════════════════════════════════════ */
+
+.how-to-score-panel {
+  background: #0f0c1a;
+  border-left: 3px solid #036ee8;
+}
+
+.how-to-score-row {
+  transition: background 0.12s;
+}
+
+.how-to-score-row:hover {
+  background: rgba(255, 255, 255, 0.03);
 }
