@@ -319,6 +319,7 @@ export function MySquadView({
   const [isSubstitutionMode, setIsSubstitutionMode] = useState(false);
   const [subOutPlayerId, setSubOutPlayerId] = useState<number | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [isConfirmed, setIsConfirmed] = useState(false);
 
   const handleConfirm = async () => {
     if (isSaving) return;
@@ -351,6 +352,7 @@ export function MySquadView({
         description: "Your changes have been saved successfully.",
         variant: "success",
       });
+      setIsConfirmed(true);
       // Optionally update the initial state if passed a setter, but since it's an object from page reload, a reload will fetch new.
     } catch {
       toast({
@@ -776,7 +778,7 @@ export function MySquadView({
               )}
 
               {/* Confirm / Reset Action Buttons */}
-              {!isTransferMode && !isSubstitutionMode && !is12thManMode && (
+              {!isTransferMode && !isSubstitutionMode && !is12thManMode && !isConfirmed && (
                 <div className="flex items-center justify-center gap-4 mt-6 px-4">
                   <button
                     onClick={handleReset}
@@ -785,16 +787,21 @@ export function MySquadView({
                   >
                     Reset
                   </button>
-                  <button
-                    onClick={handleConfirm}
-                    disabled={isSaving}
-                    className="px-8 py-2 rounded-xl bg-[#c8f000] text-black text-xs font-black uppercase tracking-widest hover:bg-[#d4ff00] transition-colors shadow-lg shadow-[#c8f000]/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                  >
-                    {isSaving && (
-                      <div className="w-3 h-3 border-2 border-black border-t-transparent rounded-full animate-spin" />
-                    )}
-                    Confirm
-                  </button>
+                  <div className="relative group">
+                    <button
+                      onClick={handleConfirm}
+                      disabled={isSaving}
+                      className="px-8 py-2 rounded-xl bg-[#c8f000] text-black text-xs font-black uppercase tracking-widest hover:bg-[#d4ff00] transition-colors shadow-lg shadow-[#c8f000]/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    >
+                      {isSaving && (
+                        <div className="w-3 h-3 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                      )}
+                      Confirm
+                    </button>
+                    <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 bg-black/80 backdrop-blur-sm text-white text-[10px] font-bold px-3 py-2 rounded-md text-center leading-tight w-[200px] border border-[#f5a623]/30 shadow-lg pointer-events-none z-50">
+                      Clicking the confirm button will Lock your Squad for the Gameweek.
+                    </div>
+                  </div>
                 </div>
               )}
 
