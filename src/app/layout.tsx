@@ -74,21 +74,21 @@ export const metadata: Metadata = {
     "fantasy football",
     "fantasy soccer",
     "World Cup fantasy",
-    "F26 Fantasy",
+    "FWC26 Fantasy",
   ],
-  authors: [{ name: "F26 Fantasy" }],
-  creator: "F26 Fantasy",
+  authors: [{ name: "FWC26 Fantasy" }],
+  creator: "FWC26 Fantasy",
   openGraph: {
     type: "website",
     locale: "en_US",
-    siteName: "F26 Fantasy",
-    title: "F26 Fantasy | FIFA World Cup 2026",
+    siteName: "FWC26 Fantasy",
+    title: "FWC26 Fantasy | FIFA World Cup 2026",
     description:
       "Pick your 15-player squad, earn points from every World Cup 2026 match, and compete on the global leaderboard.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "F26 Fantasy | FIFA World Cup 2026",
+    title: "FWC26 Fantasy | FIFA World Cup 2026",
     description: "The official fantasy game for FIFA World Cup 2026.",
   },
   robots: {

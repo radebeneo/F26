@@ -12,7 +12,7 @@
  *  - Auto Pick, Reset, Enter Squad action buttons
  */
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Image from "next/image";
 import { UserCircle2, Minus } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -33,6 +33,7 @@ interface SquadSelectionPanelProps {
   favoriteCountry: string;
   allPlayers: Player[];
   onEnterSquad: () => void;
+  isSubmitting?: boolean;
   opponentMap?: Record<string, string>;
 }
 
@@ -63,11 +64,13 @@ function PitchSlot({
   pos,
   onRemove,
   opponentMap,
+  showFullName,
 }: {
   player?: Player;
   pos: string;
   onRemove?: () => void;
   opponentMap?: Record<string, string>;
+  showFullName?: boolean;
 }) {
   const slug = player ? getCountrySlug(player.nation) : null;
 
@@ -99,7 +102,7 @@ function PitchSlot({
           <div className="w-full bg-[#111] border-[1.5px] border-white rounded-md flex flex-col overflow-hidden relative z-0">
             <div className="bg-white px-0.5 py-[2px] text-center">
               <span className="block text-[9px] font-bold text-black truncate w-full">
-                {player.lastName || player.firstName}
+                {showFullName ? `${player.firstName} ${player.lastName}` : (player.lastName || player.firstName)}
               </span>
             </div>
             <div className="bg-[#111] px-0.5 py-[2px] text-center flex items-center justify-center gap-[2px]">
@@ -136,10 +139,12 @@ function PitchView({
   selectedPlayers,
   onRemove,
   opponentMap,
+  duplicatedLastNames,
 }: {
   selectedPlayers: Player[];
   onRemove: (id: number) => void;
   opponentMap?: Record<string, string>;
+  duplicatedLastNames?: Set<string>;
 }) {
   const byPos: Record<string, Player[]> = { GK: [], DEF: [], MID: [], FWD: [] };
   for (const p of selectedPlayers) {
@@ -179,6 +184,7 @@ function PitchView({
               pos={pos}
               onRemove={p ? () => onRemove(p.id) : undefined}
               opponentMap={opponentMap}
+              showFullName={p && p.lastName ? duplicatedLastNames?.has(`${p.nation}|${p.lastName}`) : false}
             />
           </div>
         ))}
@@ -255,6 +261,7 @@ function PitchView({
                   pos={p.position}
                   onRemove={() => onRemove(p.id)}
                   opponentMap={opponentMap}
+                  showFullName={p.lastName ? duplicatedLastNames?.has(`${p.nation}|${p.lastName}`) : false}
                 />
               </div>
             ))}
@@ -338,8 +345,8 @@ function SquadKey() {
         </div>
 
         <div className="flex items-center gap-2">
-          <Image src="/fantasy-icons/bench-swap.png" alt="Bench swap" {...iconProps} />
-          <span className="text-white text-xs font-semibold">Bench swap</span>
+          <Image src="/fantasy-icons/transfer.png" alt="Transfer" {...iconProps} />
+          <span className="text-white text-xs font-semibold">Transfer</span>
         </div>
 
       </div>
@@ -409,6 +416,7 @@ export function SquadSelectionPanel({
   favoriteCountry,
   allPlayers,
   onEnterSquad,
+  isSubmitting = false,
   opponentMap,
 }: SquadSelectionPanelProps) {
   const [view, setView] = useState<ViewMode>("pitch");
@@ -418,6 +426,21 @@ export function SquadSelectionPanel({
   const count = selectedPlayers.length;
   const isFull = count >= MAX_SQUAD_SIZE;
   const remaining = budgetRemaining();
+
+  const duplicatedLastNames = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const p of allPlayers) {
+      if (p.lastName) {
+        const key = `${p.nation}|${p.lastName}`;
+        counts[key] = (counts[key] || 0) + 1;
+      }
+    }
+    const duplicated = new Set<string>();
+    for (const [key, count] of Object.entries(counts)) {
+      if (count > 1) duplicated.add(key);
+    }
+    return duplicated;
+  }, [allPlayers]);
 
   return (
     <section className="squad-panel flex flex-col h-full overflow-hidden">
@@ -533,6 +556,7 @@ export function SquadSelectionPanel({
                 selectedPlayers={selectedPlayers}
                 onRemove={removePlayer}
                 opponentMap={opponentMap}
+                duplicatedLastNames={duplicatedLastNames}
               />
             </motion.div>
           ) : (
@@ -575,15 +599,42 @@ export function SquadSelectionPanel({
         <button
           id="btn-enter-squad"
           onClick={onEnterSquad}
-          disabled={count < MAX_SQUAD_SIZE}
+          disabled={count < MAX_SQUAD_SIZE || isSubmitting}
           className={cn(
             "flex items-center justify-center gap-2 py-4 text-sm font-bold transition-all",
-            count >= MAX_SQUAD_SIZE
+            count >= MAX_SQUAD_SIZE && !isSubmitting
               ? "text-white bg-primaryBrand-600 hover:bg-primaryBrand-500"
-              : "text-white/40 cursor-not-allowed"
+              : "text-white/40 cursor-not-allowed bg-primaryBrand-600/30"
           )}
         >
-          Enter Squad
+          {isSubmitting ? (
+            <>
+              <svg
+                className="animate-spin w-4 h-4 text-white/70"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                />
+              </svg>
+              Saving...
+            </>
+          ) : (
+            "Enter Squad"
+          )}
         </button>
       </div>
     </section>

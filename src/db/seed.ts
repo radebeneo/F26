@@ -3,7 +3,7 @@ config({ path: ".env.local" });
 config({ path: ".env" });
 import { db } from "./index";
 import { players, gameweeks, fixtures } from "./schema";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { ALL_PLAYERS } from "./seeds/players";
 import { gameweeks as gameweeksData } from "./seeds/gameweeks";
 import { fixtures as fixturesData } from "./seeds/fixtures";
@@ -93,12 +93,22 @@ async function main() {
   }
 
   if (toUpdate.length > 0) {
-    // Update one by one
-    for (const u of toUpdate) {
-      await db
-        .update(players)
-        .set({ price: u.price, position: u.position, club: u.club })
-        .where(eq(players.id, u.id));
+    // Bulk-update only price (the only field changed by a reprice run).
+    // Using UPDATE … FROM (VALUES …) reduces ~1,250 round-trips to a handful.
+    const BATCH = 200;
+    for (let i = 0; i < toUpdate.length; i += BATCH) {
+      const chunk = toUpdate.slice(i, i + BATCH);
+      const valuesList = chunk
+        .map((u) => `(${u.id}, ${u.price}::numeric)`)
+        .join(", ");
+      await db.execute(
+        sql.raw(`
+          UPDATE players
+          SET price = v.price
+          FROM (VALUES ${valuesList}) AS v(id, price)
+          WHERE players.id = v.id::int
+        `)
+      );
     }
     console.log(`Updated ${toUpdate.length} existing players.`);
   }

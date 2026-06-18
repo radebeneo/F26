@@ -37,6 +37,9 @@ export interface SquadState {
   /** Remove a player by id */
   removePlayer: (playerId: number) => void;
 
+  /** Set the initial squad from the database (for returning users) */
+  setInitialSquad: (players: Player[]) => void;
+
   /** Clear the entire squad */
   reset: () => void;
 
@@ -87,10 +90,25 @@ export const useSquadStore = create<SquadState>((set, get) => ({
       };
     }
 
+    // Nation limit (max 3 per nation)
+    const MAX_PER_NATION = 3;
+    const nationCount = selectedPlayers.filter(
+      (p) => p.nation === player.nation
+    ).length;
+    if (nationCount >= MAX_PER_NATION) {
+      return {
+        ok: false,
+        reason: `Max ${MAX_PER_NATION} players from ${player.nation} allowed`,
+      };
+    }
+
     // Budget check
     const spent = selectedPlayers.reduce((sum, p) => sum + p.price, 0);
     if (spent + player.price > BUDGET_LIMIT) {
-      return { ok: false, reason: "Exceeds $100m budget" };
+      return {
+        ok: false,
+        reason: `${player.firstName} ${player.lastName} costs $${player.price}m — exceeds your $${(BUDGET_LIMIT - spent).toFixed(1)}m remaining budget`,
+      };
     }
 
     set({ selectedPlayers: [...selectedPlayers, player] });
@@ -102,6 +120,11 @@ export const useSquadStore = create<SquadState>((set, get) => ({
     set((s) => ({
       selectedPlayers: s.selectedPlayers.filter((p) => p.id !== playerId),
     }));
+  },
+
+  // ── Set Initial Squad ─────────────────────────────────────────────────────
+  setInitialSquad: (players) => {
+    set({ selectedPlayers: players });
   },
 
   // ── Reset ─────────────────────────────────────────────────────────────────

@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/db";
-import { users, players, gameweeks } from "@/db/schema";
-import { eq, asc, desc } from "drizzle-orm";
+import { users, players, gameweeks, userSquads, fixtures } from "@/db/schema";
+import { eq, asc, desc, and, ne } from "drizzle-orm";
 import { SquadBuilderClient } from "@/components/features/SquadBuilderClient";
 
 export const metadata: Metadata = {
@@ -54,11 +54,49 @@ export default async function DashboardPage() {
     });
   }
 
+  // Fetch all upcoming/live fixtures to determine the next opponent for each nation
+  const activeFixtures = await db.query.fixtures.findMany({
+    where: ne(fixtures.status, "FINISHED"),
+    orderBy: asc(fixtures.kickoffTime),
+  });
+
   const opponentMap: Record<string, string> = {};
-  if (currentGw && currentGw.fixtures) {
-    for (const f of currentGw.fixtures) {
+  for (const f of activeFixtures) {
+    if (!opponentMap[f.homeNation]) {
       opponentMap[f.homeNation] = getAcronym(f.awayNation);
+    }
+    if (!opponentMap[f.awayNation]) {
       opponentMap[f.awayNation] = getAcronym(f.homeNation);
+    }
+  }
+
+  // Detect if user already has a squad for this gameweek.
+  // If so, skip the builder and show My Squad directly, passing the existing players.
+  let hasExistingSquad = false;
+  let initialSquadPlayers: typeof allPlayers = [];
+
+  if (dbUser && currentGw) {
+    const existingSquad = await db.query.userSquads.findFirst({
+      where: and(
+        eq(userSquads.userId, dbUser.id),
+        eq(userSquads.gameweekId, currentGw.id)
+      ),
+      with: {
+        players: {
+          with: { player: true },
+        },
+      },
+    });
+
+    if (existingSquad) {
+      hasExistingSquad = true;
+      // Sort so starters come first, ensuring MySquadView slices them correctly
+      const sortedSquadPlayers = existingSquad.players.sort((a, b) => {
+        if (a.isStarter && !b.isStarter) return -1;
+        if (!a.isStarter && b.isStarter) return 1;
+        return a.id.localeCompare(b.id);
+      });
+      initialSquadPlayers = sortedSquadPlayers.map((p) => p.player);
     }
   }
 
@@ -70,6 +108,8 @@ export default async function DashboardPage() {
       favoriteCountry={favoriteCountry}
       signOutAction={signOutAction}
       opponentMap={opponentMap}
+      hasExistingSquad={hasExistingSquad}
+      initialSquadPlayers={initialSquadPlayers}
     />
   );
 }

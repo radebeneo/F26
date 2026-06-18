@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { Users, TrendingUp, Trophy, UserCircle2 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Home | F26 Fantasy",
+  title: "Home | FWC26 Fantasy",
   description:
     "Play the official FIFA World Cup 2026 Fantasy game. Build your 15-player squad and challenge other managers globally!",
 };

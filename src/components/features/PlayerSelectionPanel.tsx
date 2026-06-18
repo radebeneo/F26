@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSquadStore } from "@/store/squadStore";
+import { useToast } from "@/components/ui/toast";
 import type { Player } from "@/db/schema";
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -62,11 +63,14 @@ interface PlayerRowProps {
   isSelected: boolean;
   onAdd: () => void;
   onRemove: () => void;
+  showFullName?: boolean;
 }
 
-function PlayerRow({ player, isSelected, onAdd, onRemove }: PlayerRowProps) {
+function PlayerRow({ player, isSelected, onAdd, onRemove, showFullName }: PlayerRowProps) {
   const slug = nationToSlug(player.nation);
-  const displayName = player.lastName || player.firstName;
+  const displayName = showFullName 
+    ? `${player.firstName} ${player.lastName}` 
+    : (player.lastName || player.firstName);
 
   return (
     <div
@@ -215,12 +219,29 @@ export function PlayerSelectionPanel({ players }: PlayerSelectionPanelProps) {
     posFilter !== "All" || nationFilter !== "All" || sortBy !== "totalPoints";
 
   const { selectedPlayers, addPlayer, removePlayer } = useSquadStore();
+  const { toast } = useToast();
   const selectedIds = new Set(selectedPlayers.map((p) => p.id));
 
   // Derive unique nation list
   const nations = useMemo(() => {
     const set = new Set(players.map((p) => p.nation));
     return ["All", ...Array.from(set).sort()];
+  }, [players]);
+
+  // Find which lastNames are duplicated within the same nation
+  const duplicatedLastNames = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const p of players) {
+      if (p.lastName) {
+        const key = `${p.nation}|${p.lastName}`;
+        counts[key] = (counts[key] || 0) + 1;
+      }
+    }
+    const duplicated = new Set<string>();
+    for (const [key, count] of Object.entries(counts)) {
+      if (count > 1) duplicated.add(key);
+    }
+    return duplicated;
   }, [players]);
 
   // Filter + sort (reset page when filters change)
@@ -270,7 +291,40 @@ export function PlayerSelectionPanel({ players }: PlayerSelectionPanelProps) {
   const handleAdd = (player: Player) => {
     const result = addPlayer(player);
     if (!result.ok && result.reason) {
-      console.warn(result.reason);
+      const reason = result.reason;
+
+      // Budget exceeded
+      if (reason.includes("budget") || reason.includes("exceeds")) {
+        toast({
+          variant: "error",
+          title: "Over budget",
+          description: reason,
+        });
+        return;
+      }
+
+      // Nation cap
+      if (reason.includes("players from")) {
+        toast({
+          variant: "warning",
+          title: "Nation limit reached",
+          description: reason,
+        });
+        return;
+      }
+
+      // Position full
+      if (reason.includes("Max") && (reason.includes("GK") || reason.includes("DEF") || reason.includes("MID") || reason.includes("FWD"))) {
+        toast({
+          variant: "warning",
+          title: "Position full",
+          description: reason,
+        });
+        return;
+      }
+
+      // Fallback
+      toast({ variant: "info", title: reason });
     }
   };
 
@@ -436,6 +490,7 @@ export function PlayerSelectionPanel({ players }: PlayerSelectionPanelProps) {
                     isSelected={selectedIds.has(player.id)}
                     onAdd={() => handleAdd(player)}
                     onRemove={() => removePlayer(player.id)}
+                    showFullName={player.lastName ? duplicatedLastNames.has(`${player.nation}|${player.lastName}`) : false}
                   />
                 ))}
               </div>

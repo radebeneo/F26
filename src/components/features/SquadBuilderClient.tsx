@@ -5,16 +5,18 @@
  *
  * Top-level Client Component for the Squad Builder page.
  * Renders the nav bar, the two-panel layout, and handles
- * the "Enter Squad" action (placeholder toast for now).
+ * the "Enter Squad" action — saving the squad to the DB via POST /api/squad/enter.
  */
 
-import { useState } from "react";
-import { LogOut, CheckCircle2, X } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { LogOut } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { PlayerSelectionPanel } from "@/components/features/PlayerSelectionPanel";
 import { SquadSelectionPanel } from "@/components/features/SquadSelectionPanel";
 import { MySquadView } from "@/components/features/MySquadView";
+import { ToastProvider, useToast } from "@/components/ui/toast";
+import { useSquadStore } from "@/store/squadStore";
 import type { Player } from "@/db/schema";
 
 type ViewMode = "builder" | "mySquad";
@@ -26,62 +28,103 @@ interface SquadBuilderClientProps {
   favoriteCountry: string;
   signOutAction: () => Promise<void>;
   opponentMap?: Record<string, string>;
+  /** True when the user has already submitted a squad — skip the builder */
+  hasExistingSquad?: boolean;
+  /** Pre-populated players if hasExistingSquad is true */
+  initialSquadPlayers?: Player[];
 }
 
-// ── Toast component ───────────────────────────────────────────────────────────
+// ── Inner component (needs ToastProvider in tree) ────────────────────────────
 
-function Toast({
-  message,
-  onClose,
-}: {
-  message: string;
-  onClose: () => void;
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 24, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: 16, scale: 0.95 }}
-      className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-5 py-3.5 rounded-xl bg-secondaryGreen-700 border border-secondaryGreen-500/40 shadow-2xl shadow-black/50 text-white text-sm font-semibold max-w-sm"
-    >
-      <CheckCircle2 size={18} className="text-secondaryGreen-300 flex-shrink-0" />
-      <span className="flex-1">{message}</span>
-      <button
-        onClick={onClose}
-        className="flex-shrink-0 hover:text-white/70 transition-colors"
-        aria-label="Close notification"
-      >
-        <X size={15} />
-      </button>
-    </motion.div>
-  );
-}
-
-// ── Main component ────────────────────────────────────────────────────────────
-
-export function SquadBuilderClient({
+function SquadBuilderInner({
   players,
   teamName,
   managerName,
   favoriteCountry,
   signOutAction,
   opponentMap,
+  hasExistingSquad = false,
+  initialSquadPlayers = [],
 }: SquadBuilderClientProps) {
-  const [toast, setToast] = useState<string | null>(null);
-  const [view, setView] = useState<ViewMode>("builder");
+  const { toast } = useToast();
+  const { selectedPlayers, setInitialSquad } = useSquadStore();
+  const [view, setView] = useState<ViewMode>(hasExistingSquad ? "mySquad" : "builder");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const showToast = (msg: string) => {
-    setToast(msg);
-    setTimeout(() => setToast(null), 4000);
+  // Initialize the squad store with the user's existing players
+  const initialized = useRef(false);
+  useEffect(() => {
+    if (hasExistingSquad && initialSquadPlayers.length > 0 && !initialized.current) {
+      setInitialSquad(initialSquadPlayers);
+      initialized.current = true;
+    }
+  }, [hasExistingSquad, initialSquadPlayers, setInitialSquad]);
+
+  // Track whether squad has been saved this session (covers the post-submit case
+  // where hasExistingSquad was false on load but the user just submitted).
+  const [squadSaved, setSquadSaved] = useState(hasExistingSquad);
+
+  const handleEnterSquad = async () => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+
+    try {
+      const res = await fetch("/api/squad/enter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          playerIds: selectedPlayers.map((p) => p.id),
+        }),
+      });
+
+      const data = (await res.json()) as { success: boolean; error?: string };
+
+      if (!res.ok || !data.success) {
+        toast({
+          title: "Failed to enter squad",
+          description: data.error ?? "Something went wrong. Please try again.",
+          variant: "error",
+        });
+        return;
+      }
+
+      toast({
+        title: "Squad entered! 🎉",
+        description: "Your squad has been saved. Good luck!",
+        variant: "success",
+      });
+      // Lock the builder and switch to My Squad
+      setSquadSaved(true);
+      setView("mySquad");
+    } catch {
+      toast({
+        title: "Network error",
+        description: "Could not reach the server. Check your connection.",
+        variant: "error",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const handleEnterSquad = () => {
-    setView("mySquad");
-    showToast("Squad entered successfully!");
+  const handleNavClick = (target: ViewMode | null) => {
+    if (!target) return;
+    // Once a squad is saved, the builder is permanently locked
+    if (target === "builder" && squadSaved) return;
+    setView(target);
   };
+
+  // Nav links — Squad Builder is hidden once the user has a saved squad
+  const navLinks: { label: string; target: ViewMode | null }[] = [
+    ...(!squadSaved ? [{ label: "Squad Builder", target: "builder" as ViewMode }] : []),
+    { label: "My Squad", target: "mySquad" as ViewMode },
+    { label: "Fixtures", target: null },
+    { label: "Leaderboard", target: null },
+    { label: "How to Play", target: null },
+  ];
 
   return (
-    <div className="squad-builder-root">
+    <div className="squad-builder-root" id="squad-builder-root">
       {/* ── Sticky top nav ── */}
       <header className="squad-nav">
         <div className="squad-nav-inner">
@@ -94,16 +137,10 @@ export function SquadBuilderClient({
 
           {/* Nav links */}
           <nav className="hidden md:flex items-center gap-6">
-            {[
-              { label: "Squad Builder", target: "builder" as ViewMode },
-              { label: "My Squad", target: "mySquad" as ViewMode },
-              { label: "Fixtures", target: null },
-              { label: "Leaderboard", target: null },
-              { label: "How to Play", target: null },
-            ].map(({ label, target }) => (
+            {navLinks.map(({ label, target }) => (
               <button
                 key={label}
-                onClick={() => target && setView(target)}
+                onClick={() => handleNavClick(target)}
                 className={cn(
                   "text-xs font-bold transition-colors uppercase tracking-wide",
                   target && view === target
@@ -155,6 +192,7 @@ export function SquadBuilderClient({
                   favoriteCountry={favoriteCountry}
                   allPlayers={players}
                   onEnterSquad={handleEnterSquad}
+                  isSubmitting={isSubmitting}
                   opponentMap={opponentMap}
                 />
               </div>
@@ -180,12 +218,16 @@ export function SquadBuilderClient({
         )}
       </AnimatePresence>
 
-      {/* ── Toast notifications ── */}
-      <AnimatePresence>
-        {toast && (
-          <Toast message={toast} onClose={() => setToast(null)} />
-        )}
-      </AnimatePresence>
     </div>
+  );
+}
+
+// ── Public export — wraps inner with ToastProvider ────────────────────────────
+
+export function SquadBuilderClient(props: SquadBuilderClientProps) {
+  return (
+    <ToastProvider>
+      <SquadBuilderInner {...props} />
+    </ToastProvider>
   );
 }
