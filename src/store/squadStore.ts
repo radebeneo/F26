@@ -25,11 +25,53 @@ const POSITION_LIMITS: Record<string, number> = {
   FWD: 3,
 };
 
+function computeDefaultSquadState(players: Player[]) {
+  if (players.length < MAX_SQUAD_SIZE) {
+    return { startingXI: [], bench: [], captainId: null, viceCaptainId: null };
+  }
+
+  const byPos: Record<string, Player[]> = { GK: [], DEF: [], MID: [], FWD: [] };
+  for (const p of players) {
+    byPos[p.position].push(p);
+  }
+
+  const startingGK = byPos.GK.slice(0, 1);
+  const startingDEF = byPos.DEF.slice(0, 4);
+  const startingMID = byPos.MID.slice(0, 4);
+  const startingFWD = byPos.FWD.slice(0, 2);
+
+  const startingPlayers = [...startingGK, ...startingDEF, ...startingMID, ...startingFWD];
+  const benchPlayers = [
+    ...byPos.GK.slice(1),
+    ...byPos.DEF.slice(4),
+    ...byPos.MID.slice(4),
+    ...byPos.FWD.slice(2),
+  ];
+
+  const sorted = [...players].sort((a, b) => b.totalPoints - a.totalPoints);
+  const captainId = sorted[0]?.id ?? null;
+  const viceCaptainId = sorted[1]?.id ?? null;
+
+  return {
+    startingXI: startingPlayers.map((p) => p.id),
+    bench: benchPlayers.map((p) => p.id),
+    captainId,
+    viceCaptainId,
+  };
+}
+
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 export interface SquadState {
   /** All players currently selected in the squad */
   selectedPlayers: Player[];
+
+  startingXI: number[];
+  bench: number[];
+  captainId: number | null;
+  viceCaptainId: number | null;
+  twelfthManId: number | null;
+  activeBooster: string | null;
 
   /** Add a player — validates composition + budget rules */
   addPlayer: (player: Player) => { ok: boolean; reason?: string };
@@ -40,6 +82,9 @@ export interface SquadState {
   /** Set the initial squad from the database (for returning users) */
   setInitialSquad: (players: Player[]) => void;
 
+  /** Set the full squad state explicitly (e.g., from DB after loading) */
+  setFullSquadState: (state: Partial<SquadState>) => void;
+
   /** Clear the entire squad */
   reset: () => void;
 
@@ -49,6 +94,12 @@ export interface SquadState {
    * respecting position quotas.
    */
   autoPick: (allPlayers: Player[]) => void;
+
+  setCaptainId: (id: number) => void;
+  setViceCaptainId: (id: number) => void;
+  setTwelfthManId: (id: number | null) => void;
+  setActiveBooster: (boosterId: string | null) => void;
+  substitutePlayer: (subOutId: number, subInId: number) => { ok: boolean; reason?: string };
 
   // ── Derived helpers (computed inline) ──
   /** $m spent so far */
@@ -63,6 +114,12 @@ export interface SquadState {
 
 export const useSquadStore = create<SquadState>((set, get) => ({
   selectedPlayers: [],
+  startingXI: [],
+  bench: [],
+  captainId: null,
+  viceCaptainId: null,
+  twelfthManId: null,
+  activeBooster: null,
 
   // ── Add ──────────────────────────────────────────────────────────────────
   addPlayer: (player) => {
@@ -111,24 +168,45 @@ export const useSquadStore = create<SquadState>((set, get) => ({
       };
     }
 
-    set({ selectedPlayers: [...selectedPlayers, player] });
+    const newPlayers = [...selectedPlayers, player];
+    set({
+      selectedPlayers: newPlayers,
+      ...computeDefaultSquadState(newPlayers),
+    });
     return { ok: true };
   },
 
   // ── Remove ───────────────────────────────────────────────────────────────
   removePlayer: (playerId) => {
-    set((s) => ({
-      selectedPlayers: s.selectedPlayers.filter((p) => p.id !== playerId),
-    }));
+    set((s) => {
+      const newPlayers = s.selectedPlayers.filter((p) => p.id !== playerId);
+      return {
+        selectedPlayers: newPlayers,
+        ...computeDefaultSquadState(newPlayers),
+      };
+    });
   },
 
   // ── Set Initial Squad ─────────────────────────────────────────────────────
   setInitialSquad: (players) => {
-    set({ selectedPlayers: players });
+    set({
+      selectedPlayers: players,
+      ...computeDefaultSquadState(players),
+    });
   },
 
+  setFullSquadState: (state) => set(state),
+
   // ── Reset ─────────────────────────────────────────────────────────────────
-  reset: () => set({ selectedPlayers: [] }),
+  reset: () => set({
+    selectedPlayers: [],
+    startingXI: [],
+    bench: [],
+    captainId: null,
+    viceCaptainId: null,
+    twelfthManId: null,
+    activeBooster: null,
+  }),
 
   // ── Auto Pick ─────────────────────────────────────────────────────────────
   autoPick: (allPlayers) => {
@@ -163,7 +241,87 @@ export const useSquadStore = create<SquadState>((set, get) => ({
     tryPick("MID", 5);
     tryPick("FWD", 3);
 
-    set({ selectedPlayers: picked });
+    set({
+      selectedPlayers: picked,
+      ...computeDefaultSquadState(picked),
+    });
+  },
+
+  setCaptainId: (id) => {
+    const { captainId, viceCaptainId } = get();
+    if (id === viceCaptainId) {
+      // Swap them
+      set({ captainId: id, viceCaptainId: captainId });
+    } else {
+      set({ captainId: id });
+    }
+  },
+
+  setViceCaptainId: (id) => {
+    const { captainId, viceCaptainId } = get();
+    if (id === captainId) {
+      // Swap them
+      set({ captainId: viceCaptainId, viceCaptainId: id });
+    } else {
+      set({ viceCaptainId: id });
+    }
+  },
+
+  setTwelfthManId: (id) => set({ twelfthManId: id }),
+  setActiveBooster: (boosterId) => set({ activeBooster: boosterId }),
+
+  substitutePlayer: (subOutId, subInId) => {
+    const { startingXI, bench, selectedPlayers } = get();
+    
+    // Ensure one is on pitch and one is on bench
+    const isOutInXI = startingXI.includes(subOutId);
+    const isInOnBench = bench.includes(subInId);
+    
+    if (!isOutInXI || !isInOnBench) {
+      return { ok: false, reason: "Invalid substitution players" };
+    }
+
+    const playerOut = selectedPlayers.find((p) => p.id === subOutId);
+    const playerIn = selectedPlayers.find((p) => p.id === subInId);
+
+    if (!playerOut || !playerIn) {
+      return { ok: false, reason: "Players not found" };
+    }
+
+    // If both are same position, it's always valid
+    if (playerOut.position === playerIn.position) {
+      const newXI = startingXI.map((id) => (id === subOutId ? subInId : id));
+      const newBench = bench.map((id) => (id === subInId ? subOutId : id));
+      set({ startingXI: newXI, bench: newBench });
+      return { ok: true };
+    }
+
+    // GK can only swap with GK
+    if (playerOut.position === "GK" || playerIn.position === "GK") {
+      return { ok: false, reason: "Goalkeeper can only substitute for a Goalkeeper" };
+    }
+
+    // Check min/max bounds for positions
+    const posCounts: Record<string, number> = { GK: 0, DEF: 0, MID: 0, FWD: 0 };
+    for (const id of startingXI) {
+      const p = selectedPlayers.find((x) => x.id === id);
+      if (p) posCounts[p.position]++;
+    }
+
+    posCounts[playerOut.position]--;
+    posCounts[playerIn.position]++;
+
+    if (posCounts.DEF < 3) return { ok: false, reason: "Must have at least 3 Defenders" };
+    if (posCounts.DEF > 5) return { ok: false, reason: "Cannot have more than 5 Defenders" };
+    if (posCounts.MID < 3) return { ok: false, reason: "Must have at least 3 Midfielders" };
+    if (posCounts.MID > 5) return { ok: false, reason: "Cannot have more than 5 Midfielders" };
+    if (posCounts.FWD < 1) return { ok: false, reason: "Must have at least 1 Forward" };
+    if (posCounts.FWD > 3) return { ok: false, reason: "Cannot have more than 3 Forwards" };
+
+    const newXI = startingXI.map((id) => (id === subOutId ? subInId : id));
+    const newBench = bench.map((id) => (id === subInId ? subOutId : id));
+    set({ startingXI: newXI, bench: newBench });
+    return { ok: true };
   },
 
   // ── Derived ──────────────────────────────────────────────────────────────

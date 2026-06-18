@@ -17,6 +17,7 @@ interface PlayerDetailsModalProps {
   onSubOut?: () => void;
   onTransferOut?: () => void;
   opponentAcronym?: string | null;
+  isBench?: boolean;
 }
 
 export function PlayerDetailsModal({
@@ -30,6 +31,7 @@ export function PlayerDetailsModal({
   onSubOut,
   onTransferOut,
   opponentAcronym,
+  isBench,
 }: PlayerDetailsModalProps) {
   const [activeTab, setActiveTab] = useState<"overview" | "fixtures" | "results">("overview");
 
@@ -215,7 +217,7 @@ export function PlayerDetailsModal({
                   onClick={onSubOut}
                   className="w-full py-3 bg-white border border-black rounded-[100px] text-black text-lg font-black uppercase text-center hover:bg-gray-50 transition-colors shadow-sm"
                 >
-                  SUB OUT
+                  {isBench ? "SUB IN" : "SUB OUT"}
                 </button>
                 <button
                   onClick={onTransferOut}

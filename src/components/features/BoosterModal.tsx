@@ -7,7 +7,7 @@
  * Only 1 booster is allowed per round; each can be used once in the tournament.
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Info, Zap } from "lucide-react";
@@ -16,6 +16,9 @@ import { cn } from "@/lib/utils";
 interface BoosterModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onActivate: (boosterId: string) => void;
+  activeBoosterId?: string | null;
+  onDeactivate?: () => void;
 }
 
 interface BoosterOption {
@@ -46,6 +49,7 @@ const BOOSTERS: BoosterOption[] = [
     name: "Wild Card",
     description: "Make unlimited transfers for one round.",
     icon: "/fantasy-icons/transfer.png",
+    disabled: true,
   },
   {
     id: "qualification-booster",
@@ -53,6 +57,7 @@ const BOOSTERS: BoosterOption[] = [
     description:
       "All players in your team who qualify for the next round will receive a +2 bonus points boost.",
     icon: "/fantasy-icons/boosters.png",
+    disabled: true,
   },
   {
     id: "mystery-booster",
@@ -63,13 +68,25 @@ const BOOSTERS: BoosterOption[] = [
   },
 ];
 
-export function BoosterModal({ isOpen, onClose }: BoosterModalProps) {
+export function BoosterModal({ isOpen, onClose, onActivate, activeBoosterId, onDeactivate }: BoosterModalProps) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [tooltipId, setTooltipId] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (isOpen) {
+      setSelectedId(activeBoosterId || null);
+    }
+  }, [isOpen, activeBoosterId]);
+
+  const isActive = selectedId === activeBoosterId && selectedId !== null;
+
   const handleActivate = () => {
     if (!selectedId) return;
-    // Placeholder — booster activation logic will be added later
+    if (isActive && onDeactivate) {
+      onDeactivate();
+    } else {
+      onActivate(selectedId);
+    }
     onClose();
   };
 
@@ -211,11 +228,13 @@ export function BoosterModal({ isOpen, onClose }: BoosterModalProps) {
                   className={cn(
                     "w-full py-3.5 rounded-xl text-sm font-display font-black uppercase tracking-widest transition-all duration-200",
                     selectedId
-                      ? "bg-[#f5a623] text-white hover:bg-[#e09515] shadow-md"
+                      ? isActive
+                        ? "bg-[#f44336] text-white hover:bg-[#d32f2f] shadow-md"
+                        : "bg-[#f5a623] text-white hover:bg-[#e09515] shadow-md"
                       : "bg-gray-100 text-gray-400 cursor-not-allowed"
                   )}
                 >
-                  Activate
+                  {isActive ? "Deactivate" : "Activate"}
                 </button>
               </div>
             </div>

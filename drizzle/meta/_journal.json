@@ -8,6 +8,13 @@
       "when": 1781246141654,
       "tag": "0000_last_lilandra",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1781793605508,
+      "tag": "0001_swift_the_liberteens",
+      "breakpoints": true
     }
   ]
 }

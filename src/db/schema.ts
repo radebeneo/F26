@@ -138,6 +138,8 @@ export const userSquads = pgTable(
       .references(() => gameweeks.id),
     /** Aggregated GW points after point engine runs */
     gwPoints: integer("gw_points").notNull().default(0),
+    activeBooster: text("active_booster"),
+    twelfthManId: integer("twelfth_man_id").references(() => players.id),
   },
   (table) => ({
     /** One squad per user per gameweek */

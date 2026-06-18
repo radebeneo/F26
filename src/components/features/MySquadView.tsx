@@ -20,7 +20,9 @@ import { HowToScorePanel } from "@/components/features/HowToScorePanel";
 import { PlayerSelectionPanel } from "@/components/features/PlayerSelectionPanel";
 import { BoosterModal } from "@/components/features/BoosterModal";
 import { PlayerDetailsModal } from "@/components/features/PlayerDetailsModal";
+import { useToast } from "@/components/ui/toast";
 import type { Player } from "@/db/schema";
+import type { SquadState } from "@/store/squadStore";
 
 interface MySquadViewProps {
   teamName: string;
@@ -28,6 +30,7 @@ interface MySquadViewProps {
   favoriteCountry: string;
   allPlayers: Player[];
   opponentMap?: Record<string, string>;
+  initialSquadState?: Partial<SquadState> | null;
 }
 
 // ── Sub-components ────────────────────────────────────────────────────────────
@@ -41,6 +44,10 @@ function MySquadPitchSlot({
   viceCaptainId,
   isTransferMode,
   onClick,
+  isSubOutSelected,
+  isSubInValid,
+  benchIndex,
+  isSubDisabled,
 }: {
   player?: Player;
   pos: string;
@@ -49,6 +56,10 @@ function MySquadPitchSlot({
   viceCaptainId: number | null;
   isTransferMode: boolean;
   onClick?: () => void;
+  isSubOutSelected?: boolean;
+  isSubInValid?: boolean;
+  benchIndex?: number;
+  isSubDisabled?: boolean;
 }) {
   const slug = player ? getCountrySlug(player.nation) : null;
   const opponentAcronym =
@@ -65,15 +76,37 @@ function MySquadPitchSlot({
       className={cn(
         "pitch-slot",
         player
-          ? "pitch-slot--filled !bg-transparent !border-transparent !p-0 cursor-pointer"
-          : "pitch-slot--empty cursor-pointer"
+          ? "pitch-slot--filled !bg-transparent !border-transparent !p-0 cursor-pointer transition-all duration-300"
+          : "pitch-slot--empty cursor-pointer",
+        isSubDisabled && "opacity-40 grayscale-[80%] cursor-not-allowed"
       )}
       onClick={onClick}
     >
       {player ? (
         <div className="relative flex flex-col items-center w-[54px]">
+          {/* Sub Out Icon */}
+          {isSubOutSelected && (
+            <div className="absolute -top-2 -left-2 z-40 w-5 h-5 bg-white rounded-full border-[1.5px] border-[#f44336] flex items-center justify-center shadow-sm">
+              <Image src="/fantasy-icons/substitute-out.png" alt="Sub Out" width={12} height={12} />
+            </div>
+          )}
+
+          {/* Sub In Icon */}
+          {isSubInValid && (
+            <>
+              <div className="absolute -top-2 -left-2 z-40 w-5 h-5 bg-white rounded-full border-[1.5px] border-[#4caf50] flex items-center justify-center shadow-sm">
+                <Image src="/fantasy-icons/substitute-in.png" alt="Sub In" width={12} height={12} />
+              </div>
+              {benchIndex !== undefined && (
+                <div className="absolute -top-2 -right-2 z-40 w-5 h-5 bg-white rounded-full border-[1.5px] border-black flex items-center justify-center text-[10px] font-black text-black shadow-sm">
+                  {benchIndex + 1}
+                </div>
+              )}
+            </>
+          )}
+
           {/* Captain / Vice-Captain badge */}
-          {(isCaptain || isViceCaptain) && (
+          {!isSubOutSelected && !isSubInValid && (isCaptain || isViceCaptain) && (
             <div className="absolute -top-1 -left-2 z-30 w-6 h-6">
               <Image
                 src={
@@ -260,52 +293,135 @@ export function MySquadView({
   favoriteCountry,
   allPlayers,
   opponentMap,
+  initialSquadState,
 }: MySquadViewProps) {
-  const { selectedPlayers } = useSquadStore();
+  const { toast } = useToast();
+  const {
+    selectedPlayers,
+    startingXI,
+    bench,
+    captainId,
+    viceCaptainId,
+    setCaptainId,
+    setViceCaptainId,
+    substitutePlayer,
+    activeBooster,
+    setActiveBooster,
+    twelfthManId,
+    setFullSquadState
+  } = useSquadStore();
+
   const [isTransferMode, setIsTransferMode] = useState(false);
+  const [is12thManMode, setIs12thManMode] = useState(false);
   const [isBoosterOpen, setIsBoosterOpen] = useState(false);
   const [selectedPlayerForModal, setSelectedPlayerForModal] = useState<Player | null>(null);
 
-  // Captain = highest totalPoints, Vice-Captain = 2nd highest
-  const { captainId, viceCaptainId } = useMemo(() => {
-    if (selectedPlayers.length === 0)
-      return { captainId: null, viceCaptainId: null };
+  const [isSubstitutionMode, setIsSubstitutionMode] = useState(false);
+  const [subOutPlayerId, setSubOutPlayerId] = useState<number | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
-    const sorted = [...selectedPlayers].sort(
-      (a, b) => b.totalPoints - a.totalPoints
-    );
-    return {
-      captainId: sorted[0]?.id ?? null,
-      viceCaptainId: sorted[1]?.id ?? null,
-    };
-  }, [selectedPlayers]);
+  const handleConfirm = async () => {
+    if (isSaving) return;
+    setIsSaving(true);
+    try {
+      const res = await fetch("/api/squad/update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          startingXI,
+          bench,
+          captainId,
+          viceCaptainId,
+          activeBooster,
+          twelfthManId,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        toast({
+          title: "Failed to update squad",
+          description: data.error ?? "Something went wrong.",
+          variant: "error",
+        });
+        return;
+      }
+      toast({
+        title: "Squad updated! 🎉",
+        description: "Your changes have been saved successfully.",
+        variant: "success",
+      });
+      // Optionally update the initial state if passed a setter, but since it's an object from page reload, a reload will fetch new.
+    } catch {
+      toast({
+        title: "Network error",
+        description: "Could not reach the server.",
+        variant: "error",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleReset = () => {
+    if (initialSquadState) {
+      setFullSquadState(initialSquadState);
+      toast({
+        title: "Squad reset",
+        description: "Your squad has been reset to the last saved state.",
+      });
+    }
+  };
+
+  const handleBoosterActivate = (boosterId: string) => {
+    setActiveBooster(boosterId);
+    if (boosterId === "12th-man") {
+      setIs12thManMode(true);
+      setIsTransferMode(false);
+    }
+  };
+
+  // Helper to check if a sub is valid
+  const checkSubstitutionValid = (outId: number, inId: number) => {
+    const playerOut = selectedPlayers.find((p) => p.id === outId);
+    const playerIn = selectedPlayers.find((p) => p.id === inId);
+    if (!playerOut || !playerIn) return false;
+    if (playerOut.position === playerIn.position) return true;
+    if (playerOut.position === "GK" || playerIn.position === "GK") return false;
+
+    const posCounts = { GK: 0, DEF: 0, MID: 0, FWD: 0 };
+    for (const id of startingXI) {
+      const p = selectedPlayers.find((x) => x.id === id);
+      if (p) posCounts[p.position]++;
+    }
+    posCounts[playerOut.position]--;
+    posCounts[playerIn.position]++;
+
+    if (posCounts.DEF < 3 || posCounts.DEF > 5) return false;
+    if (posCounts.MID < 3 || posCounts.MID > 5) return false;
+    if (posCounts.FWD < 1 || posCounts.FWD > 3) return false;
+    return true;
+  };
 
   // Group players by position
   const byPos: Record<string, Player[]> = useMemo(() => {
-    const groups: Record<string, Player[]> = {
-      GK: [],
-      DEF: [],
-      MID: [],
-      FWD: [],
-    };
+    const groups: Record<string, Player[]> = { GK: [], DEF: [], MID: [], FWD: [] };
     for (const p of selectedPlayers) {
       if (groups[p.position]) groups[p.position].push(p);
     }
     return groups;
   }, [selectedPlayers]);
 
-  // Starting XI + Bench (default mode)
-  const startingGK = byPos.GK.slice(0, 1);
-  const startingDEF = byPos.DEF.slice(0, 4);
-  const startingMID = byPos.MID.slice(0, 4);
-  const startingFWD = byPos.FWD.slice(0, 2);
+  const startingPlayersObj = useMemo(() => startingXI.map(id => selectedPlayers.find(p => p.id === id)!).filter(Boolean), [startingXI, selectedPlayers]);
+  const benchPlayersObj = useMemo(() => bench.map(id => selectedPlayers.find(p => p.id === id)!).filter(Boolean), [bench, selectedPlayers]);
 
-  const bench = [
-    ...byPos.GK.slice(1),
-    ...byPos.DEF.slice(4),
-    ...byPos.MID.slice(4),
-    ...byPos.FWD.slice(2),
-  ];
+  const byPosStarting: Record<string, Player[]> = useMemo(() => {
+    const groups: Record<string, Player[]> = { GK: [], DEF: [], MID: [], FWD: [] };
+    for (const p of startingPlayersObj) {
+      if (groups[p.position]) groups[p.position].push(p);
+    }
+    return groups;
+  }, [startingPlayersObj]);
 
   const renderRow = (
     pos: string,
@@ -317,26 +433,43 @@ export function MySquadView({
     while (slots.length < totalSlots) slots.push(undefined);
     return (
       <div key={pos} className={cn("exact-pitch-row", rowClass)}>
-        {slots.map((p, i) => (
-          <div key={p?.id ?? `${pos}-${i}`} className="group/slot relative">
-            <MySquadPitchSlot
-              player={p}
-              pos={pos}
-              opponentMap={opponentMap}
-              captainId={captainId}
-              viceCaptainId={viceCaptainId}
-              isTransferMode={isTransferMode}
-              onClick={() => {
-                if (p && !isTransferMode) {
-                  setSelectedPlayerForModal(p);
-                }
-              }}
-            />
-          </div>
-        ))}
+        {slots.map((p, i) => {
+          const isOut = isSubstitutionMode && subOutPlayerId === p?.id;
+          const isSubDisabled = isSubstitutionMode && !isOut;
+          return (
+            <div key={p?.id ?? `${pos}-${i}`} className="group/slot relative">
+              <MySquadPitchSlot
+                player={p}
+                pos={pos}
+                opponentMap={opponentMap}
+                captainId={captainId}
+                viceCaptainId={viceCaptainId}
+                isTransferMode={isTransferMode}
+                isSubOutSelected={isOut}
+                isSubDisabled={isSubDisabled}
+                onClick={() => {
+                  if (!p || isTransferMode) return;
+                  if (isSubstitutionMode && subOutPlayerId) {
+                    if (p.id === subOutPlayerId) {
+                      setIsSubstitutionMode(false);
+                      setSubOutPlayerId(null);
+                    }
+                  } else {
+                    setSelectedPlayerForModal(p);
+                  }
+                }}
+              />
+            </div>
+          );
+        })}
       </div>
     );
   };
+
+  const twelfthManPlayer = useMemo(
+    () => (twelfthManId ? allPlayers.find((p) => p.id === twelfthManId) : undefined),
+    [twelfthManId, allPlayers]
+  );
 
   return (
     <>
@@ -442,48 +575,82 @@ export function MySquadView({
                     </svg>
                   </div>
 
-                  {/* Booster button (top-left) */}
-                  <button
-                    id="btn-apply-booster"
-                    onClick={() => setIsBoosterOpen(true)}
-                    className="absolute top-2 left-2 z-30 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#f5a623]/90 hover:bg-[#f5a623] text-white text-[10px] font-bold uppercase tracking-wide shadow-lg transition-all hover:scale-105"
-                  >
-                    <Image
-                      src="/fantasy-icons/boosters.png"
-                      alt="Boosters"
-                      width={18}
-                      height={18}
-                      className="object-contain"
-                    />
-                    Booster
-                  </button>
+                  {/* Top-Left Controls */}
+                  <div className="absolute top-2 left-2 z-30 flex items-start gap-2">
+                    {activeBooster === "12th-man" && twelfthManPlayer && (
+                      <div className="scale-[0.8] origin-top-left opacity-80 blur-[0.5px]">
+                        <MySquadPitchSlot
+                          player={twelfthManPlayer}
+                          pos={twelfthManPlayer.position}
+                          opponentMap={opponentMap}
+                          captainId={null}
+                          viceCaptainId={null}
+                          isTransferMode={false}
+                        />
+                      </div>
+                    )}
+
+                    <button
+                      id="btn-apply-booster"
+                      onClick={() => setIsBoosterOpen(true)}
+                      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#f5a623]/90 hover:bg-[#f5a623] text-white text-[10px] font-bold uppercase tracking-wide shadow-lg transition-all hover:scale-105"
+                    >
+                      <Image
+                        src={
+                          activeBooster === "12th-man"
+                            ? "/fantasy-icons/substitute-in.png"
+                            : activeBooster === "max-captain"
+                              ? "/fantasy-icons/captain.png"
+                              : "/fantasy-icons/boosters.png"
+                        }
+                        alt="Boosters"
+                        width={18}
+                        height={18}
+                        className="object-contain"
+                      />
+                      {activeBooster ? activeBooster.replace("-", " ") : "Booster"}
+                    </button>
+                  </div>
 
                   {/* Next Fixture / Make Transfers button (top-right) */}
-                  <button
-                    id="btn-make-transfers"
-                    onClick={() => setIsTransferMode((v) => !v)}
-                    className={cn(
-                      "absolute top-2 right-2 z-30 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wide shadow-lg transition-all hover:scale-105",
-                      isTransferMode
-                        ? "bg-secondaryRed-600 hover:bg-secondaryRed-500 text-white"
-                        : "bg-white/90 hover:bg-white text-black"
-                    )}
-                  >
-                    {isTransferMode ? (
-                      "Cancel"
-                    ) : (
-                      <>
+                  {isSubstitutionMode ? (
+                    <button
+                      onClick={() => {
+                        setIsSubstitutionMode(false);
+                        setSubOutPlayerId(null);
+                      }}
+                      className="absolute top-2 right-2 z-30 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#f44336] hover:bg-[#d32f2f] text-white text-[10px] font-bold uppercase tracking-wide shadow-lg transition-all hover:scale-105"
+                    >
+                      Cancel Sub
+                    </button>
+                  ) : is12thManMode ? (
+                    <button
+                      onClick={() => setIs12thManMode(false)}
+                      className="absolute top-2 right-2 z-30 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#f5a623] hover:bg-[#e09515] text-white text-[10px] font-bold uppercase tracking-wide shadow-lg transition-all hover:scale-105"
+                    >
+                      Done
+                    </button>
+                  ) : (
+                    <div className="absolute top-2 right-2 z-30 flex flex-col items-end gap-1 group">
+                      <button
+                        id="btn-make-transfers"
+                        disabled={true}
+                        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wide shadow-lg bg-white/50 text-black/50 cursor-not-allowed"
+                      >
                         <Image
                           src="/fantasy-icons/transfer.png"
                           alt="Transfer"
                           width={16}
                           height={16}
-                          className="object-contain"
+                          className="object-contain opacity-50"
                         />
                         Make Transfers
-                      </>
-                    )}
-                  </button>
+                      </button>
+                      <div className="opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 bg-black/70 backdrop-blur-sm text-[#cca64f] text-[9px] font-bold px-2 py-1 rounded text-center leading-tight max-w-[130px] border border-white/10 shadow-lg">
+                        Transfers are Disabled for the Duration of GameWeek 2
+                      </div>
+                    </div>
+                  )}
 
                   {/* Top Banner & Goal */}
                   <div className="exact-pitch-banner">
@@ -538,11 +705,11 @@ export function MySquadView({
                           exit={{ opacity: 0 }}
                           className="flex flex-col justify-between h-full"
                         >
-                          {/* Default mode: 1-4-4-2 */}
-                          {renderRow("GK", startingGK, 1, "center")}
-                          {renderRow("DEF", startingDEF, 4)}
-                          {renderRow("MID", startingMID, 4)}
-                          {renderRow("FWD", startingFWD, 2, "center fwd")}
+                          {/* Default mode: Dynamic rendering of starting XI */}
+                          {renderRow("GK", byPosStarting.GK, byPosStarting.GK.length, "center")}
+                          {renderRow("DEF", byPosStarting.DEF, byPosStarting.DEF.length)}
+                          {renderRow("MID", byPosStarting.MID, byPosStarting.MID.length)}
+                          {renderRow("FWD", byPosStarting.FWD, byPosStarting.FWD.length, "center fwd")}
                         </motion.div>
                       )}
                     </AnimatePresence>
@@ -551,31 +718,49 @@ export function MySquadView({
               </div>
 
               {/* Bench (only in default mode) */}
-              {!isTransferMode && bench.length > 0 && (
+              {!isTransferMode && benchPlayersObj.length > 0 && (
                 <div className="flex-shrink-0 flex items-center justify-center gap-2 py-4 mt-2 bg-black/20 border-y border-white/10 w-full px-4">
                   <span className="text-[10px] text-white/40 font-bold uppercase tracking-widest mr-1">
                     Bench
                   </span>
-                  {bench.map((p) => (
-                    <div key={p.id} className="group/slot relative">
-                      <MySquadPitchSlot
-                        player={p}
-                        pos={p.position}
-                        opponentMap={opponentMap}
-                        captainId={captainId}
-                        viceCaptainId={viceCaptainId}
-                        isTransferMode={false}
-                        onClick={() => {
-                          if (p && !isTransferMode) {
-                            setSelectedPlayerForModal(p);
-                          }
-                        }}
-                      />
-                    </div>
-                  ))}
+                  {benchPlayersObj.map((p, index) => {
+                    // For field players on bench, we show their number (1, 2, 3)
+                    // The first bench player is always GK, so field player index is index (since GK is index 0)
+                    const benchIndex = p.position === "GK" ? undefined : index;
+                    const isSubInValid = isSubstitutionMode && subOutPlayerId !== null && checkSubstitutionValid(subOutPlayerId, p.id);
+                    const isSubDisabled = isSubstitutionMode && !isSubInValid;
+
+                    return (
+                      <div key={p.id} className="group/slot relative">
+                        <MySquadPitchSlot
+                          player={p}
+                          pos={p.position}
+                          opponentMap={opponentMap}
+                          captainId={captainId}
+                          viceCaptainId={viceCaptainId}
+                          isTransferMode={false}
+                          isSubInValid={isSubInValid}
+                          isSubDisabled={isSubDisabled}
+                          benchIndex={benchIndex}
+                          onClick={() => {
+                            if (!p || isTransferMode) return;
+                            if (isSubstitutionMode && subOutPlayerId) {
+                              if (isSubInValid) {
+                                substitutePlayer(subOutPlayerId, p.id);
+                                setIsSubstitutionMode(false);
+                                setSubOutPlayerId(null);
+                              }
+                            } else {
+                              setSelectedPlayerForModal(p);
+                            }
+                          }}
+                        />
+                      </div>
+                    );
+                  })}
                   {/* Empty bench slots up to 4 */}
                   {Array.from({
-                    length: Math.max(0, 4 - bench.length),
+                    length: Math.max(0, 4 - benchPlayersObj.length),
                   }).map((_, i) => (
                     <div key={`bench-empty-${i}`} className="group/slot relative">
                       <MySquadPitchSlot
@@ -589,6 +774,29 @@ export function MySquadView({
                 </div>
               )}
 
+              {/* Confirm / Reset Action Buttons */}
+              {!isTransferMode && !isSubstitutionMode && !is12thManMode && (
+                <div className="flex items-center justify-center gap-4 mt-6 px-4">
+                  <button
+                    onClick={handleReset}
+                    disabled={!initialSquadState || isSaving}
+                    className="px-6 py-2 rounded-xl border border-white/20 text-white/80 text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Reset
+                  </button>
+                  <button
+                    onClick={handleConfirm}
+                    disabled={isSaving}
+                    className="px-8 py-2 rounded-xl bg-[#c8f000] text-black text-xs font-black uppercase tracking-widest hover:bg-[#d4ff00] transition-colors shadow-lg shadow-[#c8f000]/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    {isSaving && (
+                      <div className="w-3 h-3 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                    )}
+                    Confirm
+                  </button>
+                </div>
+              )}
+
               <SquadKey />
             </div>
           </section>
@@ -597,7 +805,7 @@ export function MySquadView({
         {/* ── Right Panel ── */}
         <div className="squad-builder-right">
           <AnimatePresence mode="wait">
-            {isTransferMode ? (
+            {isTransferMode || is12thManMode ? (
               <motion.div
                 key="transfer-panel"
                 initial={{ opacity: 0, x: 20 }}
@@ -606,7 +814,7 @@ export function MySquadView({
                 transition={{ duration: 0.2 }}
                 className="h-full"
               >
-                <PlayerSelectionPanel players={allPlayers} />
+                <PlayerSelectionPanel players={allPlayers} mode={is12thManMode ? "12th-man" : "transfer"} />
               </motion.div>
             ) : (
               <motion.div
@@ -628,6 +836,16 @@ export function MySquadView({
       <BoosterModal
         isOpen={isBoosterOpen}
         onClose={() => setIsBoosterOpen(false)}
+        onActivate={handleBoosterActivate}
+        activeBoosterId={activeBooster}
+        onDeactivate={() => {
+          setActiveBooster(null);
+          setIs12thManMode(false);
+          if (twelfthManId) {
+            const { setTwelfthManId } = useSquadStore.getState();
+            setTwelfthManId(null);
+          }
+        }}
       />
 
       {/* ── Player Details Modal ── */}
@@ -637,20 +855,24 @@ export function MySquadView({
         player={selectedPlayerForModal}
         isCaptain={selectedPlayerForModal?.id === captainId}
         isViceCaptain={selectedPlayerForModal?.id === viceCaptainId}
+        isBench={selectedPlayerForModal ? bench.includes(selectedPlayerForModal.id) : false}
         opponentAcronym={
           selectedPlayerForModal && opponentMap
             ? opponentMap[selectedPlayerForModal.nation]
             : null
         }
         onSetCaptain={() => {
-          // Implement captain setting logic if not using Zustand,
-          // or just show it works
+          if (selectedPlayerForModal) setCaptainId(selectedPlayerForModal.id);
         }}
         onSetViceCaptain={() => {
-          // Implement vice-captain setting logic
+          if (selectedPlayerForModal) setViceCaptainId(selectedPlayerForModal.id);
         }}
         onSubOut={() => {
-          // Implement sub out logic
+          if (selectedPlayerForModal) {
+            setSubOutPlayerId(selectedPlayerForModal.id);
+            setIsSubstitutionMode(true);
+            setSelectedPlayerForModal(null);
+          }
         }}
       />
     </>

@@ -204,9 +204,10 @@ function Pagination({
 
 interface PlayerSelectionPanelProps {
   players: Player[];
+  mode?: "transfer" | "12th-man";
 }
 
-export function PlayerSelectionPanel({ players }: PlayerSelectionPanelProps) {
+export function PlayerSelectionPanel({ players, mode = "transfer" }: PlayerSelectionPanelProps) {
   const [search, setSearch] = useState("");
   const [posFilter, setPosFilter] = useState("All");
   const [nationFilter, setNationFilter] = useState("All");
@@ -218,7 +219,7 @@ export function PlayerSelectionPanel({ players }: PlayerSelectionPanelProps) {
   const hasActiveFilters =
     posFilter !== "All" || nationFilter !== "All" || sortBy !== "totalPoints";
 
-  const { selectedPlayers, addPlayer, removePlayer } = useSquadStore();
+  const { selectedPlayers, addPlayer, removePlayer, twelfthManId, setTwelfthManId } = useSquadStore();
   const { toast } = useToast();
   const selectedIds = new Set(selectedPlayers.map((p) => p.id));
 
@@ -289,6 +290,19 @@ export function PlayerSelectionPanel({ players }: PlayerSelectionPanelProps) {
   };
 
   const handleAdd = (player: Player) => {
+    if (mode === "12th-man") {
+      if (selectedIds.has(player.id)) {
+        toast({
+          variant: "warning",
+          title: "Player already in squad",
+          description: "Please select a different player for your 12th man.",
+        });
+        return;
+      }
+      setTwelfthManId(player.id);
+      return;
+    }
+
     const result = addPlayer(player);
     if (!result.ok && result.reason) {
       const reason = result.reason;
@@ -328,6 +342,14 @@ export function PlayerSelectionPanel({ players }: PlayerSelectionPanelProps) {
     }
   };
 
+  const handleRemove = (player: Player) => {
+    if (mode === "12th-man") {
+      setTwelfthManId(null);
+      return;
+    }
+    removePlayer(player.id);
+  };
+
   return (
     <aside className="squad-panel flex flex-col h-full overflow-hidden">
       {/* ── Panel header ── */}
@@ -335,7 +357,7 @@ export function PlayerSelectionPanel({ players }: PlayerSelectionPanelProps) {
         {/* Row 1: title + filters toggle */}
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-base font-display font-black text-white">
-            Player Selection
+            {mode === "12th-man" ? "Select 12th Man" : "Player Selection"}
           </h2>
 
           <button
@@ -487,9 +509,9 @@ export function PlayerSelectionPanel({ players }: PlayerSelectionPanelProps) {
                   <PlayerRow
                     key={player.id}
                     player={player}
-                    isSelected={selectedIds.has(player.id)}
+                    isSelected={mode === "12th-man" ? twelfthManId === player.id : selectedIds.has(player.id)}
                     onAdd={() => handleAdd(player)}
-                    onRemove={() => removePlayer(player.id)}
+                    onRemove={() => handleRemove(player)}
                     showFullName={player.lastName ? duplicatedLastNames.has(`${player.nation}|${player.lastName}`) : false}
                   />
                 ))}

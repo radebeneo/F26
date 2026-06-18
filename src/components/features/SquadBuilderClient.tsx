@@ -18,6 +18,7 @@ import { MySquadView } from "@/components/features/MySquadView";
 import { ToastProvider, useToast } from "@/components/ui/toast";
 import { useSquadStore } from "@/store/squadStore";
 import type { Player } from "@/db/schema";
+import type { SquadState } from "@/store/squadStore";
 
 type ViewMode = "builder" | "mySquad";
 
@@ -30,8 +31,8 @@ interface SquadBuilderClientProps {
   opponentMap?: Record<string, string>;
   /** True when the user has already submitted a squad — skip the builder */
   hasExistingSquad?: boolean;
-  /** Pre-populated players if hasExistingSquad is true */
-  initialSquadPlayers?: Player[];
+  /** Pre-populated state if hasExistingSquad is true */
+  initialSquadState?: Partial<SquadState> | null;
 }
 
 // ── Inner component (needs ToastProvider in tree) ────────────────────────────
@@ -44,21 +45,21 @@ function SquadBuilderInner({
   signOutAction,
   opponentMap,
   hasExistingSquad = false,
-  initialSquadPlayers = [],
+  initialSquadState = null,
 }: SquadBuilderClientProps) {
   const { toast } = useToast();
-  const { selectedPlayers, setInitialSquad } = useSquadStore();
+  const { selectedPlayers, setFullSquadState } = useSquadStore();
   const [view, setView] = useState<ViewMode>(hasExistingSquad ? "mySquad" : "builder");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Initialize the squad store with the user's existing players
   const initialized = useRef(false);
   useEffect(() => {
-    if (hasExistingSquad && initialSquadPlayers.length > 0 && !initialized.current) {
-      setInitialSquad(initialSquadPlayers);
+    if (hasExistingSquad && initialSquadState && !initialized.current) {
+      setFullSquadState(initialSquadState);
       initialized.current = true;
     }
-  }, [hasExistingSquad, initialSquadPlayers, setInitialSquad]);
+  }, [hasExistingSquad, initialSquadState, setFullSquadState]);
 
   // Track whether squad has been saved this session (covers the post-submit case
   // where hasExistingSquad was false on load but the user just submitted).
@@ -213,6 +214,7 @@ function SquadBuilderInner({
               favoriteCountry={favoriteCountry}
               allPlayers={players}
               opponentMap={opponentMap}
+              initialSquadState={initialSquadState}
             />
           </motion.div>
         )}

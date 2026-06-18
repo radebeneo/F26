@@ -5,6 +5,7 @@ import { db } from "@/db";
 import { users, players, gameweeks, userSquads, fixtures } from "@/db/schema";
 import { eq, asc, desc, and, ne } from "drizzle-orm";
 import { SquadBuilderClient } from "@/components/features/SquadBuilderClient";
+import type { SquadState } from "@/store/squadStore";
 
 export const metadata: Metadata = {
   title: "Squad Builder",
@@ -73,7 +74,7 @@ export default async function DashboardPage() {
   // Detect if user already has a squad for this gameweek.
   // If so, skip the builder and show My Squad directly, passing the existing players.
   let hasExistingSquad = false;
-  let initialSquadPlayers: typeof allPlayers = [];
+  let initialSquadState: Partial<SquadState> | null = null;
 
   if (dbUser && currentGw) {
     const existingSquad = await db.query.userSquads.findFirst({
@@ -90,13 +91,21 @@ export default async function DashboardPage() {
 
     if (existingSquad) {
       hasExistingSquad = true;
-      // Sort so starters come first, ensuring MySquadView slices them correctly
-      const sortedSquadPlayers = existingSquad.players.sort((a, b) => {
-        if (a.isStarter && !b.isStarter) return -1;
-        if (!a.isStarter && b.isStarter) return 1;
-        return a.id.localeCompare(b.id);
-      });
-      initialSquadPlayers = sortedSquadPlayers.map((p) => p.player);
+      const starters = existingSquad.players.filter(p => p.isStarter);
+      const bench = existingSquad.players.filter(p => !p.isStarter);
+      
+      const captain = existingSquad.players.find(p => p.isCaptain);
+      const viceCaptain = existingSquad.players.find(p => p.isViceCaptain);
+
+      initialSquadState = {
+        selectedPlayers: existingSquad.players.map(p => p.player),
+        startingXI: starters.map(p => p.playerId),
+        bench: bench.map(p => p.playerId),
+        captainId: captain?.playerId ?? null,
+        viceCaptainId: viceCaptain?.playerId ?? null,
+        activeBooster: existingSquad.activeBooster ?? null,
+        twelfthManId: existingSquad.twelfthManId ?? null,
+      };
     }
   }
 
@@ -109,7 +118,7 @@ export default async function DashboardPage() {
       signOutAction={signOutAction}
       opponentMap={opponentMap}
       hasExistingSquad={hasExistingSquad}
-      initialSquadPlayers={initialSquadPlayers}
+      initialSquadState={initialSquadState}
     />
   );
 }
