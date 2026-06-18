@@ -19,6 +19,7 @@ import { getCountrySlug } from "@/components/features/SquadSelectionPanel";
 import { HowToScorePanel } from "@/components/features/HowToScorePanel";
 import { PlayerSelectionPanel } from "@/components/features/PlayerSelectionPanel";
 import { BoosterModal } from "@/components/features/BoosterModal";
+import { PlayerDetailsModal } from "@/components/features/PlayerDetailsModal";
 import type { Player } from "@/db/schema";
 
 interface MySquadViewProps {
@@ -39,6 +40,7 @@ function MySquadPitchSlot({
   captainId,
   viceCaptainId,
   isTransferMode,
+  onClick,
 }: {
   player?: Player;
   pos: string;
@@ -46,6 +48,7 @@ function MySquadPitchSlot({
   captainId: number | null;
   viceCaptainId: number | null;
   isTransferMode: boolean;
+  onClick?: () => void;
 }) {
   const slug = player ? getCountrySlug(player.nation) : null;
   const opponentAcronym =
@@ -62,9 +65,10 @@ function MySquadPitchSlot({
       className={cn(
         "pitch-slot",
         player
-          ? "pitch-slot--filled !bg-transparent !border-transparent !p-0"
-          : "pitch-slot--empty"
+          ? "pitch-slot--filled !bg-transparent !border-transparent !p-0 cursor-pointer"
+          : "pitch-slot--empty cursor-pointer"
       )}
+      onClick={onClick}
     >
       {player ? (
         <div className="relative flex flex-col items-center w-[54px]">
@@ -260,6 +264,7 @@ export function MySquadView({
   const { selectedPlayers } = useSquadStore();
   const [isTransferMode, setIsTransferMode] = useState(false);
   const [isBoosterOpen, setIsBoosterOpen] = useState(false);
+  const [selectedPlayerForModal, setSelectedPlayerForModal] = useState<Player | null>(null);
 
   // Captain = highest totalPoints, Vice-Captain = 2nd highest
   const { captainId, viceCaptainId } = useMemo(() => {
@@ -321,6 +326,11 @@ export function MySquadView({
               captainId={captainId}
               viceCaptainId={viceCaptainId}
               isTransferMode={isTransferMode}
+              onClick={() => {
+                if (p && !isTransferMode) {
+                  setSelectedPlayerForModal(p);
+                }
+              }}
             />
           </div>
         ))}
@@ -555,6 +565,11 @@ export function MySquadView({
                         captainId={captainId}
                         viceCaptainId={viceCaptainId}
                         isTransferMode={false}
+                        onClick={() => {
+                          if (p && !isTransferMode) {
+                            setSelectedPlayerForModal(p);
+                          }
+                        }}
                       />
                     </div>
                   ))}
@@ -613,6 +628,30 @@ export function MySquadView({
       <BoosterModal
         isOpen={isBoosterOpen}
         onClose={() => setIsBoosterOpen(false)}
+      />
+
+      {/* ── Player Details Modal ── */}
+      <PlayerDetailsModal
+        isOpen={!!selectedPlayerForModal}
+        onClose={() => setSelectedPlayerForModal(null)}
+        player={selectedPlayerForModal}
+        isCaptain={selectedPlayerForModal?.id === captainId}
+        isViceCaptain={selectedPlayerForModal?.id === viceCaptainId}
+        opponentAcronym={
+          selectedPlayerForModal && opponentMap
+            ? opponentMap[selectedPlayerForModal.nation]
+            : null
+        }
+        onSetCaptain={() => {
+          // Implement captain setting logic if not using Zustand,
+          // or just show it works
+        }}
+        onSetViceCaptain={() => {
+          // Implement vice-captain setting logic
+        }}
+        onSubOut={() => {
+          // Implement sub out logic
+        }}
       />
     </>
   );
