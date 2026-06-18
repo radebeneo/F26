@@ -706,7 +706,7 @@
   }
 
   .homepage-hero-visual {
-    height: 320px;
+    height: 480px;
   }
 
   .homepage-trophy {
@@ -755,6 +755,18 @@
   margin: 0 auto;
   perspective: 1000px;
   z-index: 10;
+}
+
+@media (max-width: 768px) {
+  .exact-pitch-container {
+    aspect-ratio: 1.1;
+  }
+}
+
+@media (max-width: 480px) {
+  .exact-pitch-container {
+    aspect-ratio: 0.9;
+  }
 }
 
 .exact-pitch-3d {
@@ -894,6 +906,14 @@
   height: 100svh;
   overflow: hidden;
   background: #0f0c1a;
+}
+
+@media (max-width: 900px) {
+  .squad-builder-root {
+    height: auto;
+    min-height: 100svh;
+    overflow: auto;
+  }
 }
 
 /* ── Sticky nav ───────────────────────────────────────────────────────────── */
@@ -1124,33 +1144,26 @@
 
 /* ── Responsive: tablet / mobile ─────────────────────────────────────────── */
 @media (max-width: 900px) {
-  .squad-builder-body {
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr 1fr;
-    overflow: auto;
-  }
-
+  .squad-builder-body,
   .my-squad-body {
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr 1fr;
-    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
   }
 
   .squad-builder-left,
   .squad-builder-right {
-    min-height: 50svh;
+    min-height: 600px;
+    height: auto;
     border-right: none;
     border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    flex: none;
   }
 }
 
 @media (max-width: 480px) {
   .squad-nav-inner {
     padding-inline: 1rem;
-  }
-
-  .squad-builder-body {
-    grid-template-rows: auto auto;
   }
 }
 

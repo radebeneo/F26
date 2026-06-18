@@ -369,6 +369,7 @@ export function MySquadView({
       toast({
         title: "Squad reset",
         description: "Your squad has been reset to the last saved state.",
+        variant: "info",
       });
     }
   };
