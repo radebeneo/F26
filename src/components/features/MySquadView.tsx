@@ -32,6 +32,7 @@ interface MySquadViewProps {
   allPlayers: Player[];
   opponentMap?: Record<string, string>;
   initialSquadState?: Partial<SquadState> | null;
+  hasJoinedLeague?: boolean;
 }
 
 // ── Sub-components ────────────────────────────────────────────────────────────
@@ -295,6 +296,7 @@ export function MySquadView({
   allPlayers,
   opponentMap,
   initialSquadState,
+  hasJoinedLeague = false,
 }: MySquadViewProps) {
   const { toast } = useToast();
   const {
@@ -779,7 +781,7 @@ export function MySquadView({
               )}
 
               {/* Confirm / Reset / Join League Action Buttons */}
-              {!isTransferMode && !isSubstitutionMode && !is12thManMode && (
+              {!hasJoinedLeague && !isTransferMode && !isSubstitutionMode && !is12thManMode && (
                 <div className="flex items-center justify-center gap-4 mt-6 px-4">
                   {!isConfirmed ? (
                     <>

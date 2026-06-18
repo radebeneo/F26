@@ -2,11 +2,17 @@ import { db } from "@/db";
 import { leagues, userLeagues, users } from "@/db/schema";
 import { eq, count } from "drizzle-orm";
 import { LeaderboardClient } from "@/components/features/LeaderboardClient";
-import { ToastProvider } from "@/components/ui/toast";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
 export default async function LeaderboardPage() {
+  async function signOutAction() {
+    "use server";
+    const supabase = await createClient();
+    await supabase.auth.signOut();
+    redirect("/auth/login");
+  }
+
   const supabase = await createClient();
   const {
     data: { user },
@@ -48,13 +54,10 @@ export default async function LeaderboardPage() {
   const joinedLeagueIds = joinedLeaguesQuery.map((jl) => jl.leagueId);
 
   return (
-    <div className="flex flex-col w-full h-full p-6 md:p-10 max-w-5xl mx-auto text-white">
-      <ToastProvider>
-        <LeaderboardClient
-          leagues={allLeaguesQuery}
-          joinedLeagueIds={joinedLeagueIds}
-        />
-      </ToastProvider>
-    </div>
+    <LeaderboardClient
+      leagues={allLeaguesQuery}
+      joinedLeagueIds={joinedLeagueIds}
+      signOutAction={signOutAction}
+    />
   );
 }

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/db";
-import { users, players, gameweeks, userSquads, fixtures } from "@/db/schema";
+import { users, players, gameweeks, userSquads, fixtures, userLeagues } from "@/db/schema";
 import { eq, asc, desc, and, ne } from "drizzle-orm";
 import { SquadBuilderClient } from "@/components/features/SquadBuilderClient";
 import type { SquadState } from "@/store/squadStore";
@@ -109,6 +109,15 @@ export default async function DashboardPage() {
     }
   }
 
+  // Check if the user has joined any league
+  let hasJoinedLeague = false;
+  if (dbUser) {
+    const userLeagueCount = await db.query.userLeagues.findFirst({
+      where: eq(userLeagues.userId, dbUser.id),
+    });
+    hasJoinedLeague = !!userLeagueCount;
+  }
+
   return (
     <SquadBuilderClient
       players={allPlayers}
@@ -119,6 +128,7 @@ export default async function DashboardPage() {
       opponentMap={opponentMap}
       hasExistingSquad={hasExistingSquad}
       initialSquadState={initialSquadState}
+      hasJoinedLeague={hasJoinedLeague}
     />
   );
 }

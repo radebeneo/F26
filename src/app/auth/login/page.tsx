@@ -7,6 +7,13 @@ export const metadata: Metadata = {
   description: "Sign in to your F26 Fantasy account to manage your squad.",
 };
 
-export default function LoginPage() {
-  return <AuthForm mode="login" action={loginAction} />;
+export default function LoginPage({
+  searchParams,
+}: {
+  searchParams?: { [key: string]: string | string[] | undefined };
+}) {
+  const message =
+    typeof searchParams?.message === "string" ? searchParams.message : undefined;
+
+  return <AuthForm mode="login" action={loginAction} message={message} />;
 }

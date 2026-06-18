@@ -21,6 +21,9 @@ export async function loginAction(
   const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
+    if (error.message.includes("Email not confirmed")) {
+      return { error: "Please verify your email address before logging in." };
+    }
     return { error: error.message };
   }
 

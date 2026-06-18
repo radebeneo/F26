@@ -6,6 +6,13 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
 export default async function LeagueDetailPage({ params }: { params: { leagueId: string } }) {
+  async function signOutAction() {
+    "use server";
+    const supabase = await createClient();
+    await supabase.auth.signOut();
+    redirect("/auth/login");
+  }
+
   const leagueId = parseInt(params.leagueId, 10);
   
   if (isNaN(leagueId)) {
@@ -119,6 +126,7 @@ export default async function LeagueDetailPage({ params }: { params: { leagueId:
       members={membersData}
       rounds={rounds}
       currentRoundId={activeGw?.id ?? null}
+      signOutAction={signOutAction}
     />
   );
 }

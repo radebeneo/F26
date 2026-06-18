@@ -30,9 +30,10 @@ function SubmitButton({ label }: { label: string }) {
 type AuthFormProps = {
   mode: "login" | "register";
   action: (prevState: FormState, formData: FormData) => Promise<FormState>;
+  message?: string;
 };
 
-export function AuthForm({ mode, action }: AuthFormProps) {
+export function AuthForm({ mode, action, message }: AuthFormProps) {
   const [state, formAction] = useFormState(action, null);
   const [showPassword, setShowPassword] = React.useState(false);
   const [showConfirm, setShowConfirm] = React.useState(false);
@@ -78,6 +79,18 @@ export function AuthForm({ mode, action }: AuthFormProps) {
             : "Join FWC26 Fantasy and pick your World Cup squad."}
         </motion.p>
       </div>
+
+      {/* Success/Info banner */}
+      {message && message === "check-email" && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          className="mb-5 rounded-lg border border-primary/40 bg-primary/10 px-4 py-3 text-sm text-primary"
+          role="alert"
+        >
+          Please check your email to verify your account before logging in.
+        </motion.div>
+      )}
 
       {/* Error banner */}
       {state?.error && (
@@ -138,9 +151,11 @@ export function AuthForm({ mode, action }: AuthFormProps) {
             name="email"
             type="email"
             label="Email address"
-            placeholder="you@example.com"
+            placeholder="you@ogilvy.co.za"
             autoComplete="email"
             required
+            pattern={!isLogin ? ".*@ogilvy\\.co\\.za$" : undefined}
+            title={!isLogin ? "Must be an @ogilvy.co.za email address" : undefined}
             icon={<Mail size={16} />}
           />
         </motion.div>

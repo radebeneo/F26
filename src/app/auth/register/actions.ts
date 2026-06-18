@@ -34,6 +34,9 @@ export async function registerAction(
   if (password.length < 8) {
     return { error: "Password must be at least 8 characters." };
   }
+  if (!email || !email.toLowerCase().endsWith("@ogilvy.co.za")) {
+    return { error: "Only @ogilvy.co.za email addresses are allowed." };
+  }
 
   const supabase = await createClient();
 
@@ -64,6 +67,11 @@ export async function registerAction(
   } catch {
     // If team name already taken, the unique constraint fires
     return { error: "That team name is already taken. Please choose another." };
+  }
+
+  // If email confirmation is required, session will be null
+  if (!data.session) {
+    redirect("/auth/login?message=check-email");
   }
 
   redirect("/dashboard");
