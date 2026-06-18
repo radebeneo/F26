@@ -53,6 +53,8 @@ export const users = pgTable("users", {
 
 export const usersRelations = relations(users, ({ many }) => ({
   squads: many(userSquads),
+  managedLeagues: many(leagues),
+  joinedLeagues: many(userLeagues),
 }));
 
 // ─────────────────────────────────────────────
@@ -264,6 +266,60 @@ export const playerStatsRelations = relations(playerStats, ({ one }) => ({
 }));
 
 // ─────────────────────────────────────────────
+// leagues
+// ─────────────────────────────────────────────
+
+export const leagues = pgTable("leagues", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull().unique(),
+  managerId: uuid("manager_id")
+    .notNull()
+    .references(() => users.id),
+  isPublic: boolean("is_public").notNull().default(true),
+  inviteCode: text("invite_code").unique(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+export const leaguesRelations = relations(leagues, ({ one, many }) => ({
+  manager: one(users, {
+    fields: [leagues.managerId],
+    references: [users.id],
+  }),
+  members: many(userLeagues),
+}));
+
+// ─────────────────────────────────────────────
+// user_leagues
+// ─────────────────────────────────────────────
+
+export const userLeagues = pgTable(
+  "user_leagues",
+  {
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id),
+    leagueId: integer("league_id")
+      .notNull()
+      .references(() => leagues.id),
+    joinedAt: timestamp("joined_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    userLeagueUnique: unique().on(table.userId, table.leagueId),
+  })
+);
+
+export const userLeaguesRelations = relations(userLeagues, ({ one }) => ({
+  user: one(users, {
+    fields: [userLeagues.userId],
+    references: [users.id],
+  }),
+  league: one(leagues, {
+    fields: [userLeagues.leagueId],
+    references: [leagues.id],
+  }),
+}));
+
+// ─────────────────────────────────────────────
 // Exported TypeScript types (inferred from schema)
 // ─────────────────────────────────────────────
 
@@ -287,6 +343,12 @@ export type NewUserSquadPlayer = typeof userSquadPlayers.$inferInsert;
 
 export type PlayerStat = typeof playerStats.$inferSelect;
 export type NewPlayerStat = typeof playerStats.$inferInsert;
+
+export type League = typeof leagues.$inferSelect;
+export type NewLeague = typeof leagues.$inferInsert;
+
+export type UserLeague = typeof userLeagues.$inferSelect;
+export type NewUserLeague = typeof userLeagues.$inferInsert;
 
 export type Position = "GK" | "DEF" | "MID" | "FWD";
 export type FixtureStatus = "UPCOMING" | "LIVE" | "FINISHED";

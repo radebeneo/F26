@@ -12,6 +12,7 @@
 
 import { useState, useMemo } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useSquadStore } from "@/store/squadStore";
@@ -777,31 +778,42 @@ export function MySquadView({
                 </div>
               )}
 
-              {/* Confirm / Reset Action Buttons */}
-              {!isTransferMode && !isSubstitutionMode && !is12thManMode && !isConfirmed && (
+              {/* Confirm / Reset / Join League Action Buttons */}
+              {!isTransferMode && !isSubstitutionMode && !is12thManMode && (
                 <div className="flex items-center justify-center gap-4 mt-6 px-4">
-                  <button
-                    onClick={handleReset}
-                    disabled={!initialSquadState || isSaving}
-                    className="px-6 py-2 rounded-xl border border-white/20 text-white/80 text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Reset
-                  </button>
-                  <div className="relative group">
-                    <button
-                      onClick={handleConfirm}
-                      disabled={isSaving}
-                      className="px-8 py-2 rounded-xl bg-[#c8f000] text-black text-xs font-black uppercase tracking-widest hover:bg-[#d4ff00] transition-colors shadow-lg shadow-[#c8f000]/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  {!isConfirmed ? (
+                    <>
+                      <button
+                        onClick={handleReset}
+                        disabled={!initialSquadState || isSaving}
+                        className="px-6 py-2 rounded-xl border border-white/20 text-white/80 text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Reset
+                      </button>
+                      <div className="relative group">
+                        <button
+                          onClick={handleConfirm}
+                          disabled={isSaving}
+                          className="px-8 py-2 rounded-xl bg-[#c8f000] text-black text-xs font-black uppercase tracking-widest hover:bg-[#d4ff00] transition-colors shadow-lg shadow-[#c8f000]/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                        >
+                          {isSaving && (
+                            <div className="w-3 h-3 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                          )}
+                          Confirm
+                        </button>
+                        <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 bg-black/80 backdrop-blur-sm text-white text-[10px] font-bold px-3 py-2 rounded-md text-center leading-tight w-[200px] border border-[#f5a623]/30 shadow-lg pointer-events-none z-50">
+                          Clicking the confirm button will Lock your Squad for the Gameweek.
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <Link
+                      href="/leaderboard"
+                      className="px-8 py-3 rounded-xl bg-[#3b82f6] text-white text-sm font-black uppercase tracking-widest hover:bg-[#2563eb] transition-all hover:scale-105 shadow-lg shadow-[#3b82f6]/20 flex items-center justify-center gap-2"
                     >
-                      {isSaving && (
-                        <div className="w-3 h-3 border-2 border-black border-t-transparent rounded-full animate-spin" />
-                      )}
-                      Confirm
-                    </button>
-                    <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 bg-black/80 backdrop-blur-sm text-white text-[10px] font-bold px-3 py-2 rounded-md text-center leading-tight w-[200px] border border-[#f5a623]/30 shadow-lg pointer-events-none z-50">
-                      Clicking the confirm button will Lock your Squad for the Gameweek.
-                    </div>
-                  </div>
+                      Join League
+                    </Link>
+                  )}
                 </div>
               )}
 

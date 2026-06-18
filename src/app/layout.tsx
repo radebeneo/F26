@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { ToastProvider } from "@/components/ui/toast";
 
 const fwcSans = localFont({
   src: [
@@ -113,7 +114,9 @@ export default function RootLayout({
     // `dark` class enables dark-first design via Tailwind darkMode: 'class'
     <html lang="en" className="dark" suppressHydrationWarning>
       <body className={`${fwcSans.variable} ${fwcDisplay.variable} ${fwcSemiExpanded.variable} ${fwcCondensed.variable} ${fwcUltraCondensed.variable} antialiased min-h-screen bg-navy-gradient font-sans`}>
-        {children}
+        <ToastProvider>
+          {children}
+        </ToastProvider>
       </body>
     </html>
   );

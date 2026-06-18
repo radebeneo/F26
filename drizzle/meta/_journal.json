@@ -15,6 +15,20 @@
       "when": 1781793605508,
       "tag": "0001_swift_the_liberteens",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1781796888526,
+      "tag": "0002_hard_ben_parker",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1781799655631,
+      "tag": "0003_nappy_ronan",
+      "breakpoints": true
     }
   ]
 }

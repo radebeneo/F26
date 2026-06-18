@@ -7,6 +7,7 @@ import { eq, sql } from "drizzle-orm";
 import { ALL_PLAYERS } from "./seeds/players";
 import { gameweeks as gameweeksData } from "./seeds/gameweeks";
 import { fixtures as fixturesData } from "./seeds/fixtures";
+import { seedLeagues } from "./seeds/leagues";
 
 async function main() {
   console.log("🌱 Starting database seed...");
@@ -112,6 +113,9 @@ async function main() {
     }
     console.log(`Updated ${toUpdate.length} existing players.`);
   }
+
+  // 4. Seed Leagues
+  await seedLeagues();
 
   console.log("✅ Seeding complete.");
   process.exit(0);
