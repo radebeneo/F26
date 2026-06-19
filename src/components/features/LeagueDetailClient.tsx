@@ -176,13 +176,6 @@ export function LeagueDetailClient({
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="text-sm font-bold transition-colors uppercase tracking-wide text-white/60 hover:text-white"
               >
-                Squad Builder
-              </Link>
-              <Link
-                href="/dashboard"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="text-sm font-bold transition-colors uppercase tracking-wide text-white/60 hover:text-white"
-              >
                 My Squad
               </Link>
               <Link
