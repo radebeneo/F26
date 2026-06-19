@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 
@@ -69,9 +69,13 @@ export async function registerAction(
     return { error: "That team name is already taken. Please choose another." };
   }
 
-  // 3. Sign the user in immediately — no email confirmation required.
-  //    Email confirmation is disabled; the @ogilvy.co.za domain guard
-  //    is the sole gating mechanism for registration.
+  // 3. Auto-confirm the email via the Admin API so the user never has
+  //    to wait for a confirmation email. The @ogilvy.co.za domain guard
+  //    above is the sole gating mechanism for registration.
+  const adminClient = await createAdminClient();
+  await adminClient.auth.admin.updateUser(userId, { email_confirm: true });
+
+  // 4. Sign the user in immediately.
   const { error: signInError } = await supabase.auth.signInWithPassword({
     email,
     password,
