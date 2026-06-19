@@ -33,7 +33,7 @@ type AuthFormProps = {
   message?: string;
 };
 
-export function AuthForm({ mode, action, message: _message }: AuthFormProps) {
+export function AuthForm({ mode, action }: AuthFormProps) {
   const [state, formAction] = useFormState(action, null);
   const [showPassword, setShowPassword] = React.useState(false);
   const [showConfirm, setShowConfirm] = React.useState(false);

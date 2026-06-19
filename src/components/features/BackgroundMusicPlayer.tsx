@@ -105,7 +105,7 @@ export function BackgroundMusicPlayer() {
       }, FADE_DURATION_MS / FADE_STEPS);
 
       return true;
-    } catch (_err) {
+    } catch {
       console.warn("Autoplay still prevented. Waiting for next interaction.");
       return false;
     }
