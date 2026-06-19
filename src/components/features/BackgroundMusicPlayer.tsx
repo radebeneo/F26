@@ -230,8 +230,14 @@ export function BackgroundMusicPlayer() {
     <audio
       ref={audioRef}
       src={shuffledTracks[currentTrackIndex]}
+      crossOrigin="anonymous"
+      preload="none"
       onTimeUpdate={handleTimeUpdate}
       onEnded={fadeOutAndNext} // Fallback in case timeupdate misses the threshold
+      onError={(e) => {
+        const mediaEl = e.currentTarget as HTMLAudioElement;
+        console.warn("[MusicPlayer] Audio error:", mediaEl.error?.code, mediaEl.error?.message, mediaEl.src);
+      }}
     />
   );
 }
