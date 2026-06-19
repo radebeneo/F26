@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import { validateAllowedEmail } from "@/lib/domain";
@@ -44,15 +44,9 @@ export async function registerAction(
   const supabase = await createClient();
 
   // 1. Create the Supabase Auth account.
-  //    Email confirmation is ON — Supabase will send a confirmation link
-  //    through Resend (custom SMTP). We do NOT auto-confirm here.
   const { data, error: signUpError } = await supabase.auth.signUp({
     email,
     password,
-    options: {
-      // After the user clicks the confirmation link, land them on /dashboard.
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/callback`,
-    },
   });
 
   if (signUpError) {
@@ -78,7 +72,21 @@ export async function registerAction(
     return { error: "That team name is already taken. Please choose another." };
   }
 
-  // 3. Redirect to the "check your inbox" page.
-  //    The user must click the Resend confirmation link before they can log in.
-  redirect(`/auth/verify-email?email=${encodeURIComponent(email)}`);
+  // 3. Auto-confirm the email via the Admin API.
+  //    This bypasses Supabase's email system entirely so we don't hit rate limits or need DNS.
+  const adminClient = await createAdminClient();
+  await adminClient.auth.admin.updateUserById(userId, { email_confirm: true });
+
+  // 4. Sign the user in immediately.
+  const { error: signInError } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (signInError) {
+    // Account created but auto-login failed — send to login page.
+    redirect("/auth/login");
+  }
+
+  redirect("/dashboard");
 }

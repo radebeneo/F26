@@ -30,10 +30,7 @@ export async function loginAction(
 
   if (error) {
     if (error.message.includes("Email not confirmed")) {
-      return {
-        error:
-          "Your email address hasn't been confirmed yet. Check your Ogilvy inbox for the confirmation link.",
-      };
+      return { error: "Please verify your email address before logging in." };
     }
     return { error: error.message };
   }
