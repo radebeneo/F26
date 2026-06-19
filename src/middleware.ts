@@ -7,10 +7,14 @@
  *
  * Protects /dashboard and /squad routes: unauthenticated users are
  * redirected to /auth/login.
+ *
+ * Also enforces the @ogilvy.co.za domain allowlist for authenticated
+ * sessions — last line of defence against accounts created outside the app.
  */
 
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { isAllowedDomain } from "@/lib/domain";
 
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
@@ -41,8 +45,20 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Protected routes
   const pathname = request.nextUrl.pathname;
+
+  // Domain enforcement for authenticated users.
+  // If a session exists but the email is not from an allowed domain,
+  // sign the user out and send them back to the login page.
+  if (user && user.email && !isAllowedDomain(user.email)) {
+    await supabase.auth.signOut();
+    const url = request.nextUrl.clone();
+    url.pathname = "/auth/login";
+    url.searchParams.set("error", "unauthorised_domain");
+    return NextResponse.redirect(url);
+  }
+
+  // Protected routes
   const isProtected =
     pathname.startsWith("/dashboard") || pathname.startsWith("/squad");
 
@@ -75,3 +91,4 @@ export const config = {
     "/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };
+

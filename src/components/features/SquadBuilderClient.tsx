@@ -9,13 +9,14 @@
  */
 
 import { useState, useEffect, useRef } from "react";
-import { LogOut, Menu, X } from "lucide-react";
+import { LogOut, Menu, X, HelpCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { PlayerSelectionPanel } from "@/components/features/PlayerSelectionPanel";
 import { SquadSelectionPanel } from "@/components/features/SquadSelectionPanel";
 import { MySquadView } from "@/components/features/MySquadView";
+import { HowToPlayModal } from "@/components/features/HowToPlayModal";
 import { ToastProvider, useToast } from "@/components/ui/toast";
 import { useSquadStore } from "@/store/squadStore";
 import type { Player } from "@/db/schema";
@@ -56,6 +57,7 @@ function SquadBuilderInner({
   const [view, setView] = useState<ViewMode>(hasExistingSquad ? "mySquad" : "builder");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isHowToPlayOpen, setIsHowToPlayOpen] = useState(false);
 
   // Initialize the squad store with the user's existing players
   const initialized = useRef(false);
@@ -122,16 +124,21 @@ function SquadBuilderInner({
   };
 
   // Nav links — Squad Builder is hidden once the user has a saved squad
-  const navLinks: { label: string; target?: ViewMode; href?: string }[] = [
+  const navLinks: { label: string; target?: ViewMode; href?: string; action?: () => void }[] = [
     ...(!squadSaved ? [{ label: "Squad Builder", target: "builder" as ViewMode }] : []),
     { label: "My Squad", target: "mySquad" as ViewMode },
     { label: "Fixtures", href: "/fixtures" },
     { label: "Leaderboard", href: "/leaderboard" },
-    { label: "How to Play", href: "/how-to-play" },
+    { label: "How to Play", action: () => setIsHowToPlayOpen(true) },
   ];
 
   return (
     <div className="squad-builder-root" id="squad-builder-root">
+      {/* ── How to Play modal (auto-shows on first sign-in) ── */}
+      <HowToPlayModal
+        forceOpen={isHowToPlayOpen}
+        onClose={() => setIsHowToPlayOpen(false)}
+      />
       {/* ── Sticky top nav ── */}
       <header className="squad-nav">
         <div className="squad-nav-inner">
@@ -144,7 +151,7 @@ function SquadBuilderInner({
 
           {/* Nav links */}
           <nav className="hidden md:flex items-center gap-6">
-            {navLinks.map(({ label, target, href }) => {
+            {navLinks.map(({ label, target, href, action }) => {
               if (href) {
                 return (
                   <Link
@@ -154,6 +161,19 @@ function SquadBuilderInner({
                   >
                     {label}
                   </Link>
+                );
+              }
+              if (action) {
+                return (
+                  <button
+                    key={label}
+                    id="btn-how-to-play-nav"
+                    onClick={action}
+                    className="flex items-center gap-1.5 text-xs font-bold transition-colors uppercase tracking-wide text-white/60 hover:text-white"
+                  >
+                    <HelpCircle size={13} />
+                    {label}
+                  </button>
                 );
               }
               return (
@@ -207,7 +227,7 @@ function SquadBuilderInner({
             className="md:hidden bg-[#0a0a0a] border-b border-white/10 overflow-hidden absolute top-[52px] left-0 w-full z-40"
           >
             <div className="flex flex-col py-4 px-6 gap-4">
-              {navLinks.map(({ label, target, href }) => {
+              {navLinks.map(({ label, target, href, action }) => {
                 if (href) {
                   return (
                     <Link
@@ -218,6 +238,18 @@ function SquadBuilderInner({
                     >
                       {label}
                     </Link>
+                  );
+                }
+                if (action) {
+                  return (
+                    <button
+                      key={label}
+                      onClick={() => { action(); setIsMobileMenuOpen(false); }}
+                      className="flex items-center gap-1.5 text-sm font-bold transition-colors uppercase tracking-wide text-left text-white/60 hover:text-white"
+                    >
+                      <HelpCircle size={14} />
+                      {label}
+                    </button>
                   );
                 }
                 return (

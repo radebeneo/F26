@@ -1,9 +1,10 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { createClient, createAdminClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import { db } from "@/db";
 import { users } from "@/db/schema";
+import { validateAllowedEmail } from "@/lib/domain";
 
 type FormState = { error?: string } | null;
 
@@ -34,16 +35,24 @@ export async function registerAction(
   if (password.length < 8) {
     return { error: "Password must be at least 8 characters." };
   }
-  if (!email || !email.toLowerCase().endsWith("@ogilvy.co.za")) {
-    return { error: "Only @ogilvy.co.za email addresses are allowed." };
+  // Server-side email validation: format + domain allowlist
+  const emailCheck = validateAllowedEmail(email ?? "");
+  if (!emailCheck.valid) {
+    return { error: emailCheck.reason };
   }
 
   const supabase = await createClient();
 
-  // 1. Create Supabase Auth account
+  // 1. Create the Supabase Auth account.
+  //    Email confirmation is ON — Supabase will send a confirmation link
+  //    through Resend (custom SMTP). We do NOT auto-confirm here.
   const { data, error: signUpError } = await supabase.auth.signUp({
     email,
     password,
+    options: {
+      // After the user clicks the confirmation link, land them on /dashboard.
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/callback`,
+    },
   });
 
   if (signUpError) {
@@ -55,7 +64,7 @@ export async function registerAction(
     return { error: "Registration failed. Please try again." };
   }
 
-  // 2. Insert into our users table (links auth UUID → team name)
+  // 2. Insert into our users table (links auth UUID → team name).
   try {
     await db.insert(users).values({
       id: userId,
@@ -65,26 +74,11 @@ export async function registerAction(
       favoriteCountry,
     });
   } catch {
-    // If team name already taken, the unique constraint fires
+    // Unique constraint on teamName fired.
     return { error: "That team name is already taken. Please choose another." };
   }
 
-  // 3. Auto-confirm the email via the Admin API so the user never has
-  //    to wait for a confirmation email. The @ogilvy.co.za domain guard
-  //    above is the sole gating mechanism for registration.
-  const adminClient = await createAdminClient();
-  await adminClient.auth.admin.updateUserById(userId, { email_confirm: true });
-
-  // 4. Sign the user in immediately.
-  const { error: signInError } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
-
-  if (signInError) {
-    // Account created but auto-login failed — send to login page.
-    redirect("/auth/login");
-  }
-
-  redirect("/dashboard");
+  // 3. Redirect to the "check your inbox" page.
+  //    The user must click the Resend confirmation link before they can log in.
+  redirect(`/auth/verify-email?email=${encodeURIComponent(email)}`);
 }
