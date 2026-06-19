@@ -35,7 +35,6 @@ const ALL_PLAYERS: ScoringSection[] = [
       { action: "Yellow card", points: "-1" },
       { action: "Red card", points: "-2" },
       { action: "Own goal", points: "-2" },
-      { action: "Winning a penalty", points: "+2" },
       { action: "Conceding a penalty", points: "-1" },
     ],
   },
