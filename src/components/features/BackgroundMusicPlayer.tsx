@@ -62,7 +62,7 @@ export function BackgroundMusicPlayer() {
   const [shuffledTracks, setShuffledTracks] = useState<string[]>([]);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
 
-  const TARGET_VOLUME = 0.05;
+  const TARGET_VOLUME = 0.20;
   const FADE_DURATION_MS = 2000;
   const FADE_STEPS = 30;
 
