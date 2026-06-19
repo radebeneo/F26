@@ -73,7 +73,7 @@ export async function registerAction(
   //    to wait for a confirmation email. The @ogilvy.co.za domain guard
   //    above is the sole gating mechanism for registration.
   const adminClient = await createAdminClient();
-  await adminClient.auth.admin.updateUser(userId, { email_confirm: true });
+  await adminClient.auth.admin.updateUserById(userId, { email_confirm: true });
 
   // 4. Sign the user in immediately.
   const { error: signInError } = await supabase.auth.signInWithPassword({
