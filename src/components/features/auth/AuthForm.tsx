@@ -80,18 +80,6 @@ export function AuthForm({ mode, action, message }: AuthFormProps) {
         </motion.p>
       </div>
 
-      {/* Success/Info banner */}
-      {message && message === "check-email" && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: "auto" }}
-          className="mb-5 rounded-lg border border-primary/40 bg-primary/10 px-4 py-3 text-sm text-primary"
-          role="alert"
-        >
-          Please check your email to verify your account before logging in.
-        </motion.div>
-      )}
-
       {/* Error banner */}
       {state?.error && (
         <motion.div

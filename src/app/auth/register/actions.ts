@@ -69,9 +69,17 @@ export async function registerAction(
     return { error: "That team name is already taken. Please choose another." };
   }
 
-  // If email confirmation is required, session will be null
-  if (!data.session) {
-    redirect("/auth/login?message=check-email");
+  // 3. Sign the user in immediately — no email confirmation required.
+  //    Email confirmation is disabled; the @ogilvy.co.za domain guard
+  //    is the sole gating mechanism for registration.
+  const { error: signInError } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (signInError) {
+    // Account created but auto-login failed — send to login page.
+    redirect("/auth/login");
   }
 
   redirect("/dashboard");
