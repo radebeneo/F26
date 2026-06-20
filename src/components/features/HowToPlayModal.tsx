@@ -18,7 +18,7 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { X, ChevronRight, ChevronLeft, Users, TrendingUp, Trophy, Star } from "lucide-react";
+import { X, ChevronRight, ChevronLeft, Users, TrendingUp, Trophy, Star, RefreshCw } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 
@@ -241,10 +241,19 @@ const STEPS: Step[] = [
     visual: <ScoreVisual />,
   },
   {
+    id: "transfers",
+    icon: RefreshCw,
+    accentColor: "#f97316",
+    label: "Step 5",
+    heading: "Make Transfers",
+    body: "Transfer players to keep your team fresh. Keep an eye on the “Ones to Watch”!",
+    visual: undefined,
+  },
+  {
     id: "leagues",
     icon: Trophy,
     accentColor: "#a855f7",
-    label: "Step 5",
+    label: "Step 6",
     heading: "Challenge Your Friends",
     body: "Create or join a private league with your friends and colleagues. Compete on the global leaderboard — 8 gameweeks, one champion.",
     visual: undefined,
