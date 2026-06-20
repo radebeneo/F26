@@ -18,7 +18,7 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { X, ChevronRight, ChevronLeft, Users, TrendingUp, Trophy, Star, RefreshCw } from "lucide-react";
+import { X, ChevronRight, ChevronLeft, Users, TrendingUp, Trophy, Star } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 
@@ -101,8 +101,8 @@ function PlayersVisual() {
             i === 2
               ? "w-[68px] h-[92px]"
               : i === 1 || i === 3
-              ? "w-[60px] h-[80px]"
-              : "w-[52px] h-[68px]"
+                ? "w-[60px] h-[80px]"
+                : "w-[52px] h-[68px]"
           )}
         >
           <Image
@@ -219,7 +219,7 @@ const STEPS: Step[] = [
     accentColor: "#36b9ff",
     label: "Step 2",
     heading: "Maximise Your Performance",
-    body: "Pick from world-class stars across 48 nations. Use transfers and boosters between gameweeks to stay ahead of the competition.",
+    body: "Pick from world-class stars across 48 nations. Use transfers, substitutions and boosters between gameweeks to stay ahead of the competition.",
     visual: <PlayersVisual />,
   },
   {
@@ -241,19 +241,10 @@ const STEPS: Step[] = [
     visual: <ScoreVisual />,
   },
   {
-    id: "transfers",
-    icon: RefreshCw,
-    accentColor: "#f97316",
-    label: "Step 5",
-    heading: "Make Transfers",
-    body: "Transfer players to keep your team fresh. Keep an eye on the “Ones to Watch”!",
-    visual: undefined,
-  },
-  {
     id: "leagues",
     icon: Trophy,
     accentColor: "#a855f7",
-    label: "Step 6",
+    label: "Step 5",
     heading: "Challenge Your Friends",
     body: "Create or join a private league with your friends and colleagues. Compete on the global leaderboard — 8 gameweeks, one champion.",
     visual: undefined,
