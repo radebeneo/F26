@@ -1055,14 +1055,14 @@
     },
     {
         "id": 2,
-        "status": "scheduled",
+        "status": "playing",
         "startDate": "2026-06-18T17:00:00+01:00",
         "endDate": "2026-06-24T05:00:00+01:00",
         "tournaments": [
             {
                 "id": 25,
-                "period": "pre_match",
-                "minutes": 0,
+                "period": "full_time",
+                "minutes": 98,
                 "extraMinutes": 0,
                 "venueName": "Mercedes-benz Stadium",
                 "venueCity": "Atlanta, Georgia",
@@ -1070,7 +1070,7 @@
                 "venueCityTranslationKey": null,
                 "venueId": 13,
                 "date": "2026-06-18T17:00:00+01:00",
-                "status": "scheduled",
+                "status": "complete",
                 "isSuspended": false,
                 "homeSquadId": 15,
                 "awaySquadId": 40,
@@ -1078,17 +1078,29 @@
                 "awaySquadName": "South Africa",
                 "homeSquadAbbr": "CZE",
                 "awaySquadAbbr": "RSA",
-                "homeScore": null,
-                "homePenaltyScore": null,
-                "homeGoalScorersAssists": null,
-                "awayScore": null,
-                "awayPenaltyScore": null,
-                "awayGoalScorersAssists": null
+                "homeScore": 1,
+                "homePenaltyScore": 0,
+                "homeGoalScorersAssists": [
+                    {
+                        "playerId": 395,
+                        "assistId": 1411,
+                        "isOwnGoal": false
+                    }
+                ],
+                "awayScore": 1,
+                "awayPenaltyScore": 0,
+                "awayGoalScorersAssists": [
+                    {
+                        "playerId": 1058,
+                        "assistId": null,
+                        "isOwnGoal": false
+                    }
+                ]
             },
             {
                 "id": 26,
-                "period": "pre_match",
-                "minutes": 0,
+                "period": "full_time",
+                "minutes": 98,
                 "extraMinutes": 0,
                 "venueName": "Sofi Stadium",
                 "venueCity": "Inglewood, California",
@@ -1096,7 +1108,7 @@
                 "venueCityTranslationKey": null,
                 "venueId": 4,
                 "date": "2026-06-18T20:00:00+01:00",
-                "status": "scheduled",
+                "status": "complete",
                 "isSuspended": false,
                 "homeSquadId": 43,
                 "awaySquadId": 6,
@@ -1104,17 +1116,44 @@
                 "awaySquadName": "Bosnia and Herzegovina",
                 "homeSquadAbbr": "SUI",
                 "awaySquadAbbr": "BIH",
-                "homeScore": null,
-                "homePenaltyScore": null,
-                "homeGoalScorersAssists": null,
-                "awayScore": null,
-                "awayPenaltyScore": null,
-                "awayGoalScorersAssists": null
+                "homeScore": 4,
+                "homePenaltyScore": 0,
+                "homeGoalScorersAssists": [
+                    {
+                        "playerId": 1133,
+                        "assistId": null,
+                        "isOwnGoal": false
+                    },
+                    {
+                        "playerId": 1158,
+                        "assistId": 1149,
+                        "isOwnGoal": false
+                    },
+                    {
+                        "playerId": 1133,
+                        "assistId": 1158,
+                        "isOwnGoal": false
+                    },
+                    {
+                        "playerId": 1135,
+                        "assistId": null,
+                        "isOwnGoal": false
+                    }
+                ],
+                "awayScore": 1,
+                "awayPenaltyScore": 0,
+                "awayGoalScorersAssists": [
+                    {
+                        "playerId": 1342,
+                        "assistId": null,
+                        "isOwnGoal": false
+                    }
+                ]
             },
             {
                 "id": 27,
-                "period": "pre_match",
-                "minutes": 0,
+                "period": "full_time",
+                "minutes": 100,
                 "extraMinutes": 0,
                 "venueName": "Bc Place",
                 "venueCity": "Vancouver",
@@ -1122,7 +1161,7 @@
                 "venueCityTranslationKey": null,
                 "venueId": 8,
                 "date": "2026-06-18T23:00:00+01:00",
-                "status": "scheduled",
+                "status": "complete",
                 "isSuspended": false,
                 "homeSquadId": 9,
                 "awaySquadId": 36,
@@ -1130,17 +1169,48 @@
                 "awaySquadName": "Qatar",
                 "homeSquadAbbr": "CAN",
                 "awaySquadAbbr": "QAT",
-                "homeScore": null,
-                "homePenaltyScore": null,
-                "homeGoalScorersAssists": null,
-                "awayScore": null,
-                "awayPenaltyScore": null,
+                "homeScore": 6,
+                "homePenaltyScore": 0,
+                "homeGoalScorersAssists": [
+                    {
+                        "playerId": 227,
+                        "assistId": null,
+                        "isOwnGoal": false
+                    },
+                    {
+                        "playerId": 226,
+                        "assistId": null,
+                        "isOwnGoal": false
+                    },
+                    {
+                        "playerId": 226,
+                        "assistId": null,
+                        "isOwnGoal": false
+                    },
+                    {
+                        "playerId": 241,
+                        "assistId": null,
+                        "isOwnGoal": false
+                    },
+                    {
+                        "playerId": 942,
+                        "assistId": null,
+                        "isOwnGoal": true
+                    },
+                    {
+                        "playerId": 226,
+                        "assistId": 241,
+                        "isOwnGoal": false
+                    }
+                ],
+                "awayScore": 0,
+                "awayPenaltyScore": 0,
                 "awayGoalScorersAssists": null
             },
             {
                 "id": 28,
-                "period": "pre_match",
-                "minutes": 0,
+                "period": "full_time",
+                "minutes": 97,
                 "extraMinutes": 0,
                 "venueName": "Estadio Akron",
                 "venueCity": "Guadalajara",
@@ -1148,7 +1218,7 @@
                 "venueCityTranslationKey": null,
                 "venueId": 2,
                 "date": "2026-06-19T02:00:00+01:00",
-                "status": "scheduled",
+                "status": "complete",
                 "isSuspended": false,
                 "homeSquadId": 28,
                 "awaySquadId": 27,
@@ -1156,17 +1226,23 @@
                 "awaySquadName": "Korea Republic",
                 "homeSquadAbbr": "MEX",
                 "awaySquadAbbr": "KOR",
-                "homeScore": null,
-                "homePenaltyScore": null,
-                "homeGoalScorersAssists": null,
-                "awayScore": null,
-                "awayPenaltyScore": null,
+                "homeScore": 1,
+                "homePenaltyScore": 0,
+                "homeGoalScorersAssists": [
+                    {
+                        "playerId": 1478,
+                        "assistId": null,
+                        "isOwnGoal": false
+                    }
+                ],
+                "awayScore": 0,
+                "awayPenaltyScore": 0,
                 "awayGoalScorersAssists": null
             },
             {
                 "id": 29,
-                "period": "pre_match",
-                "minutes": 0,
+                "period": "full_time",
+                "minutes": 99,
                 "extraMinutes": 0,
                 "venueName": "Lumen Field",
                 "venueCity": "Seattle, Washington",
@@ -1174,7 +1250,7 @@
                 "venueCityTranslationKey": null,
                 "venueId": 14,
                 "date": "2026-06-19T20:00:00+01:00",
-                "status": "scheduled",
+                "status": "complete",
                 "isSuspended": false,
                 "homeSquadId": 47,
                 "awaySquadId": 3,
@@ -1182,17 +1258,28 @@
                 "awaySquadName": "Australia",
                 "homeSquadAbbr": "USA",
                 "awaySquadAbbr": "AUS",
-                "homeScore": null,
-                "homePenaltyScore": null,
-                "homeGoalScorersAssists": null,
-                "awayScore": null,
-                "awayPenaltyScore": null,
+                "homeScore": 2,
+                "homePenaltyScore": 0,
+                "homeGoalScorersAssists": [
+                    {
+                        "playerId": 61,
+                        "assistId": null,
+                        "isOwnGoal": true
+                    },
+                    {
+                        "playerId": 1264,
+                        "assistId": null,
+                        "isOwnGoal": false
+                    }
+                ],
+                "awayScore": 0,
+                "awayPenaltyScore": 0,
                 "awayGoalScorersAssists": null
             },
             {
                 "id": 30,
-                "period": "pre_match",
-                "minutes": 0,
+                "period": "full_time",
+                "minutes": 97,
                 "extraMinutes": 0,
                 "venueName": "Gillette Stadium",
                 "venueCity": "Foxborough, Massachusetts",
@@ -1200,7 +1287,7 @@
                 "venueCityTranslationKey": null,
                 "venueId": 7,
                 "date": "2026-06-19T23:00:00+01:00",
-                "status": "scheduled",
+                "status": "complete",
                 "isSuspended": false,
                 "homeSquadId": 38,
                 "awaySquadId": 29,
@@ -1208,17 +1295,23 @@
                 "awaySquadName": "Morocco",
                 "homeSquadAbbr": "SCO",
                 "awaySquadAbbr": "MAR",
-                "homeScore": null,
-                "homePenaltyScore": null,
+                "homeScore": 0,
+                "homePenaltyScore": 0,
                 "homeGoalScorersAssists": null,
-                "awayScore": null,
-                "awayPenaltyScore": null,
-                "awayGoalScorersAssists": null
+                "awayScore": 1,
+                "awayPenaltyScore": 0,
+                "awayGoalScorersAssists": [
+                    {
+                        "playerId": 792,
+                        "assistId": 2020,
+                        "isOwnGoal": false
+                    }
+                ]
             },
             {
                 "id": 31,
-                "period": "pre_match",
-                "minutes": 0,
+                "period": "full_time",
+                "minutes": 96,
                 "extraMinutes": 0,
                 "venueName": "Lincoln Financial Field",
                 "venueCity": "Philadelphia, Pennsylvania",
@@ -1226,7 +1319,7 @@
                 "venueCityTranslationKey": null,
                 "venueId": 11,
                 "date": "2026-06-20T01:30:00+01:00",
-                "status": "scheduled",
+                "status": "complete",
                 "isSuspended": false,
                 "homeSquadId": 7,
                 "awaySquadId": 22,
@@ -1234,17 +1327,33 @@
                 "awaySquadName": "Haiti",
                 "homeSquadAbbr": "BRA",
                 "awaySquadAbbr": "HAI",
-                "homeScore": null,
-                "homePenaltyScore": null,
-                "homeGoalScorersAssists": null,
-                "awayScore": null,
-                "awayPenaltyScore": null,
+                "homeScore": 3,
+                "homePenaltyScore": 0,
+                "homeGoalScorersAssists": [
+                    {
+                        "playerId": 174,
+                        "assistId": null,
+                        "isOwnGoal": false
+                    },
+                    {
+                        "playerId": 174,
+                        "assistId": 173,
+                        "isOwnGoal": false
+                    },
+                    {
+                        "playerId": 173,
+                        "assistId": 190,
+                        "isOwnGoal": false
+                    }
+                ],
+                "awayScore": 0,
+                "awayPenaltyScore": 0,
                 "awayGoalScorersAssists": null
             },
             {
                 "id": 32,
-                "period": "pre_match",
-                "minutes": 0,
+                "period": "full_time",
+                "minutes": 99,
                 "extraMinutes": 0,
                 "venueName": "Levi's Stadium",
                 "venueCity": "Santa Clara, California",
@@ -1252,7 +1361,7 @@
                 "venueCityTranslationKey": null,
                 "venueId": 5,
                 "date": "2026-06-20T04:00:00+01:00",
-                "status": "scheduled",
+                "status": "complete",
                 "isSuspended": false,
                 "homeSquadId": 45,
                 "awaySquadId": 34,
@@ -1260,12 +1369,18 @@
                 "awaySquadName": "Paraguay",
                 "homeSquadAbbr": "TUR",
                 "awaySquadAbbr": "PAR",
-                "homeScore": null,
-                "homePenaltyScore": null,
+                "homeScore": 0,
+                "homePenaltyScore": 0,
                 "homeGoalScorersAssists": null,
-                "awayScore": null,
-                "awayPenaltyScore": null,
-                "awayGoalScorersAssists": null
+                "awayScore": 1,
+                "awayPenaltyScore": 0,
+                "awayGoalScorersAssists": [
+                    {
+                        "playerId": 890,
+                        "assistId": 912,
+                        "isOwnGoal": false
+                    }
+                ]
             },
             {
                 "id": 33,
