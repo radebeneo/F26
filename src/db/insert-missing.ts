@@ -22,6 +22,17 @@ const reverseSquadMap: Record<number, string> = Object.fromEntries(
   Object.entries(squadMap).map(([k, v]) => [v, k])
 );
 
+interface OfficialPlayer {
+  id: number;
+  firstName?: string;
+  lastName?: string;
+  position: string;
+  squadId: number;
+  price?: number;
+  status: string;
+  stats?: { totalPoints?: number };
+}
+
 async function main() {
   const jsonRaw = fs.readFileSync("./public/official/official_players.json", "utf-8");
   const officialPlayers = JSON.parse(jsonRaw);
@@ -29,12 +40,12 @@ async function main() {
   const dbPlayers = await db.select().from(players);
   const dbPlayerIds = new Set(dbPlayers.map(p => p.id));
   
-  const missing = officialPlayers.filter((op: any) => !dbPlayerIds.has(op.id));
+  const missing = officialPlayers.filter((op: OfficialPlayer) => !dbPlayerIds.has(op.id));
   
   console.log(`Found ${missing.length} players to insert.`);
   
   if (missing.length > 0) {
-    const toInsert = missing.map((op: any) => ({
+    const toInsert = missing.map((op: OfficialPlayer) => ({
       id: op.id,
       firstName: op.firstName || "",
       lastName: op.lastName || "",

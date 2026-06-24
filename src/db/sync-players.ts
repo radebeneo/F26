@@ -7,6 +7,15 @@ import { db } from "./index";
 import { players } from "./schema";
 import { eq } from "drizzle-orm";
 
+interface OfficialPlayer {
+  id: number;
+  firstName?: string;
+  lastName?: string;
+  price?: number;
+  status: string;
+  stats?: { totalPoints?: number };
+}
+
 async function main() {
   console.log("Starting player sync with official_players.json...");
   
@@ -20,7 +29,7 @@ async function main() {
   console.log(`Found ${dbPlayers.length} players in the database. Syncing...`);
 
   for (const dbP of dbPlayers) {
-    const jsonP = officialPlayers.find((op: any) => op.id === dbP.id);
+    const jsonP = officialPlayers.find((op: OfficialPlayer) => op.id === dbP.id);
     
     if (jsonP) {
       // Update names, price, and availability based on the JSON

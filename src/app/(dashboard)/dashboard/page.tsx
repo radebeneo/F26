@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/db";
 import { users, players, gameweeks, userSquads, fixtures, userLeagues } from "@/db/schema";
-import { eq, asc, desc, and, ne } from "drizzle-orm";
+import { eq, asc, desc, ne } from "drizzle-orm";
 import { SquadBuilderClient } from "@/components/features/SquadBuilderClient";
 import type { SquadState } from "@/store/squadStore";
 
