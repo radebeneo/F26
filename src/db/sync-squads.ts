@@ -3,7 +3,7 @@ config({ path: ".env.local" });
 
 import { db } from "./index";
 import { userSquads, userSquadPlayers, users } from "./schema";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 
 async function main() {
   console.log("Starting squad sync...");

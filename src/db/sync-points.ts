@@ -49,7 +49,7 @@ async function main() {
         const playerGwPoints = roundPointsObj[gwIdStr] || 0;
 
         // A player scores if they are a starter
-        let isScoring = sp.isStarter;
+        const isScoring = sp.isStarter;
 
         if (isScoring) {
           let multiplier = 1;
