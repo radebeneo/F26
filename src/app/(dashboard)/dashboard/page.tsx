@@ -78,10 +78,8 @@ export default async function DashboardPage() {
 
   if (dbUser && currentGw) {
     const existingSquad = await db.query.userSquads.findFirst({
-      where: and(
-        eq(userSquads.userId, dbUser.id),
-        eq(userSquads.gameweekId, currentGw.id)
-      ),
+      where: eq(userSquads.userId, dbUser.id),
+      orderBy: desc(userSquads.gameweekId),
       with: {
         players: {
           with: { player: true },

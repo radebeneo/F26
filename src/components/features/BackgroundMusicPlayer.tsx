@@ -50,7 +50,9 @@ const TRACKS = [
   "https://ufvsbuasgzituhoyvrfv.supabase.co/storage/v1/object/public/audio/Way%20down%20We%20Go%20-%20KALEO.mp3",
   "https://ufvsbuasgzituhoyvrfv.supabase.co/storage/v1/object/public/audio/Welcome%20To%20Jamrock%20-%20Damian%20Marley.mp3",
   "https://ufvsbuasgzituhoyvrfv.supabase.co/storage/v1/object/public/audio/Where%20&%20When%20-%20P%20Money.mp3",
-  "https://ufvsbuasgzituhoyvrfv.supabase.co/storage/v1/object/public/audio/Yesterday%20-%20Loyle%20Carner.mp3"
+  "https://ufvsbuasgzituhoyvrfv.supabase.co/storage/v1/object/public/audio/Yesterday%20-%20Loyle%20Carner.mp3",
+  "https://ufvsbuasgzituhoyvrfv.supabase.co/storage/v1/object/public/audio/Pump%20It.mp3",
+  "https://ufvsbuasgzituhoyvrfv.supabase.co/storage/v1/object/public/audio/Mas%20Que%20Nada.mp3"
 ];
 
 export function BackgroundMusicPlayer() {
