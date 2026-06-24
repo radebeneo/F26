@@ -95,7 +95,6 @@ export default async function LeagueDetailPage({ params }: { params: { leagueId:
 
     if (!memberUser) continue;
 
-    // Get all squad records to sum points
     const squads = await db.query.userSquads.findMany({
       where: eq(userSquads.userId, mId),
     });
@@ -104,12 +103,18 @@ export default async function LeagueDetailPage({ params }: { params: { leagueId:
     const currentSq = squads.find(sq => sq.gameweekId === activeGw?.id);
     const rdPts = currentSq ? currentSq.gwPoints : 0;
 
+    const roundPoints: Record<string, number> = {};
+    for (const sq of squads) {
+        roundPoints[sq.gameweekId.toString()] = sq.gwPoints;
+    }
+
     membersData.push({
       id: memberUser.id,
       managerName: memberUser.managerName,
       teamName: memberUser.teamName,
       favoriteCountry: memberUser.favoriteCountry,
       rdPts,
+      roundPoints,
       totalPts,
     });
   }

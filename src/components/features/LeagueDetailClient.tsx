@@ -17,6 +17,7 @@ export interface LeagueMember {
   favoriteCountry: string;
   rdPts: number;
   totalPts: number;
+  roundPoints: Record<string, number>;
 }
 
 export interface LeagueDetail {
@@ -69,7 +70,7 @@ export function LeagueDetailClient({
 
   const membersPerPage = 10;
 
-  // Sort members by Total Points descending
+  // Always sort members by Total Points descending
   const sortedMembers = [...members].sort((a, b) => b.totalPts - a.totalPts);
 
   const totalPages = Math.max(1, Math.ceil(sortedMembers.length / membersPerPage));
@@ -287,6 +288,20 @@ export function LeagueDetailClient({
                       ) : (
                         currentMembers.map((member, idx) => {
                           const rank = (currentPage - 1) * membersPerPage + idx + 1;
+                          
+                          let displayRdPts: string | number = 0;
+                          if (selectedRound === "All") {
+                            displayRdPts = member.totalPts === 0 ? "-" : member.totalPts;
+                          } else {
+                            const pts = member.roundPoints[selectedRound] || 0;
+                            const isCurrentOrFuture = currentRoundId !== null && parseInt(selectedRound) >= currentRoundId;
+                            if (pts === 0 && isCurrentOrFuture) {
+                              displayRdPts = "-";
+                            } else {
+                              displayRdPts = pts;
+                            }
+                          }
+
                           return (
                             <div key={member.id} className="grid grid-cols-12 px-6 py-4 items-center hover:bg-gray-50 transition-colors">
                               <div className="col-span-2 text-center font-bold text-gray-700">
@@ -307,7 +322,7 @@ export function LeagueDetailClient({
                                 </div>
                               </div>
                               <div className="col-span-2 text-center font-bold text-gray-800">
-                                {member.totalPts === 0 ? "-" : member.rdPts}
+                                {displayRdPts}
                               </div>
                               <div className="col-span-2 text-center font-black text-black">
                                 {member.totalPts === 0 ? "-" : member.totalPts}

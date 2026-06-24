@@ -24,6 +24,7 @@ import {
   timestamp,
   unique,
   uuid,
+  jsonb,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
@@ -51,10 +52,14 @@ export const users = pgTable("users", {
   favoriteCountry: text("favorite_country").notNull().default(''),
 });
 
-export const usersRelations = relations(users, ({ many }) => ({
+export const usersRelations = relations(users, ({ one, many }) => ({
   squads: many(userSquads),
   managedLeagues: many(leagues),
   joinedLeagues: many(userLeagues),
+  leaderboard: one(leaderboard, {
+    fields: [users.id],
+    references: [leaderboard.userId],
+  }),
 }));
 
 // ─────────────────────────────────────────────
@@ -320,6 +325,28 @@ export const userLeaguesRelations = relations(userLeagues, ({ one }) => ({
 }));
 
 // ─────────────────────────────────────────────
+// leaderboard
+// ─────────────────────────────────────────────
+
+export const leaderboard = pgTable("leaderboard", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  userId: uuid("user_id")
+    .notNull()
+    .unique()
+    .references(() => users.id),
+  totalPoints: integer("total_points").notNull().default(0),
+  lastRoundPoints: integer("last_round_points").notNull().default(0),
+  roundPoints: jsonb("round_points").notNull().default({}),
+});
+
+export const leaderboardRelations = relations(leaderboard, ({ one }) => ({
+  user: one(users, {
+    fields: [leaderboard.userId],
+    references: [users.id],
+  }),
+}));
+
+// ─────────────────────────────────────────────
 // Exported TypeScript types (inferred from schema)
 // ─────────────────────────────────────────────
 
@@ -349,6 +376,9 @@ export type NewLeague = typeof leagues.$inferInsert;
 
 export type UserLeague = typeof userLeagues.$inferSelect;
 export type NewUserLeague = typeof userLeagues.$inferInsert;
+
+export type Leaderboard = typeof leaderboard.$inferSelect;
+export type NewLeaderboard = typeof leaderboard.$inferInsert;
 
 export type Position = "GK" | "DEF" | "MID" | "FWD";
 export type FixtureStatus = "UPCOMING" | "LIVE" | "FINISHED";
