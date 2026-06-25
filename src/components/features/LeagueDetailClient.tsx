@@ -6,8 +6,9 @@ import { cn } from "@/lib/utils";
 import { useToast } from "@/components/ui/toast";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { LogOut, Menu, X } from "lucide-react";
+import { LogOut, Menu, X, HelpCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { HowToPlayModal } from "@/components/features/HowToPlayModal";
 
 
 export interface LeagueMember {
@@ -64,9 +65,17 @@ export function LeagueDetailClient({
   const [currentPage, setCurrentPage] = useState(1);
   const [isLeaving, setIsLeaving] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isHowToPlayOpen, setIsHowToPlayOpen] = useState(false);
 
   const { toast } = useToast();
   const router = useRouter();
+
+  const navLinks: { label: string; href?: string; action?: () => void }[] = [
+    { label: "My Squad", href: "/dashboard" },
+    { label: "Fixtures", href: "/fixtures" },
+    { label: "Leaderboard", href: "/leaderboard" },
+    { label: "How to Play", action: () => setIsHowToPlayOpen(true) },
+  ];
 
   const membersPerPage = 10;
 
@@ -111,6 +120,12 @@ export function LeagueDetailClient({
 
   return (
     <div className="squad-builder-root" id="leaderboard-root">
+      {/* ── How to Play modal ── */}
+      <HowToPlayModal
+        forceOpen={isHowToPlayOpen}
+        onClose={() => setIsHowToPlayOpen(false)}
+      />
+
       {/* ── Sticky top nav ── */}
       <header className="squad-nav">
         <div className="squad-nav-inner">
@@ -121,24 +136,38 @@ export function LeagueDetailClient({
           </div>
 
           <nav className="hidden md:flex items-center gap-6">
-            <Link
-              href="/dashboard"
-              className="text-xs font-bold transition-colors uppercase tracking-wide text-white/60 hover:text-white"
-            >
-              My Squad
-            </Link>
-            <Link
-              href="/dashboard"
-              className="text-xs font-bold transition-colors uppercase tracking-wide text-white/60 hover:text-white"
-            >
-              Fixtures
-            </Link>
-            <Link
-              href="/leaderboard"
-              className="text-xs font-bold transition-colors uppercase tracking-wide text-[#c8f000]"
-            >
-              Leaderboard
-            </Link>
+            {navLinks.map(({ label, href, action }) => {
+              if (href) {
+                return (
+                  <Link
+                    key={label}
+                    href={href}
+                    className={cn(
+                      "text-xs font-bold transition-colors uppercase tracking-wide",
+                      href === "/leaderboard"
+                        ? "text-[#c8f000]"
+                        : "text-white/60 hover:text-white"
+                    )}
+                  >
+                    {label}
+                  </Link>
+                );
+              }
+              if (action) {
+                return (
+                  <button
+                    key={label}
+                    id="btn-how-to-play-nav"
+                    onClick={action}
+                    className="flex items-center gap-1.5 text-xs font-bold transition-colors uppercase tracking-wide text-white/60 hover:text-white"
+                  >
+                    <HelpCircle size={13} />
+                    {label}
+                  </button>
+                );
+              }
+              return null;
+            })}
           </nav>
 
           <div className="flex items-center gap-4">
@@ -172,20 +201,38 @@ export function LeagueDetailClient({
             className="md:hidden bg-[#0a0a0a] border-b border-white/10 overflow-hidden absolute top-[52px] left-0 w-full z-40"
           >
             <div className="flex flex-col py-4 px-6 gap-4">
-              <Link
-                href="/dashboard"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="text-sm font-bold transition-colors uppercase tracking-wide text-white/60 hover:text-white"
-              >
-                My Squad
-              </Link>
-              <Link
-                href="/leaderboard"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="text-sm font-bold transition-colors uppercase tracking-wide text-[#c8f000]"
-              >
-                Leaderboard
-              </Link>
+              {navLinks.map(({ label, href, action }) => {
+                if (href) {
+                  return (
+                    <Link
+                      key={label}
+                      href={href}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={cn(
+                        "text-sm font-bold transition-colors uppercase tracking-wide",
+                        href === "/leaderboard"
+                          ? "text-[#c8f000]"
+                          : "text-white/60 hover:text-white"
+                      )}
+                    >
+                      {label}
+                    </Link>
+                  );
+                }
+                if (action) {
+                  return (
+                    <button
+                      key={label}
+                      onClick={() => { action(); setIsMobileMenuOpen(false); }}
+                      className="flex items-center gap-1.5 text-sm font-bold transition-colors uppercase tracking-wide text-left text-white/60 hover:text-white"
+                    >
+                      <HelpCircle size={14} />
+                      {label}
+                    </button>
+                  );
+                }
+                return null;
+              })}
               <div className="h-px w-full bg-white/10 my-2" />
               <form action={signOutAction}>
                 <button

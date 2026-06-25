@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/db";
 import { users, gameweeks, userSquads, userSquadPlayers } from "@/db/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, asc } from "drizzle-orm";
 
 const UpdateSquadBody = z.object({
   startingXI: z.array(z.number().int().positive()).length(11, "Exactly 11 starting players required"),
@@ -49,15 +50,24 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: false, error: "User profile not found" }, { status: 404 });
   }
 
-  const gameweek = await db.query.gameweeks.findFirst({
-    where: eq(gameweeks.isCurrent, true),
+  let gameweek = await db.query.gameweeks.findFirst({
+    where: and(eq(gameweeks.isCurrent, true), eq(gameweeks.isFinished, false)),
   });
 
   if (!gameweek) {
-    return NextResponse.json({ success: false, error: "No current gameweek found" }, { status: 500 });
+    gameweek = await db.query.gameweeks.findFirst({
+      where: eq(gameweeks.isFinished, false),
+      orderBy: asc(gameweeks.id),
+    });
+  }
+
+  if (!gameweek) {
+    return NextResponse.json({ success: false, error: "No active gameweek found" }, { status: 500 });
   }
 
   let squadId: string;
+  
+  const finalTwelfthManId = activeBooster === "12th-man" ? (twelfthManId ?? null) : null;
 
   const existingSquad = await db.query.userSquads.findFirst({
     where: and(eq(userSquads.userId, dbUser.id), eq(userSquads.gameweekId, gameweek.id)),
@@ -71,7 +81,7 @@ export async function POST(req: NextRequest) {
         gameweekId: gameweek.id,
         gwPoints: 0,
         activeBooster: activeBooster ?? null,
-        twelfthManId: twelfthManId ?? null,
+        twelfthManId: finalTwelfthManId,
       })
       .returning({ id: userSquads.id });
     
@@ -86,7 +96,7 @@ export async function POST(req: NextRequest) {
       .update(userSquads)
       .set({
         activeBooster: activeBooster ?? null,
-        twelfthManId: twelfthManId ?? null,
+        twelfthManId: finalTwelfthManId,
       })
       .where(eq(userSquads.id, squadId));
 
@@ -116,5 +126,7 @@ export async function POST(req: NextRequest) {
 
   await db.insert(userSquadPlayers).values(squadPlayerRows);
 
+  revalidatePath("/dashboard");
+  
   return NextResponse.json({ success: true }, { status: 200 });
 }

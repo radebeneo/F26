@@ -78,6 +78,8 @@ export const players = pgTable("players", {
   /** false = injured or suspended; UI hides from selection */
   isAvailable: boolean("is_available").notNull().default(true),
   totalPoints: integer("total_points").notNull().default(0),
+  percentSelected: real("percent_selected").notNull().default(0),
+  lastRoundPoints: integer("last_round_points").notNull().default(0),
 });
 
 export const playersRelations = relations(players, ({ many }) => ({

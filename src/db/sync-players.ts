@@ -13,7 +13,8 @@ interface OfficialPlayer {
   lastName?: string;
   price?: number;
   status: string;
-  stats?: { totalPoints?: number };
+  percentSelected?: number;
+  stats?: { totalPoints?: number, lastRoundPoints?: number };
 }
 
 async function main() {
@@ -39,7 +40,9 @@ async function main() {
           lastName: jsonP.lastName,
           price: jsonP.price,
           isAvailable: jsonP.status === "playing",
-          totalPoints: jsonP.stats?.totalPoints || 0
+          totalPoints: jsonP.stats?.totalPoints || 0,
+          percentSelected: jsonP.percentSelected || 0,
+          lastRoundPoints: jsonP.stats?.lastRoundPoints || 0
         })
         .where(eq(players.id, dbP.id));
       updatedCount++;

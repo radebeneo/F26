@@ -12,6 +12,7 @@ import { useState, useEffect, useRef } from "react";
 import { LogOut, Menu, X, HelpCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { PlayerSelectionPanel } from "@/components/features/PlayerSelectionPanel";
 import { SquadSelectionPanel } from "@/components/features/SquadSelectionPanel";
@@ -53,6 +54,7 @@ function SquadBuilderInner({
   hasJoinedLeague = false,
 }: SquadBuilderClientProps) {
   const { toast } = useToast();
+  const router = useRouter();
   const { selectedPlayers, setFullSquadState } = useSquadStore();
   const [view, setView] = useState<ViewMode>(hasExistingSquad ? "mySquad" : "builder");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -104,6 +106,7 @@ function SquadBuilderInner({
       // Lock the builder and switch to My Squad
       setSquadSaved(true);
       setView("mySquad");
+      router.refresh();
     } catch {
       toast({
         title: "Network error",

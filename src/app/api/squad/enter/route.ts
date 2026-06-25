@@ -19,6 +19,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/db";
@@ -154,18 +155,19 @@ export async function POST(req: NextRequest) {
 
   // 4. Resolve current (or first) gameweek
   let gameweek = await db.query.gameweeks.findFirst({
-    where: eq(gameweeks.isCurrent, true),
+    where: and(eq(gameweeks.isCurrent, true), eq(gameweeks.isFinished, false)),
   });
 
   if (!gameweek) {
     gameweek = await db.query.gameweeks.findFirst({
+      where: eq(gameweeks.isFinished, false),
       orderBy: asc(gameweeks.id),
     });
   }
 
   if (!gameweek) {
     return NextResponse.json(
-      { success: false, error: "No gameweek found. Please seed gameweeks first." },
+      { success: false, error: "No active gameweek found. Please seed gameweeks first or wait for next season." },
       { status: 500 }
     );
   }
@@ -229,6 +231,8 @@ export async function POST(req: NextRequest) {
   const squadPlayerRows = buildSquadPlayerRows(insertedSquad.id, orderedPlayers);
 
   await db.insert(userSquadPlayers).values(squadPlayerRows);
+
+  revalidatePath("/dashboard");
 
   return NextResponse.json(
     { success: true, squadId: insertedSquad.id },

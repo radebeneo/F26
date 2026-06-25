@@ -64,9 +64,10 @@ interface PlayerRowProps {
   onAdd: () => void;
   onRemove: () => void;
   showFullName?: boolean;
+  mode: "transfer" | "12th-man" | "view";
 }
 
-function PlayerRow({ player, isSelected, onAdd, onRemove, showFullName }: PlayerRowProps) {
+function PlayerRow({ player, isSelected, onAdd, onRemove, showFullName, mode }: PlayerRowProps) {
   const slug = nationToSlug(player.nation);
   const displayName = showFullName 
     ? `${player.firstName} ${player.lastName}` 
@@ -130,19 +131,21 @@ function PlayerRow({ player, isSelected, onAdd, onRemove, showFullName }: Player
       </div>
 
       {/* Add / Remove button */}
-      <button
-        id={`btn-player-${player.id}`}
-        aria-label={isSelected ? `Remove ${displayName}` : `Add ${displayName}`}
-        onClick={isSelected ? onRemove : onAdd}
-        className={cn(
-          "flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center font-bold transition-all duration-150 text-white",
-          isSelected
-            ? "bg-secondaryRed-600 hover:bg-secondaryRed-500"
-            : "bg-primaryBrand-600 hover:bg-primaryBrand-500"
-        )}
-      >
-        {isSelected ? <Minus size={13} /> : <Plus size={13} />}
-      </button>
+      {mode !== "view" && (
+        <button
+          id={`btn-player-${player.id}`}
+          aria-label={isSelected ? `Remove ${displayName}` : `Add ${displayName}`}
+          onClick={isSelected ? onRemove : onAdd}
+          className={cn(
+            "flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center font-bold transition-all duration-150 text-white",
+            isSelected
+              ? "bg-secondaryRed-600 hover:bg-secondaryRed-500"
+              : "bg-[#c8f000] hover:bg-[#d4ff00] text-black"
+          )}
+        >
+          {isSelected ? <Minus size={14} /> : <Plus size={14} className="text-black" />}
+        </button>
+      )}
     </div>
   );
 }
@@ -204,7 +207,7 @@ function Pagination({
 
 interface PlayerSelectionPanelProps {
   players: Player[];
-  mode?: "transfer" | "12th-man";
+  mode?: "transfer" | "12th-man" | "view";
 }
 
 export function PlayerSelectionPanel({ players, mode = "transfer" }: PlayerSelectionPanelProps) {
@@ -513,6 +516,7 @@ export function PlayerSelectionPanel({ players, mode = "transfer" }: PlayerSelec
                     onAdd={() => handleAdd(player)}
                     onRemove={() => handleRemove(player)}
                     showFullName={player.lastName ? duplicatedLastNames.has(`${player.nation}|${player.lastName}`) : false}
+                    mode={mode}
                   />
                 ))}
               </div>

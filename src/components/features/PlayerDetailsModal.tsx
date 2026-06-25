@@ -86,7 +86,7 @@ export function PlayerDetailsModal({
                     {player.position} | {formattedPrice}
                   </p>
                   <p className="text-white text-sm font-medium leading-tight shadow-black drop-shadow-md mt-1">
-                    MD selection: 0%
+                    MD selection: {player.percentSelected ?? 0}%
                   </p>
                   <div className="mt-2">
                     <Image
@@ -152,27 +152,27 @@ export function PlayerDetailsModal({
                     <div className="flex gap-4">
                       <button
                         onClick={onSetCaptain}
-                        disabled={isCaptain}
+                        disabled={isCaptain || !onSetCaptain}
                         className={cn(
                           "flex-1 py-3 rounded-[100px] text-lg font-black uppercase text-center transition-all",
-                          isCaptain 
+                          isCaptain || !onSetCaptain
                             ? "bg-white/10 text-white/30 cursor-not-allowed" 
                             : "bg-white text-gray-300 hover:bg-gray-100 shadow-md"
                         )}
                       >
-                        <span className={cn(isCaptain ? "" : "text-gray-300")}>CAPTAIN</span>
+                        <span className={cn((isCaptain || !onSetCaptain) ? "" : "text-gray-300")}>CAPTAIN</span>
                       </button>
                       <button
                         onClick={onSetViceCaptain}
-                        disabled={isViceCaptain}
+                        disabled={isViceCaptain || !onSetViceCaptain}
                         className={cn(
                           "flex-1 py-3 rounded-[100px] text-lg font-black uppercase text-center transition-all",
-                          isViceCaptain 
+                          isViceCaptain || !onSetViceCaptain
                             ? "bg-white/10 text-white/30 cursor-not-allowed" 
                             : "bg-[#717171] text-black hover:bg-[#858585] shadow-md"
                         )}
                       >
-                        <span className={cn(isViceCaptain ? "" : "text-black")}>VICE-CAPTAIN</span>
+                        <span className={cn((isViceCaptain || !onSetViceCaptain) ? "" : "text-black")}>VICE-CAPTAIN</span>
                       </button>
                     </div>
 
@@ -183,15 +183,15 @@ export function PlayerDetailsModal({
                         <span className="text-xs font-bold text-black mt-1">Next fixture</span>
                       </div>
                       <div className="bg-white rounded py-4 flex flex-col items-center justify-center">
-                        <span className="text-xl font-black text-black uppercase">0%</span>
+                        <span className="text-xl font-black text-black uppercase">{player.percentSelected ?? 0}%</span>
                         <span className="text-xs font-bold text-black mt-1">% Selected</span>
                       </div>
                       <div className="bg-white rounded py-4 flex flex-col items-center justify-center">
-                        <span className="text-xl font-black text-black uppercase">0</span>
+                        <span className="text-xl font-black text-black uppercase">{player.lastRoundPoints ?? 0}</span>
                         <span className="text-xs font-bold text-black mt-1">Last round pts</span>
                       </div>
                       <div className="bg-white rounded py-4 flex flex-col items-center justify-center">
-                        <span className="text-xl font-black text-black uppercase">0</span>
+                        <span className="text-xl font-black text-black uppercase">{player.totalPoints ?? 0}</span>
                         <span className="text-xs font-bold text-black mt-1">Total pts</span>
                       </div>
                     </div>
@@ -215,7 +215,8 @@ export function PlayerDetailsModal({
               <div className="p-4 bg-[#f8f8f8] flex flex-col gap-3">
                 <button
                   onClick={onSubOut}
-                  className="w-full py-3 bg-white border border-black rounded-[100px] text-black text-lg font-black uppercase text-center hover:bg-gray-50 transition-colors shadow-sm"
+                  disabled={!onSubOut}
+                  className={cn("w-full py-3 border border-black rounded-[100px] text-lg font-black uppercase text-center shadow-sm transition-colors", !onSubOut ? "bg-white/10 text-white/30 cursor-not-allowed border-transparent" : "bg-white text-black hover:bg-gray-50")}
                 >
                   {isBench ? "SUB IN" : "SUB OUT"}
                 </button>

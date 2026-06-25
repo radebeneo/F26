@@ -15,8 +15,10 @@ async function main() {
   const playersData = JSON.parse(fs.readFileSync(jsonPath, "utf-8"));
 
   const playerStatsMap = new Map();
+  const playerQualifyMap = new Map();
   for (const p of playersData) {
     playerStatsMap.set(p.id, p.stats?.roundPoints || {});
+    playerQualifyMap.set(p.id, p.qualificationRoundIds || []);
   }
 
   const allUsers = await db.select().from(users);
@@ -53,6 +55,7 @@ async function main() {
 
         if (isScoring) {
           let multiplier = 1;
+          let playerTotalPoints = playerGwPoints;
 
           if (squad.activeBooster === "max-captain") {
             // Under max-captain, standard captain multipliers are ignored.
@@ -62,11 +65,18 @@ async function main() {
             multiplier = sp.multiplier;
           }
 
-          squadGwPoints += playerGwPoints * multiplier;
+          if (squad.activeBooster === "qualification-booster") {
+            const qualRounds = playerQualifyMap.get(sp.playerId) || [];
+            if (qualRounds.includes(gwId)) {
+              playerTotalPoints += 2;
+            }
+          }
+
+          squadGwPoints += playerTotalPoints * multiplier;
 
           // Track the highest raw score (for max-captain)
-          if (playerGwPoints > highestPlayerPoints) {
-            highestPlayerPoints = playerGwPoints;
+          if (playerTotalPoints > highestPlayerPoints) {
+            highestPlayerPoints = playerTotalPoints;
           }
         }
       }

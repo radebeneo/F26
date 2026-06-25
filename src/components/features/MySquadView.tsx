@@ -14,6 +14,7 @@ import { useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useSquadStore } from "@/store/squadStore";
 import { getCountrySlug } from "@/components/features/SquadSelectionPanel";
@@ -298,6 +299,7 @@ export function MySquadView({
   initialSquadState,
   hasJoinedLeague = false,
 }: MySquadViewProps) {
+  const router = useRouter();
   const { toast } = useToast();
   const {
     selectedPlayers,
@@ -323,6 +325,8 @@ export function MySquadView({
   const [subOutPlayerId, setSubOutPlayerId] = useState<number | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState(false);
+  const [isManaging, setIsManaging] = useState(!hasJoinedLeague);
+  const [rightPanelView, setRightPanelView] = useState<"how-to-score" | "player-pool">("how-to-score");
 
   const handleConfirm = async () => {
     if (isSaving) return;
@@ -356,6 +360,10 @@ export function MySquadView({
         variant: "success",
       });
       setIsConfirmed(true);
+      if (hasJoinedLeague) {
+        setIsManaging(false);
+      }
+      router.refresh();
       // Optionally update the initial state if passed a setter, but since it's an object from page reload, a reload will fetch new.
     } catch {
       toast({
@@ -377,6 +385,17 @@ export function MySquadView({
         variant: "info",
       });
     }
+  };
+
+  const handleCancel = () => {
+    handleReset();
+    if (hasJoinedLeague) {
+      setIsManaging(false);
+    }
+    setIsSubstitutionMode(false);
+    setSubOutPlayerId(null);
+    setIs12thManMode(false);
+    setIsTransferMode(false);
   };
 
   const handleBoosterActivate = (boosterId: string) => {
@@ -598,8 +617,15 @@ export function MySquadView({
 
                     <button
                       id="btn-apply-booster"
-                      onClick={() => setIsBoosterOpen(true)}
-                      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#f5a623]/90 hover:bg-[#f5a623] text-white text-[10px] font-bold uppercase tracking-wide shadow-lg transition-all hover:scale-105"
+                      onClick={() => {
+                        if (isManaging) setIsBoosterOpen(true);
+                      }}
+                      className={cn(
+                        "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-white text-[10px] font-bold uppercase tracking-wide shadow-lg transition-all",
+                        isManaging
+                          ? "bg-[#f5a623]/90 hover:bg-[#f5a623] hover:scale-105"
+                          : "bg-[#f5a623]/50 cursor-not-allowed"
+                      )}
                     >
                       <Image
                         src={
@@ -653,7 +679,7 @@ export function MySquadView({
                         Make Transfers
                       </button>
                       <div className="opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 bg-black/70 backdrop-blur-sm text-[#cca64f] text-[9px] font-bold px-2 py-1 rounded text-center leading-tight max-w-[130px] border border-white/10 shadow-lg">
-                        Transfers are Disabled for the Duration of GameWeek 2
+                        Transfers will be available after the Group Stage matches are completed.
                       </div>
                     </div>
                   )}
@@ -781,40 +807,82 @@ export function MySquadView({
               )}
 
               {/* Confirm / Reset / Join League Action Buttons */}
-              {!hasJoinedLeague && !isTransferMode && !isSubstitutionMode && !is12thManMode && (
+              {!isTransferMode && !isSubstitutionMode && !is12thManMode && (
                 <div className="flex items-center justify-center gap-4 mt-6 px-4">
-                  {!isConfirmed ? (
-                    <>
-                      <button
-                        onClick={handleReset}
-                        disabled={!initialSquadState || isSaving}
-                        className="px-6 py-2 rounded-xl border border-white/20 text-white/80 text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        Reset
-                      </button>
-                      <div className="relative group">
+                  {!hasJoinedLeague ? (
+                    !isConfirmed ? (
+                      <>
                         <button
-                          onClick={handleConfirm}
-                          disabled={isSaving}
-                          className="px-8 py-2 rounded-xl bg-[#c8f000] text-black text-xs font-black uppercase tracking-widest hover:bg-[#d4ff00] transition-colors shadow-lg shadow-[#c8f000]/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                          onClick={handleReset}
+                          disabled={!initialSquadState || isSaving}
+                          className="px-6 py-2 rounded-xl border border-white/20 text-white/80 text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          {isSaving && (
-                            <div className="w-3 h-3 border-2 border-black border-t-transparent rounded-full animate-spin" />
-                          )}
-                          Confirm
+                          Reset
                         </button>
-                        <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 bg-black/80 backdrop-blur-sm text-white text-[10px] font-bold px-3 py-2 rounded-md text-center leading-tight w-[200px] border border-[#f5a623]/30 shadow-lg pointer-events-none z-50">
-                          Clicking the confirm button will Lock your Squad for the Gameweek.
+                        <div className="relative group">
+                          <button
+                            onClick={handleConfirm}
+                            disabled={isSaving}
+                            className="px-8 py-2 rounded-xl bg-[#c8f000] text-black text-xs font-black uppercase tracking-widest hover:bg-[#d4ff00] transition-colors shadow-lg shadow-[#c8f000]/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                          >
+                            {isSaving && (
+                              <div className="w-3 h-3 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                            )}
+                            Confirm
+                          </button>
+                          <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 bg-black/80 backdrop-blur-sm text-white text-[10px] font-bold px-3 py-2 rounded-md text-center leading-tight w-[200px] border border-[#f5a623]/30 shadow-lg pointer-events-none z-50">
+                            Clicking the confirm button will Lock your Squad for the Gameweek.
+                          </div>
                         </div>
-                      </div>
-                    </>
+                      </>
+                    ) : (
+                      <Link
+                        href="/leaderboard"
+                        className="px-8 py-3 rounded-xl bg-[#3b82f6] text-white text-sm font-black uppercase tracking-widest hover:bg-[#2563eb] transition-all hover:scale-105 shadow-lg shadow-[#3b82f6]/20 flex items-center justify-center gap-2"
+                      >
+                        Join League
+                      </Link>
+                    )
                   ) : (
-                    <Link
-                      href="/leaderboard"
-                      className="px-8 py-3 rounded-xl bg-[#3b82f6] text-white text-sm font-black uppercase tracking-widest hover:bg-[#2563eb] transition-all hover:scale-105 shadow-lg shadow-[#3b82f6]/20 flex items-center justify-center gap-2"
-                    >
-                      Join League
-                    </Link>
+                    isManaging ? (
+                      <>
+                        <button
+                          onClick={handleCancel}
+                          className="px-6 py-2 rounded-xl border border-white/20 text-white/80 text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition-colors"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          onClick={handleReset}
+                          disabled={!initialSquadState || isSaving}
+                          className="px-6 py-2 rounded-xl border border-white/20 text-white/80 text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          Reset
+                        </button>
+                        <div className="relative group">
+                          <button
+                            onClick={handleConfirm}
+                            disabled={isSaving}
+                            className="px-8 py-2 rounded-xl bg-[#c8f000] text-black text-xs font-black uppercase tracking-widest hover:bg-[#d4ff00] transition-colors shadow-lg shadow-[#c8f000]/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                          >
+                            {isSaving && (
+                              <div className="w-3 h-3 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                            )}
+                            Confirm
+                          </button>
+                          <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 bg-black/80 backdrop-blur-sm text-white text-[10px] font-bold px-3 py-2 rounded-md text-center leading-tight w-[200px] border border-[#f5a623]/30 shadow-lg pointer-events-none z-50">
+                            Clicking the confirm button will Lock your Squad for the Gameweek.
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      <button
+                        onClick={() => setIsManaging(true)}
+                        className="px-8 py-3 rounded-xl bg-[#3b82f6] text-white text-sm font-black uppercase tracking-widest hover:bg-[#2563eb] transition-all hover:scale-105 shadow-lg shadow-[#3b82f6]/20 flex items-center justify-center gap-2"
+                      >
+                        Manage Squad
+                      </button>
+                    )
                   )}
                 </div>
               )}
@@ -825,32 +893,51 @@ export function MySquadView({
         </div>
 
         {/* ── Right Panel ── */}
-        <div className="squad-builder-right">
-          <AnimatePresence mode="wait">
-            {isTransferMode || is12thManMode ? (
-              <motion.div
-                key="transfer-panel"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.2 }}
-                className="h-full"
+        <div className="squad-builder-right flex flex-col h-full bg-[#1a1733] border-l border-white/10">
+          {!isTransferMode && !is12thManMode && (
+            <div className="px-5 pt-4 pb-2 border-b border-white/10 shrink-0">
+              <select
+                value={rightPanelView}
+                onChange={(e) => setRightPanelView(e.target.value as "how-to-score" | "player-pool")}
+                className="w-full bg-[#252243] text-white text-sm font-bold p-2.5 rounded-lg border border-white/10 focus:outline-none focus:border-[#c8f000] cursor-pointer appearance-none transition-colors"
+                style={{ backgroundImage: 'url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.75rem top 50%', backgroundSize: '0.65rem auto' }}
               >
-                <PlayerSelectionPanel players={allPlayers} mode={is12thManMode ? "12th-man" : "transfer"} />
-              </motion.div>
-            ) : (
-              <motion.div
-                key="how-to-score-panel"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                transition={{ duration: 0.2 }}
-                className="h-full"
-              >
-                <HowToScorePanel />
-              </motion.div>
-            )}
-          </AnimatePresence>
+                <option value="how-to-score">How To Score</option>
+                <option value="player-pool">Player Pool</option>
+              </select>
+            </div>
+          )}
+          <div className="flex-1 overflow-hidden relative">
+            <AnimatePresence mode="wait">
+              {isTransferMode || is12thManMode ? (
+                <motion.div
+                  key="transfer-panel"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute inset-0"
+                >
+                  <PlayerSelectionPanel players={allPlayers} mode={is12thManMode ? "12th-man" : "transfer"} />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key={rightPanelView}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute inset-0"
+                >
+                  {rightPanelView === "player-pool" ? (
+                    <PlayerSelectionPanel players={allPlayers} mode="view" />
+                  ) : (
+                    <HowToScorePanel />
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
       </main>
 
@@ -883,19 +970,19 @@ export function MySquadView({
             ? opponentMap[selectedPlayerForModal.nation]
             : null
         }
-        onSetCaptain={() => {
+        onSetCaptain={isManaging ? () => {
           if (selectedPlayerForModal) setCaptainId(selectedPlayerForModal.id);
-        }}
-        onSetViceCaptain={() => {
+        } : undefined}
+        onSetViceCaptain={isManaging ? () => {
           if (selectedPlayerForModal) setViceCaptainId(selectedPlayerForModal.id);
-        }}
-        onSubOut={() => {
+        } : undefined}
+        onSubOut={isManaging ? () => {
           if (selectedPlayerForModal) {
             setSubOutPlayerId(selectedPlayerForModal.id);
             setIsSubstitutionMode(true);
             setSelectedPlayerForModal(null);
           }
-        }}
+        } : undefined}
       />
     </>
   );

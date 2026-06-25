@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/db";
 import { users, players, gameweeks, userSquads, fixtures, userLeagues } from "@/db/schema";
-import { eq, asc, desc, ne } from "drizzle-orm";
+import { eq, asc, desc, ne, and } from "drizzle-orm";
 import { SquadBuilderClient } from "@/components/features/SquadBuilderClient";
 import type { SquadState } from "@/store/squadStore";
 
@@ -44,12 +44,13 @@ export default async function DashboardPage() {
 
   // Fetch current gameweek and its fixtures to determine opponents
   let currentGw = await db.query.gameweeks.findFirst({
-    where: eq(gameweeks.isCurrent, true),
+    where: and(eq(gameweeks.isCurrent, true), eq(gameweeks.isFinished, false)),
     with: { fixtures: true },
   });
   
   if (!currentGw) {
     currentGw = await db.query.gameweeks.findFirst({
+      where: eq(gameweeks.isFinished, false),
       with: { fixtures: true },
       orderBy: asc(gameweeks.id),
     });

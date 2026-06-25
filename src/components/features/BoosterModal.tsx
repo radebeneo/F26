@@ -57,14 +57,14 @@ const BOOSTERS: BoosterOption[] = [
     description:
       "All players in your team who qualify for the next round will receive a +2 bonus points boost.",
     icon: "/fantasy-icons/boosters.png",
-    disabled: true,
+    disabled: false,
   },
   {
-    id: "mystery-booster",
-    name: "Mystery Booster",
-    description: "The Mystery Booster will be revealed June 24.",
-    icon: "/fantasy-icons/bench.png",
-    disabled: true,
+    id: "clean-sheet-shield",
+    name: "Clean Sheet Shield",
+    description: "Any goalkeeper, defender or midfielder in your team will only lose their clean sheet after conceding 2 goals.",
+    icon: "/fantasy-icons/shield.png",
+    disabled: false,
   },
 ];
 
