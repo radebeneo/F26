@@ -39,9 +39,10 @@ export function PlayerDetailsModal({
 
   const slug = getCountrySlug(player.nation);
   const formattedPrice = `$${player.price}m`;
-  const name = player.lastName || player.firstName;
-  // If player has both, we might want to show full name or just the display name
-  const displayName = player.firstName && player.lastName ? `${player.firstName} ${player.lastName}` : name;
+  // Primary display name: knownName (official alias) → full firstName + lastName
+  const displayName = player.knownName ?? (player.firstName && player.lastName
+    ? `${player.firstName} ${player.lastName}`
+    : player.lastName || player.firstName);
 
   return (
     <AnimatePresence>

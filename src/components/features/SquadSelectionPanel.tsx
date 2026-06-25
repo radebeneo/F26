@@ -102,7 +102,11 @@ function PitchSlot({
           <div className="w-full bg-[#111] border-[1.5px] border-white rounded-md flex flex-col overflow-hidden relative z-0">
             <div className="bg-white px-0.5 py-[2px] text-center">
               <span className="block text-[9px] font-bold text-black truncate w-full">
-                {showFullName ? `${player.firstName} ${player.lastName}` : (player.lastName || player.firstName)}
+                {player.knownName
+                  ? player.knownName
+                  : showFullName
+                    ? `${player.firstName} ${player.lastName}`
+                    : (player.lastName || player.firstName)}
               </span>
             </div>
             <div className="bg-[#111] px-0.5 py-[2px] text-center flex items-center justify-center gap-[2px]">
@@ -184,7 +188,7 @@ function PitchView({
               pos={pos}
               onRemove={p ? () => onRemove(p.id) : undefined}
               opponentMap={opponentMap}
-              showFullName={p && p.lastName ? duplicatedLastNames?.has(`${p.nation}|${p.lastName}`) : false}
+              showFullName={p && !p.knownName && p.lastName ? duplicatedLastNames?.has(`${p.nation}|${p.lastName}`) : false}
             />
           </div>
         ))}
@@ -261,7 +265,7 @@ function PitchView({
                   pos={p.position}
                   onRemove={() => onRemove(p.id)}
                   opponentMap={opponentMap}
-                  showFullName={p.lastName ? duplicatedLastNames?.has(`${p.nation}|${p.lastName}`) : false}
+                  showFullName={!p.knownName && p.lastName ? duplicatedLastNames?.has(`${p.nation}|${p.lastName}`) : false}
                 />
               </div>
             ))}
@@ -389,7 +393,7 @@ function ListView({
             {p.position}
           </span>
           <span className="flex-1 text-sm font-semibold text-white truncate">
-            {p.firstName} {p.lastName}
+            {p.knownName || `${p.firstName} ${p.lastName}`}
           </span>
           <span className="text-xs text-white/50">{p.club ?? p.nation}</span>
           <span className="text-xs font-semibold text-white/70 w-12 text-right">

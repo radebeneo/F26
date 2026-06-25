@@ -13,7 +13,8 @@
     "db:studio": "drizzle-kit studio",
     "db:check": "drizzle-kit check",
     "db:seed": "node --env-file=.env.local --import tsx src/db/seed.ts",
-    "db:sync": "node --env-file=.env.local --import tsx src/db/sync-players.ts"
+    "db:sync": "node --env-file=.env.local --import tsx src/db/sync-players.ts",
+    "db:update-known-names": "node --env-file=.env.local --import tsx src/db/update-known-names.ts"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.5",

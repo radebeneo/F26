@@ -153,7 +153,7 @@ function MySquadPitchSlot({
           <div className="w-full bg-[#111] border-[1.5px] border-white rounded-md flex flex-col overflow-hidden relative z-0">
             <div className="bg-white px-0.5 py-[2px] text-center">
               <span className="block text-[9px] font-bold text-black truncate w-full">
-                {player.lastName || player.firstName}
+                {player.knownName || player.lastName || player.firstName}
               </span>
             </div>
             <div className="bg-[#111] px-0.5 py-[2px] text-center flex items-center justify-center gap-[2px]">

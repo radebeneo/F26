@@ -43,6 +43,13 @@
       "when": 1782371254472,
       "tag": "0005_kind_lake",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1782408757054,
+      "tag": "0006_sloppy_blizzard",
+      "breakpoints": true
     }
   ]
 }
