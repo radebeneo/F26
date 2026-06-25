@@ -211,7 +211,7 @@ export function LeaderboardClient({ leagues, joinedLeagueIds, signOutAction }: L
         {/* Full Background Image */}
         <div className="absolute inset-0 z-0">
           <Image
-            src="/images/host-cities.png"
+            src="/images/host-cities.webp"
             alt="Host Cities Background"
             fill
             className="object-cover opacity-30"

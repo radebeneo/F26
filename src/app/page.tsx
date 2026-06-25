@@ -115,13 +115,13 @@ export default function HomePage() {
                 <div className="exact-pitch-banner">
                   <div className="exact-pitch-banner-left">
                     <span className="mr-1 mt-[2px]">
-                      <Image src="/assets/logo-black.png" alt="Logo" width={12} height={16} className="object-contain" />
+                      <Image src="/assets/logo-black.webp" alt="Logo" width={12} height={16} className="object-contain" />
                     </span> FANTASY
                   </div>
 
                   <div className="exact-pitch-banner-right">
                     <span className="mr-1 mt-[2px]">
-                      <Image src="/assets/logo-white.png" alt="Logo" width={12} height={16} className="object-contain" />
+                      <Image src="/assets/logo-white.webp" alt="Logo" width={12} height={16} className="object-contain" />
                     </span> FANTASY
                   </div>
                 </div>
@@ -161,7 +161,7 @@ export default function HomePage() {
               {/* Trophy floating beside the pitch */}
               <div className="homepage-trophy">
                 <Image
-                  src="/images/trophy.png"
+                  src="/images/trophy.webp"
                   alt="FIFA World Cup Trophy"
                   width={120}
                   height={190}
@@ -195,11 +195,11 @@ export default function HomePage() {
             <h2 className="homepage-showcase-title">Featured Players</h2>
             <div className="homepage-showcase-grid">
               {[
-                { src: "/images/messi.png", name: "Messi" },
-                { src: "/images/pulisic.png", name: "Pulisic" },
-                { src: "/images/mctominay.png", name: "McTominay" },
-                { src: "/images/jimenez.png", name: "Jiménez" },
-                { src: "/images/davids.png", name: "David" },
+                { src: "/images/messi.webp", name: "Messi" },
+                { src: "/images/pulisic.webp", name: "Pulisic" },
+                { src: "/images/mctominay.webp", name: "McTominay" },
+                { src: "/images/jimenez.webp", name: "Jiménez" },
+                { src: "/images/davids.webp", name: "David" },
               ].map(({ src, name }) => (
                 <div key={name} className="homepage-showcase-card">
                   <Image
@@ -221,7 +221,7 @@ export default function HomePage() {
         <div className="homepage-footer-inner">
           <div className="homepage-footer-brand">
             <Image
-              src="/images/logo.png"
+              src="/images/logo.webp"
               alt="FIFA World Cup logo"
               width={40}
               height={56}

@@ -252,7 +252,7 @@ export function LeagueDetailClient({
         {/* Full Background Image */}
         <div className="absolute inset-0 z-0">
           <Image
-            src="/images/host-cities.png"
+            src="/images/host-cities.webp"
             alt="Host Cities Background"
             fill
             className="object-cover opacity-30"
@@ -357,7 +357,7 @@ export function LeagueDetailClient({
                               <div className="col-span-6 px-4 flex items-center gap-3">
                                 <div className="relative w-8 h-8 rounded-full overflow-hidden bg-gray-100 border border-gray-200 flex-shrink-0 drop-shadow-sm">
                                   <Image
-                                    src={`/images/flags/${getCountrySlug(member.favoriteCountry)}.png`}
+                                    src={`/images/flags/${getCountrySlug(member.favoriteCountry)}.webp`}
                                     alt={member.favoriteCountry}
                                     fill
                                     className="object-cover"

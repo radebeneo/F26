@@ -38,7 +38,7 @@ export function PlayerCard({ player, nextFixture, className }: PlayerCardProps) 
       {/* Top section: Nation background image */}
       <div className="relative flex-1 w-full bg-[#8c8c8c]">
         <Image
-          src={`/images/kits/${formattedNation}.png`}
+          src={`/images/kits/${formattedNation}.webp`}
           alt={`${player.nation} kit`}
           fill
           className="object-cover object-top"

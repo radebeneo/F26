@@ -91,7 +91,7 @@ export function PlayerDetailsModal({
                   </p>
                   <div className="mt-2">
                     <Image
-                      src="/fantasy-icons/boosters.png" 
+                      src="/fantasy-icons/boosters.webp" 
                       alt="Coin"
                       width={20}
                       height={20}
@@ -103,7 +103,7 @@ export function PlayerDetailsModal({
                 {/* Right side player image */}
                 <div className="relative w-[180px] h-[180px] -mb-2 z-0">
                   <Image
-                    src={`/images/kits/${slug}.png`}
+                    src={`/images/kits/${slug}.webp`}
                     alt={player.nation}
                     fill
                     className="object-cover object-top drop-shadow-xl"
