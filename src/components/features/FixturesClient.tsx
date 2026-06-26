@@ -16,40 +16,40 @@ type PageTab = "fixtures" | "standings";
 
 // ── Fixtures data ──────────────────────────────────────────────────────────────
 const GROUPS = [
-  { id: "A", label: "GROUP A", image: "/images/matches/groupA.png", color: "#00C86E", teams: ["Mexico", "South Korea", "Czechia", "South Africa"] },
-  { id: "B", label: "GROUP B", image: "/images/matches/groupB.png", color: "#E8214A", teams: ["Canada", "Switzerland", "Bosnia-Herzegovina", "Qatar"] },
-  { id: "C", label: "GROUP C", image: "/images/matches/groupC.png", color: "#FF8C00", teams: ["Brazil", "Scotland", "Morocco", "Haiti"] },
-  { id: "D", label: "GROUP D", image: "/images/matches/groupD.png", color: "#3B5FE8", teams: ["United States", "Türkiye", "Australia", "Paraguay"] },
-  { id: "E", label: "GROUP E", image: "/images/matches/groupE.png", color: "#6C3DD8", teams: ["Germany", "Netherlands", "Ecuador", "Curacao"] },
-  { id: "F", label: "GROUP F", image: "/images/matches/groupF.png", color: "#C8A200", teams: ["Spain", "Belgium", "Uruguay", "Cabo Verde"] },
-  { id: "G", label: "GROUP G", image: "/images/matches/groupG.png", color: "#EC4899", teams: ["France", "Norway", "Senegal", "Iraq"] }, // Pink
-  { id: "H", label: "GROUP H", image: "/images/matches/groupH.png", color: "#34D399", teams: ["Argentina", "Austria", "Algeria", "Jordan"] }, // Mint
-  { id: "I", label: "GROUP I", image: "/images/matches/groupI.png", color: "#A855F7", teams: ["Portugal", "Colombia", "Uzbekistan", "Congo DR"] }, // Purple
-  { id: "J", label: "GROUP J", image: "/images/matches/groupJ.png", color: "#14B8A6", teams: ["England", "Panama", "Ghana", "Croatia"] }, // Teal
-  { id: "K", label: "GROUP K", image: "/images/matches/groupK.png", color: "#F97316", teams: ["Saudi Arabia", "Spain", "Iran", "New Zealand"] }, // Orange
-  { id: "L", label: "GROUP L", image: "/images/matches/groupL.png", color: "#1B6CA8", teams: ["Qatar", "Switzerland", "Egypt", "Belgium"] },
+  { id: "A", label: "GROUP A", image: "/images/matches/groupA.webp", color: "#00C86E", teams: ["Mexico", "South Korea", "Czechia", "South Africa"] },
+  { id: "B", label: "GROUP B", image: "/images/matches/groupB.webp", color: "#E8214A", teams: ["Canada", "Switzerland", "Bosnia-Herzegovina", "Qatar"] },
+  { id: "C", label: "GROUP C", image: "/images/matches/groupC.webp", color: "#FF8C00", teams: ["Brazil", "Scotland", "Morocco", "Haiti"] },
+  { id: "D", label: "GROUP D", image: "/images/matches/groupD.webp", color: "#3B5FE8", teams: ["United States", "Türkiye", "Australia", "Paraguay"] },
+  { id: "E", label: "GROUP E", image: "/images/matches/groupE.webp", color: "#6C3DD8", teams: ["Germany", "Netherlands", "Ecuador", "Curacao"] },
+  { id: "F", label: "GROUP F", image: "/images/matches/groupF.webp", color: "#C8A200", teams: ["Spain", "Belgium", "Uruguay", "Cabo Verde"] },
+  { id: "G", label: "GROUP G", image: "/images/matches/groupG.webp", color: "#EC4899", teams: ["France", "Norway", "Senegal", "Iraq"] }, // Pink
+  { id: "H", label: "GROUP H", image: "/images/matches/groupH.webp", color: "#34D399", teams: ["Argentina", "Austria", "Algeria", "Jordan"] }, // Mint
+  { id: "I", label: "GROUP I", image: "/images/matches/groupI.webp", color: "#A855F7", teams: ["Portugal", "Colombia", "Uzbekistan", "Congo DR"] }, // Purple
+  { id: "J", label: "GROUP J", image: "/images/matches/groupJ.webp", color: "#14B8A6", teams: ["England", "Panama", "Ghana", "Croatia"] }, // Teal
+  { id: "K", label: "GROUP K", image: "/images/matches/groupK.webp", color: "#F97316", teams: ["Saudi Arabia", "Spain", "Iran", "New Zealand"] }, // Orange
+  { id: "L", label: "GROUP L", image: "/images/matches/groupL.webp", color: "#1B6CA8", teams: ["Qatar", "Switzerland", "Egypt", "Belgium"] },
 ] as const;
 
 // ── Standings data ─────────────────────────────────────────────────────────────
 const STANDINGS = [
-  { id: "A", label: "GROUP A", image: "/images/standings/A.png", color: "#00C86E" },
-  { id: "B", label: "GROUP B", image: "/images/standings/B.png", color: "#E8214A" },
-  { id: "C", label: "GROUP C", image: "/images/standings/C.png", color: "#FF8C00" },
-  { id: "D", label: "GROUP D", image: "/images/standings/D.png", color: "#3B5FE8" },
-  { id: "E", label: "GROUP E", image: "/images/standings/E.png", color: "#6C3DD8" },
-  { id: "F", label: "GROUP F", image: "/images/standings/F.png", color: "#C8A200" },
-  { id: "G", label: "GROUP G", image: "/images/standings/G.png", color: "#EC4899" }, // Pink
-  { id: "H", label: "GROUP H", image: "/images/standings/H.png", color: "#34D399" }, // Mint
-  { id: "I", label: "GROUP I", image: "/images/standings/I.png", color: "#A855F7" }, // Purple
-  { id: "J", label: "GROUP J", image: "/images/standings/J.png", color: "#14B8A6" }, // Teal
-  { id: "K", label: "GROUP K", image: "/images/standings/K.png", color: "#F97316" }, // Orange
-  { id: "L", label: "GROUP L", image: "/images/standings/L.png", color: "#1B6CA8" },
+  { id: "A", label: "GROUP A", image: "/images/standings/A.webp", color: "#00C86E" },
+  { id: "B", label: "GROUP B", image: "/images/standings/B.webp", color: "#E8214A" },
+  { id: "C", label: "GROUP C", image: "/images/standings/C.webp", color: "#FF8C00" },
+  { id: "D", label: "GROUP D", image: "/images/standings/D.webp", color: "#3B5FE8" },
+  { id: "E", label: "GROUP E", image: "/images/standings/E.webp", color: "#6C3DD8" },
+  { id: "F", label: "GROUP F", image: "/images/standings/F.webp", color: "#C8A200" },
+  { id: "G", label: "GROUP G", image: "/images/standings/G.webp", color: "#EC4899" }, // Pink
+  { id: "H", label: "GROUP H", image: "/images/standings/H.webp", color: "#34D399" }, // Mint
+  { id: "I", label: "GROUP I", image: "/images/standings/I.webp", color: "#A855F7" }, // Purple
+  { id: "J", label: "GROUP J", image: "/images/standings/J.webp", color: "#14B8A6" }, // Teal
+  { id: "K", label: "GROUP K", image: "/images/standings/K.webp", color: "#F97316" }, // Orange
+  { id: "L", label: "GROUP L", image: "/images/standings/L.webp", color: "#1B6CA8" },
 ] as const;
 
 const THIRD_PLACED = {
   id: "3RD",
   label: "Ranking of Third Placed Teams",
-  image: "/images/standings/3RD.png",
+  image: "/images/standings/3RD.webp",
   color: "#FFFFFF",
   textColor: "#000000",
 } as const;
@@ -375,7 +375,7 @@ export function FixturesClient({ signOutAction }: FixturesClientProps) {
         {/* Background */}
         <div className="absolute inset-0 z-0">
           <Image
-            src="/images/host-cities.png"
+            src="/images/host-cities.webp"
             alt="Host Cities Background"
             fill
             className="object-cover opacity-20"

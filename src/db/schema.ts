@@ -70,6 +70,12 @@ export const players = pgTable("players", {
   id: serial("id").primaryKey(),
   firstName: text("first_name").notNull(),
   lastName: text("last_name").notNull(),
+  /**
+   * Single-name alias used by some players (e.g. "Neymar", "Vinícius Jr.", "Raphinha").
+   * Nullable — most players have null here.
+   * When non-null, the UI displays this name instead of lastName.
+   */
+  knownName: text("known_name"),
   position: positionEnum("position").notNull(),
   nation: text("nation").notNull(),
   club: text("club"),

@@ -51,11 +51,11 @@ const SCORING_HIGHLIGHTS = [
 // ── Featured player images (same as homepage showcase strip) ─────────────────
 
 const SHOWCASE_PLAYERS = [
-  { src: "/images/messi.png", name: "Messi" },
-  { src: "/images/pulisic.png", name: "Pulisic" },
-  { src: "/images/mctominay.png", name: "McTominay" },
-  { src: "/images/jimenez.png", name: "Jiménez" },
-  { src: "/images/davids.png", name: "David" },
+  { src: "/images/messi.webp", name: "Messi" },
+  { src: "/images/pulisic.webp", name: "Pulisic" },
+  { src: "/images/mctominay.webp", name: "McTominay" },
+  { src: "/images/jimenez.webp", name: "Jiménez" },
+  { src: "/images/davids.webp", name: "David" },
 ];
 
 // ── Step definitions ─────────────────────────────────────────────────────────

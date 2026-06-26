@@ -15,7 +15,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       {/* ── Left hero panel ──────────────────────────────── */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-background">
         <Image
-          src="/images/groups.png"
+          src="/images/groups.webp"
           alt="World Cup Groups"
           fill
           className="object-cover"

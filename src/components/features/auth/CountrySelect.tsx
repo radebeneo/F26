@@ -96,7 +96,7 @@ export function CountrySelect({ name, id }: { name: string; id?: string }) {
             {selectedNation ? (
               <>
                 <Image
-                  src={`/images/flags/${selectedNation.id}.png`}
+                  src={`/images/flags/${selectedNation.id}.webp`}
                   alt={selectedNation.name}
                   width={24}
                   height={16}
@@ -137,7 +137,7 @@ export function CountrySelect({ name, id }: { name: string; id?: string }) {
                   }}
                 >
                   <Image
-                    src={`/images/flags/${nation.id}.png`}
+                    src={`/images/flags/${nation.id}.webp`}
                     alt={nation.name}
                     width={24}
                     height={16}

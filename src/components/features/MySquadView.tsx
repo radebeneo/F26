@@ -90,7 +90,7 @@ function MySquadPitchSlot({
           {/* Sub Out Icon */}
           {isSubOutSelected && (
             <div className="absolute -top-2 -left-2 z-40 w-5 h-5 bg-white rounded-full border-[1.5px] border-[#f44336] flex items-center justify-center shadow-sm">
-              <Image src="/fantasy-icons/substitute-out.png" alt="Sub Out" width={12} height={12} />
+              <Image src="/fantasy-icons/substitute-out.webp" alt="Sub Out" width={12} height={12} />
             </div>
           )}
 
@@ -98,7 +98,7 @@ function MySquadPitchSlot({
           {isSubInValid && (
             <>
               <div className="absolute -top-2 -left-2 z-40 w-5 h-5 bg-white rounded-full border-[1.5px] border-[#4caf50] flex items-center justify-center shadow-sm">
-                <Image src="/fantasy-icons/substitute-in.png" alt="Sub In" width={12} height={12} />
+                <Image src="/fantasy-icons/substitute-in.webp" alt="Sub In" width={12} height={12} />
               </div>
               {benchIndex !== undefined && (
                 <div className="absolute -top-2 -right-2 z-40 w-5 h-5 bg-white rounded-full border-[1.5px] border-black flex items-center justify-center text-[10px] font-black text-black shadow-sm">
@@ -114,8 +114,8 @@ function MySquadPitchSlot({
               <Image
                 src={
                   isCaptain
-                    ? "/fantasy-icons/captain.png"
-                    : "/fantasy-icons/vice-captain.png"
+                    ? "/fantasy-icons/captain.webp"
+                    : "/fantasy-icons/vice-captain.webp"
                 }
                 alt={isCaptain ? "Captain" : "Vice Captain"}
                 width={24}
@@ -129,7 +129,7 @@ function MySquadPitchSlot({
           {isTransferMode && (
             <div className="absolute -top-1 -right-2 z-30 w-5 h-5">
               <Image
-                src="/fantasy-icons/transfer.png"
+                src="/fantasy-icons/transfer.webp"
                 alt="Transfer"
                 width={20}
                 height={20}
@@ -141,7 +141,7 @@ function MySquadPitchSlot({
           {/* Nation kit image */}
           <div className="relative w-11 h-11 z-10 -mb-1 flex-shrink-0 drop-shadow-md">
             <Image
-              src={`/images/kits/${slug}.png`}
+              src={`/images/kits/${slug}.webp`}
               alt={player.nation}
               fill
               className="object-contain object-bottom"
@@ -153,7 +153,7 @@ function MySquadPitchSlot({
           <div className="w-full bg-[#111] border-[1.5px] border-white rounded-md flex flex-col overflow-hidden relative z-0">
             <div className="bg-white px-0.5 py-[2px] text-center">
               <span className="block text-[9px] font-bold text-black truncate w-full">
-                {player.lastName || player.firstName}
+                {player.knownName || player.lastName || player.firstName}
               </span>
             </div>
             <div className="bg-[#111] px-0.5 py-[2px] text-center flex items-center justify-center gap-[2px]">
@@ -200,24 +200,24 @@ function SquadKey() {
 
       <div className="flex flex-wrap items-center gap-x-6 gap-y-4 px-2">
         <div className="flex items-center gap-2">
-          <Image src="/fantasy-icons/captain.png" alt="Captain" {...iconProps} />
+          <Image src="/fantasy-icons/captain.webp" alt="Captain" {...iconProps} />
           <span className="text-white text-xs font-semibold">Captain</span>
         </div>
         <div className="flex items-center gap-2">
           <Image
-            src="/fantasy-icons/vice-captain.png"
+            src="/fantasy-icons/vice-captain.webp"
             alt="Vice Captain"
             {...iconProps}
           />
           <span className="text-white text-xs font-semibold">Vice Captain</span>
         </div>
         <div className="flex items-center gap-2">
-          <Image src="/fantasy-icons/injured.png" alt="Injured" {...iconProps} />
+          <Image src="/fantasy-icons/injured.webp" alt="Injured" {...iconProps} />
           <span className="text-white text-xs font-semibold">Injured</span>
         </div>
         <div className="flex items-center gap-2">
           <Image
-            src="/fantasy-icons/suspended.png"
+            src="/fantasy-icons/suspended.webp"
             alt="Suspended"
             {...iconProps}
           />
@@ -225,7 +225,7 @@ function SquadKey() {
         </div>
         <div className="flex items-center gap-2">
           <Image
-            src="/fantasy-icons/eliminated.png"
+            src="/fantasy-icons/eliminated.webp"
             alt="Eliminated"
             {...iconProps}
           />
@@ -233,7 +233,7 @@ function SquadKey() {
         </div>
         <div className="flex items-center gap-2">
           <Image
-            src="/fantasy-icons/starting.png"
+            src="/fantasy-icons/starting.webp"
             alt="Starting"
             {...iconProps}
           />
@@ -241,19 +241,19 @@ function SquadKey() {
         </div>
         <div className="flex items-center gap-2">
           <Image
-            src="/fantasy-icons/out-of-squad.png"
+            src="/fantasy-icons/out-of-squad.webp"
             alt="Out of squad"
             {...iconProps}
           />
           <span className="text-white text-xs font-semibold">Out of squad</span>
         </div>
         <div className="flex items-center gap-2">
-          <Image src="/fantasy-icons/bench.png" alt="Bench" {...iconProps} />
+          <Image src="/fantasy-icons/bench.webp" alt="Bench" {...iconProps} />
           <span className="text-white text-xs font-semibold">Bench</span>
         </div>
         <div className="flex items-center gap-2">
           <Image
-            src="/fantasy-icons/substitute-in.png"
+            src="/fantasy-icons/substitute-in.webp"
             alt="Substitute In"
             {...iconProps}
           />
@@ -261,7 +261,7 @@ function SquadKey() {
         </div>
         <div className="flex items-center gap-2">
           <Image
-            src="/fantasy-icons/substitute-out.png"
+            src="/fantasy-icons/substitute-out.webp"
             alt="Substitute Out"
             {...iconProps}
           />
@@ -269,7 +269,7 @@ function SquadKey() {
         </div>
         <div className="flex items-center gap-2">
           <Image
-            src="/fantasy-icons/boosters.png"
+            src="/fantasy-icons/boosters.webp"
             alt="Boosters"
             {...iconProps}
           />
@@ -277,7 +277,7 @@ function SquadKey() {
         </div>
         <div className="flex items-center gap-2">
           <Image
-            src="/fantasy-icons/transfer.png"
+            src="/fantasy-icons/transfer.webp"
             alt="Transfer"
             {...iconProps}
           />
@@ -507,7 +507,7 @@ export function MySquadView({
               <div className="flex items-center gap-3">
                 <div className="relative w-5 h-5 drop-shadow-md">
                   <Image
-                    src={`/images/flags/${getCountrySlug(favoriteCountry)}.png`}
+                    src={`/images/flags/${getCountrySlug(favoriteCountry)}.webp`}
                     alt={`${favoriteCountry} flag`}
                     fill
                     className="object-contain"
@@ -630,10 +630,10 @@ export function MySquadView({
                       <Image
                         src={
                           activeBooster === "12th-man"
-                            ? "/fantasy-icons/substitute-in.png"
+                            ? "/fantasy-icons/substitute-in.webp"
                             : activeBooster === "max-captain"
-                              ? "/fantasy-icons/captain.png"
-                              : "/fantasy-icons/boosters.png"
+                              ? "/fantasy-icons/captain.webp"
+                              : "/fantasy-icons/boosters.webp"
                         }
                         alt="Boosters"
                         width={18}
@@ -670,7 +670,7 @@ export function MySquadView({
                         className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wide shadow-lg bg-white/50 text-black/50 cursor-not-allowed"
                       >
                         <Image
-                          src="/fantasy-icons/transfer.png"
+                          src="/fantasy-icons/transfer.webp"
                           alt="Transfer"
                           width={16}
                           height={16}
@@ -689,7 +689,7 @@ export function MySquadView({
                     <div className="exact-pitch-banner-left">
                       <span className="mr-1 mt-[2px]">
                         <Image
-                          src="/assets/logo-black.png"
+                          src="/assets/logo-black.webp"
                           alt="Logo"
                           width={12}
                           height={16}
@@ -701,7 +701,7 @@ export function MySquadView({
                     <div className="exact-pitch-banner-right">
                       <span className="mr-1 mt-[2px]">
                         <Image
-                          src="/assets/logo-white.png"
+                          src="/assets/logo-white.webp"
                           alt="Logo"
                           width={12}
                           height={16}

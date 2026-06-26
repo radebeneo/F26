@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/db";
 import { users, players, gameweeks, userSquads, fixtures, userLeagues } from "@/db/schema";
-import { eq, asc, desc, ne, and } from "drizzle-orm";
+import { eq, asc, desc, ne, and, gte } from "drizzle-orm";
 import { SquadBuilderClient } from "@/components/features/SquadBuilderClient";
 import type { SquadState } from "@/store/squadStore";
 
@@ -58,7 +58,9 @@ export default async function DashboardPage() {
 
   // Fetch all upcoming/live fixtures to determine the next opponent for each nation
   const activeFixtures = await db.query.fixtures.findMany({
-    where: ne(fixtures.status, "FINISHED"),
+    where: currentGw 
+      ? and(gte(fixtures.gameweekId, currentGw.id), ne(fixtures.status, "FINISHED"))
+      : ne(fixtures.status, "FINISHED"),
     orderBy: asc(fixtures.kickoffTime),
   });
 

@@ -91,7 +91,7 @@ function PitchSlot({
           {/* Nation kit image */}
           <div className="relative w-11 h-11 z-10 -mb-1 flex-shrink-0 drop-shadow-md">
             <Image
-              src={`/images/kits/${slug}.png`}
+              src={`/images/kits/${slug}.webp`}
               alt={player.nation}
               fill
               className="object-contain object-bottom"
@@ -102,7 +102,11 @@ function PitchSlot({
           <div className="w-full bg-[#111] border-[1.5px] border-white rounded-md flex flex-col overflow-hidden relative z-0">
             <div className="bg-white px-0.5 py-[2px] text-center">
               <span className="block text-[9px] font-bold text-black truncate w-full">
-                {showFullName ? `${player.firstName} ${player.lastName}` : (player.lastName || player.firstName)}
+                {player.knownName
+                  ? player.knownName
+                  : showFullName
+                    ? `${player.firstName} ${player.lastName}`
+                    : (player.lastName || player.firstName)}
               </span>
             </div>
             <div className="bg-[#111] px-0.5 py-[2px] text-center flex items-center justify-center gap-[2px]">
@@ -184,7 +188,7 @@ function PitchView({
               pos={pos}
               onRemove={p ? () => onRemove(p.id) : undefined}
               opponentMap={opponentMap}
-              showFullName={p && p.lastName ? duplicatedLastNames?.has(`${p.nation}|${p.lastName}`) : false}
+              showFullName={p && !p.knownName && p.lastName ? duplicatedLastNames?.has(`${p.nation}|${p.lastName}`) : false}
             />
           </div>
         ))}
@@ -227,13 +231,13 @@ function PitchView({
             <div className="exact-pitch-banner">
               <div className="exact-pitch-banner-left">
                 <span className="mr-1 mt-[2px]">
-                  <Image src="/assets/logo-black.png" alt="Logo" width={12} height={16} className="object-contain" />
+                  <Image src="/assets/logo-black.webp" alt="Logo" width={12} height={16} className="object-contain" />
                 </span> FANTASY
               </div>
 
               <div className="exact-pitch-banner-right">
                 <span className="mr-1 mt-[2px]">
-                  <Image src="/assets/logo-white.png" alt="Logo" width={12} height={16} className="object-contain" />
+                  <Image src="/assets/logo-white.webp" alt="Logo" width={12} height={16} className="object-contain" />
                 </span> FANTASY
               </div>
             </div>
@@ -261,7 +265,7 @@ function PitchView({
                   pos={p.position}
                   onRemove={() => onRemove(p.id)}
                   opponentMap={opponentMap}
-                  showFullName={p.lastName ? duplicatedLastNames?.has(`${p.nation}|${p.lastName}`) : false}
+                  showFullName={!p.knownName && p.lastName ? duplicatedLastNames?.has(`${p.nation}|${p.lastName}`) : false}
                 />
               </div>
             ))}
@@ -290,62 +294,62 @@ function SquadKey() {
 
       <div className="flex flex-wrap items-center gap-x-6 gap-y-4 px-2">
         <div className="flex items-center gap-2">
-          <Image src="/fantasy-icons/captain.png" alt="Captain" {...iconProps} />
+          <Image src="/fantasy-icons/captain.webp" alt="Captain" {...iconProps} />
           <span className="text-white text-xs font-semibold">Captain</span>
         </div>
 
         <div className="flex items-center gap-2">
-          <Image src="/fantasy-icons/vice-captain.png" alt="Vice Captain" {...iconProps} />
+          <Image src="/fantasy-icons/vice-captain.webp" alt="Vice Captain" {...iconProps} />
           <span className="text-white text-xs font-semibold">Vice Captain</span>
         </div>
 
         <div className="flex items-center gap-2">
-          <Image src="/fantasy-icons/injured.png" alt="Injured" {...iconProps} />
+          <Image src="/fantasy-icons/injured.webp" alt="Injured" {...iconProps} />
           <span className="text-white text-xs font-semibold">Injured</span>
         </div>
 
         <div className="flex items-center gap-2">
-          <Image src="/fantasy-icons/suspended.png" alt="Suspended" {...iconProps} />
+          <Image src="/fantasy-icons/suspended.webp" alt="Suspended" {...iconProps} />
           <span className="text-white text-xs font-semibold">Suspended</span>
         </div>
 
         <div className="flex items-center gap-2">
-          <Image src="/fantasy-icons/eliminated.png" alt="Eliminated" {...iconProps} />
+          <Image src="/fantasy-icons/eliminated.webp" alt="Eliminated" {...iconProps} />
           <span className="text-white text-xs font-semibold">Eliminated</span>
         </div>
 
         <div className="flex items-center gap-2">
-          <Image src="/fantasy-icons/starting.png" alt="Starting" {...iconProps} />
+          <Image src="/fantasy-icons/starting.webp" alt="Starting" {...iconProps} />
           <span className="text-white text-xs font-semibold">Starting</span>
         </div>
 
         <div className="flex items-center gap-2">
-          <Image src="/fantasy-icons/out-of-squad.png" alt="Out of squad" {...iconProps} />
+          <Image src="/fantasy-icons/out-of-squad.webp" alt="Out of squad" {...iconProps} />
           <span className="text-white text-xs font-semibold">Out of squad</span>
         </div>
 
         <div className="flex items-center gap-2">
-          <Image src="/fantasy-icons/bench.png" alt="Bench" {...iconProps} />
+          <Image src="/fantasy-icons/bench.webp" alt="Bench" {...iconProps} />
           <span className="text-white text-xs font-semibold">Bench</span>
         </div>
 
         <div className="flex items-center gap-2">
-          <Image src="/fantasy-icons/substitute-in.png" alt="Substitute In" {...iconProps} />
+          <Image src="/fantasy-icons/substitute-in.webp" alt="Substitute In" {...iconProps} />
           <span className="text-white text-xs font-semibold">Subs In</span>
         </div>
 
         <div className="flex items-center gap-2">
-          <Image src="/fantasy-icons/substitute-out.png" alt="Substitute out" {...iconProps} />
+          <Image src="/fantasy-icons/substitute-out.webp" alt="Substitute out" {...iconProps} />
           <span className="text-white text-xs font-semibold">Sub Out</span>
         </div>
 
         <div className="flex items-center gap-2">
-          <Image src="/fantasy-icons/boosters.png" alt="Boosters" {...iconProps} />
+          <Image src="/fantasy-icons/boosters.webp" alt="Boosters" {...iconProps} />
           <span className="text-white text-xs font-semibold">Boosters</span>
         </div>
 
         <div className="flex items-center gap-2">
-          <Image src="/fantasy-icons/transfer.png" alt="Transfer" {...iconProps} />
+          <Image src="/fantasy-icons/transfer.webp" alt="Transfer" {...iconProps} />
           <span className="text-white text-xs font-semibold">Transfer</span>
         </div>
 
@@ -389,7 +393,7 @@ function ListView({
             {p.position}
           </span>
           <span className="flex-1 text-sm font-semibold text-white truncate">
-            {p.firstName} {p.lastName}
+            {p.knownName || `${p.firstName} ${p.lastName}`}
           </span>
           <span className="text-xs text-white/50">{p.club ?? p.nation}</span>
           <span className="text-xs font-semibold text-white/70 w-12 text-right">
@@ -497,7 +501,7 @@ export function SquadSelectionPanel({
             <div className="flex items-center gap-1 mt-0.5">
               <div className="relative w-4 h-4 drop-shadow-md">
                 <Image
-                  src={`/images/flags/${getCountrySlug(favoriteCountry)}.png`}
+                  src={`/images/flags/${getCountrySlug(favoriteCountry)}.webp`}
                   alt={`${favoriteCountry} flag`}
                   fill
                   className="object-contain object-bottom"

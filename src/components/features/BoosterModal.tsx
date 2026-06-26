@@ -35,20 +35,20 @@ const BOOSTERS: BoosterOption[] = [
     name: "Maximum Captain",
     description:
       "Your highest scoring player will earn double points.",
-    icon: "/fantasy-icons/captain.png",
+    icon: "/fantasy-icons/captain.webp",
   },
   {
     id: "12th-man",
     name: "12th Man",
     description:
       "Select another additional player to be your 12th man.",
-    icon: "/fantasy-icons/substitute-in.png",
+    icon: "/fantasy-icons/substitute-in.webp",
   },
   {
     id: "wild-card",
     name: "Wild Card",
     description: "Make unlimited transfers for one round.",
-    icon: "/fantasy-icons/transfer.png",
+    icon: "/fantasy-icons/transfer.webp",
     disabled: true,
   },
   {
@@ -56,14 +56,14 @@ const BOOSTERS: BoosterOption[] = [
     name: "Qualification Booster",
     description:
       "All players in your team who qualify for the next round will receive a +2 bonus points boost.",
-    icon: "/fantasy-icons/boosters.png",
+    icon: "/fantasy-icons/boosters.webp",
     disabled: false,
   },
   {
     id: "clean-sheet-shield",
     name: "Clean Sheet Shield",
     description: "Any goalkeeper, defender or midfielder in your team will only lose their clean sheet after conceding 2 goals.",
-    icon: "/fantasy-icons/shield.png",
+    icon: "/fantasy-icons/shield.webp",
     disabled: false,
   },
 ];

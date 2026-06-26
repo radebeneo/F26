@@ -69,9 +69,12 @@ interface PlayerRowProps {
 
 function PlayerRow({ player, isSelected, onAdd, onRemove, showFullName, mode }: PlayerRowProps) {
   const slug = nationToSlug(player.nation);
-  const displayName = showFullName 
-    ? `${player.firstName} ${player.lastName}` 
-    : (player.lastName || player.firstName);
+  // Priority: knownName (official known alias) → full name if duplicate → lastName → firstName
+  const displayName = player.knownName
+    ? player.knownName
+    : showFullName
+      ? `${player.firstName} ${player.lastName}`
+      : (player.lastName || player.firstName);
 
   return (
     <div
@@ -91,7 +94,7 @@ function PlayerRow({ player, isSelected, onAdd, onRemove, showFullName, mode }: 
       {/* Flag */}
       <div className="relative w-8 h-8 rounded-md overflow-hidden flex-shrink-0 bg-white/10">
         <Image
-          src={`/images/kits/${slug}.png`}
+          src={`/images/kits/${slug}.webp`}
           alt={player.nation}
           fill
           className="object-cover object-top"
@@ -256,7 +259,8 @@ export function PlayerSelectionPanel({ players, mode = "transfer" }: PlayerSelec
           search === "" ||
           `${p.firstName} ${p.lastName}`
             .toLowerCase()
-            .includes(search.toLowerCase());
+            .includes(search.toLowerCase()) ||
+          (p.knownName?.toLowerCase().includes(search.toLowerCase()) ?? false);
         const posMatch = posFilter === "All" || p.position === posFilter;
         const natMatch = nationFilter === "All" || p.nation === nationFilter;
         return nameMatch && posMatch && natMatch;
@@ -515,7 +519,10 @@ export function PlayerSelectionPanel({ players, mode = "transfer" }: PlayerSelec
                     isSelected={mode === "12th-man" ? twelfthManId === player.id : selectedIds.has(player.id)}
                     onAdd={() => handleAdd(player)}
                     onRemove={() => handleRemove(player)}
-                    showFullName={player.lastName ? duplicatedLastNames.has(`${player.nation}|${player.lastName}`) : false}
+                    showFullName={
+                      !player.knownName &&
+                      (player.lastName ? duplicatedLastNames.has(`${player.nation}|${player.lastName}`) : false)
+                    }
                     mode={mode}
                   />
                 ))}

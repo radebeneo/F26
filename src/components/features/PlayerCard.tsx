@@ -38,7 +38,7 @@ export function PlayerCard({ player, nextFixture, className }: PlayerCardProps) 
       {/* Top section: Nation background image */}
       <div className="relative flex-1 w-full bg-[#8c8c8c]">
         <Image
-          src={`/images/kits/${formattedNation}.png`}
+          src={`/images/kits/${formattedNation}.webp`}
           alt={`${player.nation} kit`}
           fill
           className="object-cover object-top"
@@ -50,7 +50,7 @@ export function PlayerCard({ player, nextFixture, className }: PlayerCardProps) 
       {/* Middle section: Player Name & Next Fixture */}
       <div className="bg-white w-full py-2 flex flex-col items-center justify-center">
         <span className="text-black font-black text-2xl tracking-tight leading-none uppercase">
-          {player.lastName || player.firstName}
+          {player.knownName || player.lastName || player.firstName}
         </span>
         {nextFixture && (
           <div className="mt-1 flex items-center justify-center gap-1">
