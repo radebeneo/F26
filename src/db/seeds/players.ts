@@ -19,6 +19,11 @@ export type RawPlayer = {
   nation: string;
   club: string;
   price: number;
+  /**
+   * Full-body portrait URL from FIFA Digital Hub (official_players.json → pictureUrl).
+   * Null for players without an official portrait. UI crops to head/shoulders via object-top.
+   */
+  imageUrl: string | null;
 };
 
 /**
@@ -210,6 +215,7 @@ function p(
     nation,
     club,
     price,
+    imageUrl: null,
   };
 }
 
@@ -1242,32 +1248,35 @@ export const ALL_PLAYERS: RawPlayer[] = [
   // ── GROUP J ────────────────────────────────────────
 
   // Argentina
-  p("Emiliano Martínez", "GK", "Argentina", "Aston Villa", 4.7),
-  p("Gerónimo Rulli", "GK", "Argentina", "Marseille", 4.5),
-  p("Juan Musso", "GK", "Argentina", "Atlético Madrid", 4.3),
-  p("Gonzalo Montiel", "DEF", "Argentina", "River Plate", 4.3),
-  p("Nahuel Molina", "DEF", "Argentina", "Atlético Madrid", 4.4),
-  p("Lisandro Martínez", "DEF", "Argentina", "Manchester United", 4.6),
-  p("Nicolás Otamendi", "DEF", "Argentina", "Benfica", 4.4),
+  // 26 players have official FIFA portrait URLs (pictureUrl from official_players.json).
+  // Full-body portraits are cropped to head/shoulders in the UI via object-top.
+  { firstName: "Emiliano", lastName: "Martínez", knownName: null, position: "GK", nation: "Argentina", club: "Aston Villa", price: 4.7, imageUrl: "https://digitalhub.fifa.com/transform/f5f477fe-a519-4c69-bb68-f6f5b97c1399/MARTINEZ_Emiliano_308300" },
+  { firstName: "Gerónimo", lastName: "Rulli", knownName: null, position: "GK", nation: "Argentina", club: "Marseille", price: 4.5, imageUrl: "https://digitalhub.fifa.com/transform/db91883b-99ec-4aa2-bf1a-cc7912040c7b/RULLI-Geronimo_394824" },
+  { firstName: "Juan", lastName: "Musso", knownName: null, position: "GK", nation: "Argentina", club: "Atlético Madrid", price: 4.3, imageUrl: "https://digitalhub.fifa.com/transform/c4a2b6b7-378f-422d-b2d1-42a04e5b1dfb/MUSSO-Juan_430624" },
+  { firstName: "Gonzalo", lastName: "Montiel", knownName: null, position: "DEF", nation: "Argentina", club: "River Plate", price: 4.3, imageUrl: "https://digitalhub.fifa.com/transform/b8cd278f-c843-4b99-9fb3-c8f081fbb2a8/MONTIEL-Gonzalo_402926" },
+  { firstName: "Nahuel", lastName: "Molina", knownName: null, position: "DEF", nation: "Argentina", club: "Atlético Madrid", price: 4.4, imageUrl: "https://digitalhub.fifa.com/transform/7aef8344-2a5b-42f0-b1a0-565d5220aa76/MOLINA-Nahuel_402925" },
+  { firstName: "Lisandro", lastName: "Martínez", knownName: null, position: "DEF", nation: "Argentina", club: "Manchester United", price: 4.6, imageUrl: "https://digitalhub.fifa.com/transform/1b4390f3-e94f-4851-a36b-595356b3d414/MARTINEZ-Lisandro_402921" },
+  { firstName: "Nicolás", lastName: "Otamendi", knownName: null, position: "DEF", nation: "Argentina", club: "Benfica", price: 4.4, imageUrl: "https://digitalhub.fifa.com/transform/4aedbffa-a35c-4aa5-a7ce-8a29c2af3e72/OTAMENDI-Nicolas_310116" },
   p("Leonardo Balerdi", "DEF", "Argentina", "Marseille", 4),
-  p("Cristian Romero", "DEF", "Argentina", "Tottenham", 4.9),
-  p("Facundo Medina", "DEF", "Argentina", "Marseille", 4),
-  p("Nicolás Tagliafico", "DEF", "Argentina", "Lyon", 4.3),
-  p("Leandro Paredes", "MID", "Argentina", "Boca Juniors", 5.6),
-  p("Rodrigo De Paul", "MID", "Argentina", "Inter Miami", 5.9),
-  p("Exequiel Palacios", "MID", "Argentina", "Bayer Leverkusen", 6),
-  p("Enzo Fernández", "MID", "Argentina", "Chelsea", 7.5),
-  p("Alexis Mac Allister", "MID", "Argentina", "Liverpool", 6.6),
-  p("Giovani Lo Celso", "MID", "Argentina", "Real Betis", 6.2),
-  p("Valentín Barco", "MID", "Argentina", "Strasbourg", 6.2),
-  p("Lionel Messi", "FWD", "Argentina", "Inter Miami", 10),
-  p("Nico Paz", "FWD", "Argentina", "Como", 5.9),
-  p("Thiago Almada", "FWD", "Argentina", "Atlético Madrid", 6.5),
-  p("Nicolás González", "FWD", "Argentina", "Atletico Madrid", 6),
-  p("Giuliano Simeone", "FWD", "Argentina", "Atlético Madrid", 5.6),
-  p("Lautaro Martínez", "FWD", "Argentina", "Internazionale", 8.8),
-  p("Jose Manuel López", "FWD", "Argentina", "Palmeiras", 5.3),
-  p("Julián Álvarez", "FWD", "Argentina", "Atlético Madrid", 8.6),
+  { firstName: "Cristian", lastName: "Romero", knownName: null, position: "DEF", nation: "Argentina", club: "Tottenham", price: 4.9, imageUrl: "https://digitalhub.fifa.com/transform/61d5d60a-7e5a-4a29-919d-c52bd80b9a5a/ROMERO-Cristian_431196" },
+  { firstName: "Facundo", lastName: "Medina", knownName: null, position: "DEF", nation: "Argentina", club: "Marseille", price: 4, imageUrl: "https://digitalhub.fifa.com/transform/6d4b9a27-2cd5-4372-8426-51876990ba1b/MEDINA-Facundo_418963" },
+  { firstName: "Nicolás", lastName: "Tagliafico", knownName: null, position: "DEF", nation: "Argentina", club: "Lyon", price: 4.3, imageUrl: "https://digitalhub.fifa.com/transform/dd4d5f75-b3d4-4ff2-81bf-c16bf0b0a061/TAGLIAFICO-Nicolas_308322" },
+  { firstName: "Marcos", lastName: "Senesi", knownName: null, position: "DEF", nation: "Argentina", club: "Bournemouth", price: 4, imageUrl: "https://digitalhub.fifa.com/transform/6e675b37-0a1a-4b1e-8ec8-34425ac08d86/MARCOS-SENESI_402934" },
+  { firstName: "Leandro", lastName: "Paredes", knownName: null, position: "MID", nation: "Argentina", club: "Boca Juniors", price: 5.6, imageUrl: "https://digitalhub.fifa.com/transform/76c073ae-2d3c-47b6-8fb5-698893f91a6f/PAREDES-Leandro_332847" },
+  { firstName: "Rodrigo", lastName: "De Paul", knownName: null, position: "MID", nation: "Argentina", club: "Inter Miami", price: 5.9, imageUrl: "https://digitalhub.fifa.com/transform/314bcb4c-8c81-4bce-9750-85827a209c1b/DE-PAUL-Rodrigo_428882" },
+  { firstName: "Exequiel", lastName: "Palacios", knownName: null, position: "MID", nation: "Argentina", club: "Bayer Leverkusen", price: 6, imageUrl: "https://digitalhub.fifa.com/transform/0c3725a4-a529-412d-867b-2ca0929a7a85/PALACIOS-Exequiel_389485" },
+  { firstName: "Enzo", lastName: "Fernández", knownName: null, position: "MID", nation: "Argentina", club: "Chelsea", price: 7.5, imageUrl: "https://digitalhub.fifa.com/transform/b88c6da2-28db-4d61-a668-ac8e84114063/FERNANDEZ-Enzo_448252" },
+  { firstName: "Alexis", lastName: "Mac Allister", knownName: null, position: "MID", nation: "Argentina", club: "Liverpool", price: 6.6, imageUrl: "https://digitalhub.fifa.com/transform/78b6a9e4-f2b9-4e19-b414-79b18858caaf/MAC-ALLISTER-Alexis_430628" },
+  { firstName: "Giovani", lastName: "Lo Celso", knownName: null, position: "MID", nation: "Argentina", club: "Real Betis", price: 6.2, imageUrl: "https://digitalhub.fifa.com/transform/ddda0414-89fe-4118-9830-8ef417990db4/LO-CELSO-Giovani_395414" },
+  { firstName: "Valentín", lastName: "Barco", knownName: null, position: "MID", nation: "Argentina", club: "Strasbourg", price: 6.2, imageUrl: "https://digitalhub.fifa.com/transform/b3a01b61-2e37-439e-b277-5d37c89923ab/BARCO-Valentin_463661" },
+  { firstName: "Lionel", lastName: "Messi", knownName: null, position: "FWD", nation: "Argentina", club: "Inter Miami", price: 10, imageUrl: "https://digitalhub.fifa.com/transform/19823774-fac0-485a-8a8f-572e7324c6c2/MESSI-Lionel_229397" },
+  { firstName: "Nico", lastName: "Paz", knownName: null, position: "FWD", nation: "Argentina", club: "Como", price: 5.9, imageUrl: "https://digitalhub.fifa.com/transform/db59cb7d-9b9e-4cdc-be14-07e16631dbd8/PAZ-Nico_441422" },
+  { firstName: "Thiago", lastName: "Almada", knownName: null, position: "FWD", nation: "Argentina", club: "Atlético Madrid", price: 6.5, imageUrl: "https://digitalhub.fifa.com/transform/2bcc1c2f-7d0e-46c9-bcd9-1c02ed4d408a/ALMADA-Thiago_418975" },
+  { firstName: "Nico", lastName: "González", knownName: null, position: "FWD", nation: "Argentina", club: "Atletico Madrid", price: 6, imageUrl: "https://digitalhub.fifa.com/transform/7c86f0b3-0e7b-46e4-adb5-eafcd09d5cd0/GONZALEZ-Nico_430631" },
+  { firstName: "Giuliano", lastName: "Simeone", knownName: null, position: "FWD", nation: "Argentina", club: "Atlético Madrid", price: 5.6, imageUrl: "https://digitalhub.fifa.com/transform/5d379193-ed78-498b-81c0-0e1a50f2f7c9/SIMEONE-Giuliano_485595" },
+  { firstName: "Lautaro", lastName: "Martínez", knownName: "Lautaro Martínez", position: "FWD", nation: "Argentina", club: "Internazionale", price: 8.8, imageUrl: "https://digitalhub.fifa.com/transform/2368bf53-1f73-427b-929e-557187d53ac7/MARTINEZ-Lautaro_402920" },
+  { firstName: "José Manuel", lastName: "López", knownName: null, position: "FWD", nation: "Argentina", club: "Palmeiras", price: 5.3, imageUrl: "https://digitalhub.fifa.com/transform/fe5c273f-95e7-49c7-b9a5-a332e4da801b/LOPEZ-Jose-Manuel_495054" },
+  { firstName: "Julián", lastName: "Alvarez", knownName: null, position: "FWD", nation: "Argentina", club: "Atlético Madrid", price: 8.6, imageUrl: "https://digitalhub.fifa.com/transform/c7715f12-adb9-4504-9be2-e2899bdbd172/ALVAREZ-Julian_416081" },
 
   // Algeria
   p("Oussama Benbot", "GK", "Algeria", "USM Alger", 4.2),

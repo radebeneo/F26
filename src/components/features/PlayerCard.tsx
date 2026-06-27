@@ -28,6 +28,11 @@ export function PlayerCard({ player, nextFixture, className }: PlayerCardProps) 
   // Format price (e.g. 10 -> $10m, 10.5 -> $10.5m)
   const formattedPrice = `$${player.price}m`;
 
+  // Use official FIFA portrait when available, otherwise fall back to kit image.
+  // Portraits are full-body — object-top anchors the head/shoulders in the crop area.
+  const imageSrc = player.imageUrl ?? `/images/kits/${formattedNation}.webp`;
+  const isPortrait = !!player.imageUrl;
+
   return (
     <div
       className={cn(
@@ -35,11 +40,11 @@ export function PlayerCard({ player, nextFixture, className }: PlayerCardProps) 
         className
       )}
     >
-      {/* Top section: Nation background image */}
-      <div className="relative flex-1 w-full bg-[#8c8c8c]">
+      {/* Top section: Player portrait or nation kit */}
+      <div className="relative flex-1 w-full bg-[#8c8c8c] overflow-hidden">
         <Image
-          src={`/images/kits/${formattedNation}.webp`}
-          alt={`${player.nation} kit`}
+          src={imageSrc}
+          alt={isPortrait ? `${player.firstName} ${player.lastName}` : `${player.nation} kit`}
           fill
           className="object-cover object-top"
           sizes="180px"

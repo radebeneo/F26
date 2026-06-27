@@ -1,0 +1,248 @@
+{
+  "idCompetition": "17",
+  "idSeason": "285023",
+  "fetchedAt": "2026-06-26T13:25:54.588Z",
+  "count": 48,
+  "teams": [
+    {
+      "IdTeam": "43843",
+      "IdCountry": "ALG",
+      "TeamName": "Algeria"
+    },
+    {
+      "IdTeam": "43922",
+      "IdCountry": "ARG",
+      "TeamName": "Argentina"
+    },
+    {
+      "IdTeam": "43976",
+      "IdCountry": "AUS",
+      "TeamName": "Australia"
+    },
+    {
+      "IdTeam": "43934",
+      "IdCountry": "AUT",
+      "TeamName": "Austria"
+    },
+    {
+      "IdTeam": "43935",
+      "IdCountry": "BEL",
+      "TeamName": "Belgium"
+    },
+    {
+      "IdTeam": "44037",
+      "IdCountry": "BIH",
+      "TeamName": "Bosnia and Herzegovina"
+    },
+    {
+      "IdTeam": "43924",
+      "IdCountry": "BRA",
+      "TeamName": "Brazil"
+    },
+    {
+      "IdTeam": "43850",
+      "IdCountry": "CPV",
+      "TeamName": "Cabo Verde"
+    },
+    {
+      "IdTeam": "43899",
+      "IdCountry": "CAN",
+      "TeamName": "Canada"
+    },
+    {
+      "IdTeam": "43926",
+      "IdCountry": "COL",
+      "TeamName": "Colombia"
+    },
+    {
+      "IdTeam": "20014",
+      "IdCountry": "COD",
+      "TeamName": "Congo DR"
+    },
+    {
+      "IdTeam": "43854",
+      "IdCountry": "CIV",
+      "TeamName": "Côte d'Ivoire"
+    },
+    {
+      "IdTeam": "43938",
+      "IdCountry": "CRO",
+      "TeamName": "Croatia"
+    },
+    {
+      "IdTeam": "1895293",
+      "IdCountry": "CUW",
+      "TeamName": "Curaçao"
+    },
+    {
+      "IdTeam": "43995",
+      "IdCountry": "CZE",
+      "TeamName": "Czechia"
+    },
+    {
+      "IdTeam": "43927",
+      "IdCountry": "ECU",
+      "TeamName": "Ecuador"
+    },
+    {
+      "IdTeam": "43855",
+      "IdCountry": "EGY",
+      "TeamName": "Egypt"
+    },
+    {
+      "IdTeam": "43942",
+      "IdCountry": "ENG",
+      "TeamName": "England"
+    },
+    {
+      "IdTeam": "43946",
+      "IdCountry": "FRA",
+      "TeamName": "France"
+    },
+    {
+      "IdTeam": "43948",
+      "IdCountry": "GER",
+      "TeamName": "Germany"
+    },
+    {
+      "IdTeam": "43860",
+      "IdCountry": "GHA",
+      "TeamName": "Ghana"
+    },
+    {
+      "IdTeam": "43908",
+      "IdCountry": "HAI",
+      "TeamName": "Haiti"
+    },
+    {
+      "IdTeam": "43817",
+      "IdCountry": "IRN",
+      "TeamName": "IR Iran"
+    },
+    {
+      "IdTeam": "43818",
+      "IdCountry": "IRQ",
+      "TeamName": "Iraq"
+    },
+    {
+      "IdTeam": "43819",
+      "IdCountry": "JPN",
+      "TeamName": "Japan"
+    },
+    {
+      "IdTeam": "43820",
+      "IdCountry": "JOR",
+      "TeamName": "Jordan"
+    },
+    {
+      "IdTeam": "43822",
+      "IdCountry": "KOR",
+      "TeamName": "Korea Republic"
+    },
+    {
+      "IdTeam": "43911",
+      "IdCountry": "MEX",
+      "TeamName": "Mexico"
+    },
+    {
+      "IdTeam": "43872",
+      "IdCountry": "MAR",
+      "TeamName": "Morocco"
+    },
+    {
+      "IdTeam": "43960",
+      "IdCountry": "NED",
+      "TeamName": "Netherlands"
+    },
+    {
+      "IdTeam": "43978",
+      "IdCountry": "NZL",
+      "TeamName": "New Zealand"
+    },
+    {
+      "IdTeam": "43961",
+      "IdCountry": "NOR",
+      "TeamName": "Norway"
+    },
+    {
+      "IdTeam": "43914",
+      "IdCountry": "PAN",
+      "TeamName": "Panama"
+    },
+    {
+      "IdTeam": "43928",
+      "IdCountry": "PAR",
+      "TeamName": "Paraguay"
+    },
+    {
+      "IdTeam": "43963",
+      "IdCountry": "POR",
+      "TeamName": "Portugal"
+    },
+    {
+      "IdTeam": "43834",
+      "IdCountry": "QAT",
+      "TeamName": "Qatar"
+    },
+    {
+      "IdTeam": "43835",
+      "IdCountry": "KSA",
+      "TeamName": "Saudi Arabia"
+    },
+    {
+      "IdTeam": "43967",
+      "IdCountry": "SCO",
+      "TeamName": "Scotland"
+    },
+    {
+      "IdTeam": "43879",
+      "IdCountry": "SEN",
+      "TeamName": "Senegal"
+    },
+    {
+      "IdTeam": "43883",
+      "IdCountry": "RSA",
+      "TeamName": "South Africa"
+    },
+    {
+      "IdTeam": "43969",
+      "IdCountry": "ESP",
+      "TeamName": "Spain"
+    },
+    {
+      "IdTeam": "43970",
+      "IdCountry": "SWE",
+      "TeamName": "Sweden"
+    },
+    {
+      "IdTeam": "43971",
+      "IdCountry": "SUI",
+      "TeamName": "Switzerland"
+    },
+    {
+      "IdTeam": "43888",
+      "IdCountry": "TUN",
+      "TeamName": "Tunisia"
+    },
+    {
+      "IdTeam": "43972",
+      "IdCountry": "TUR",
+      "TeamName": "Türkiye"
+    },
+    {
+      "IdTeam": "43930",
+      "IdCountry": "URU",
+      "TeamName": "Uruguay"
+    },
+    {
+      "IdTeam": "43921",
+      "IdCountry": "USA",
+      "TeamName": "USA"
+    },
+    {
+      "IdTeam": "44005",
+      "IdCountry": "UZB",
+      "TeamName": "Uzbekistan"
+    }
+  ]
+}

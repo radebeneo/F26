@@ -26,6 +26,7 @@ import { cn } from "@/lib/utils";
 import { useSquadStore } from "@/store/squadStore";
 import { useToast } from "@/components/ui/toast";
 import type { Player } from "@/db/schema";
+import { PlayerDetailsModal } from "./PlayerDetailsModal";
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -63,11 +64,12 @@ interface PlayerRowProps {
   isSelected: boolean;
   onAdd: () => void;
   onRemove: () => void;
+  onInfoClick?: () => void;
   showFullName?: boolean;
   mode: "transfer" | "12th-man" | "view";
 }
 
-function PlayerRow({ player, isSelected, onAdd, onRemove, showFullName, mode }: PlayerRowProps) {
+function PlayerRow({ player, isSelected, onAdd, onRemove, onInfoClick, showFullName, mode }: PlayerRowProps) {
   const slug = nationToSlug(player.nation);
   // Priority: knownName (official known alias) → full name if duplicate → lastName → firstName
   const displayName = player.knownName
@@ -85,20 +87,25 @@ function PlayerRow({ player, isSelected, onAdd, onRemove, showFullName, mode }: 
     >
       {/* Info icon */}
       <button
+        onClick={onInfoClick}
         aria-label={`Info about ${displayName}`}
         className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-white/40 hover:text-white/80 hover:bg-white/10 transition-colors"
       >
         <Info size={12} />
       </button>
 
-      {/* Flag */}
+      {/* Portrait or flag thumbnail */}
       <div className="relative w-8 h-8 rounded-md overflow-hidden flex-shrink-0 bg-white/10">
         <Image
-          src={`/images/kits/${slug}.webp`}
-          alt={player.nation}
+          src={player.imageUrl ?? `/images/kits/${slug}.webp`}
+          alt={player.imageUrl ? `${player.firstName} ${player.lastName}` : player.nation}
           fill
-          className="object-cover object-top"
-          sizes="32px"
+          className={player.imageUrl
+            ? "object-cover object-top scale-[1.8] origin-top"
+            : "object-cover object-top"
+          }
+          sizes="120px"
+          quality={100}
         />
       </div>
 
@@ -211,15 +218,17 @@ function Pagination({
 interface PlayerSelectionPanelProps {
   players: Player[];
   mode?: "transfer" | "12th-man" | "view";
+  opponentMap?: Record<string, string>;
 }
 
-export function PlayerSelectionPanel({ players, mode = "transfer" }: PlayerSelectionPanelProps) {
+export function PlayerSelectionPanel({ players, mode = "transfer", opponentMap }: PlayerSelectionPanelProps) {
   const [search, setSearch] = useState("");
   const [posFilter, setPosFilter] = useState("All");
   const [nationFilter, setNationFilter] = useState("All");
   const [sortBy, setSortBy] = useState<"totalPoints" | "price">("totalPoints");
   const [page, setPage] = useState(1);
   const [showFilters, setShowFilters] = useState(true);
+  const [selectedPlayerForModal, setSelectedPlayerForModal] = useState<Player | null>(null);
 
   // True when any filter deviates from its default value
   const hasActiveFilters =
@@ -519,6 +528,7 @@ export function PlayerSelectionPanel({ players, mode = "transfer" }: PlayerSelec
                     isSelected={mode === "12th-man" ? twelfthManId === player.id : selectedIds.has(player.id)}
                     onAdd={() => handleAdd(player)}
                     onRemove={() => handleRemove(player)}
+                    onInfoClick={() => setSelectedPlayerForModal(player)}
                     showFullName={
                       !player.knownName &&
                       (player.lastName ? duplicatedLastNames.has(`${player.nation}|${player.lastName}`) : false)
@@ -562,6 +572,16 @@ export function PlayerSelectionPanel({ players, mode = "transfer" }: PlayerSelec
           total={filtered.length}
         />
       )}
+
+      {/* ── Player Details Modal ── */}
+      <PlayerDetailsModal
+        isOpen={!!selectedPlayerForModal}
+        player={selectedPlayerForModal}
+        onClose={() => setSelectedPlayerForModal(null)}
+        isCaptain={false}
+        isViceCaptain={false}
+        opponentAcronym={selectedPlayerForModal ? opponentMap?.[selectedPlayerForModal.nation] : undefined}
+      />
     </aside>
   );
 }

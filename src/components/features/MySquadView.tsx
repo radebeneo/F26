@@ -86,7 +86,7 @@ function MySquadPitchSlot({
       onClick={onClick}
     >
       {player ? (
-        <div className="relative flex flex-col items-center w-[54px]">
+        <div className="relative flex flex-col items-center w-[64px]">
           {/* Sub Out Icon */}
           {isSubOutSelected && (
             <div className="absolute -top-2 -left-2 z-40 w-5 h-5 bg-white rounded-full border-[1.5px] border-[#f44336] flex items-center justify-center shadow-sm">
@@ -138,14 +138,18 @@ function MySquadPitchSlot({
             </div>
           )}
 
-          {/* Nation kit image */}
-          <div className="relative w-11 h-11 z-10 -mb-1 flex-shrink-0 drop-shadow-md">
+          {/* Player portrait or nation kit */}
+          <div className="relative w-14 h-14 z-10 -mb-1 flex-shrink-0 drop-shadow-md overflow-hidden border-[1.5px] border-white rounded-md">
             <Image
-              src={`/images/kits/${slug}.webp`}
-              alt={player.nation}
+              src={player.imageUrl ?? `/images/kits/${slug}.webp`}
+              alt={player.imageUrl ? `${player.firstName} ${player.lastName}` : player.nation}
               fill
-              className="object-contain object-bottom"
-              sizes="44px"
+              className={player.imageUrl
+                ? "object-cover object-top scale-[1.8] origin-top"
+                : "object-contain object-bottom"
+              }
+              sizes="120px"
+              quality={100}
             />
           </div>
 
@@ -918,7 +922,7 @@ export function MySquadView({
                   transition={{ duration: 0.2 }}
                   className="absolute inset-0"
                 >
-                  <PlayerSelectionPanel players={allPlayers} mode={is12thManMode ? "12th-man" : "transfer"} />
+                  <PlayerSelectionPanel players={allPlayers} mode={is12thManMode ? "12th-man" : "transfer"} opponentMap={opponentMap} />
                 </motion.div>
               ) : (
                 <motion.div
@@ -930,7 +934,7 @@ export function MySquadView({
                   className="absolute inset-0"
                 >
                   {rightPanelView === "player-pool" ? (
-                    <PlayerSelectionPanel players={allPlayers} mode="view" />
+                    <PlayerSelectionPanel players={allPlayers} mode="view" opponentMap={opponentMap} />
                   ) : (
                     <HowToScorePanel />
                   )}

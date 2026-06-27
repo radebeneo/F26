@@ -855,7 +855,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 10% 8% 4%;
+  padding: 4% 8% 48%;
 }
 
 .exact-pitch-row {
@@ -1007,13 +1007,11 @@
 
 /* ── Pitch surface ────────────────────────────────────────────────────────── */
 .pitch-surface {
-  background-image: repeating-linear-gradient(
-    to bottom,
-    #1a8f35 0%,
-    #1a8f35 12.5%,
-    #1c9d3b 12.5%,
-    #1c9d3b 25%
-  );
+  background-image: repeating-linear-gradient(to bottom,
+      #1a8f35 0%,
+      #1a8f35 12.5%,
+      #1c9d3b 12.5%,
+      #1c9d3b 25%);
   position: relative;
   display: flex;
   flex-direction: column;
@@ -1027,13 +1025,13 @@
   inset: 0;
   background-image:
     /* Centre circle */
-    radial-gradient(circle at 50% 50%, transparent 12%, rgba(255,255,255,0.12) 12%, rgba(255,255,255,0.12) 12.6%, transparent 12.6%),
+    radial-gradient(circle at 50% 50%, transparent 12%, rgba(255, 255, 255, 0.12) 12%, rgba(255, 255, 255, 0.12) 12.6%, transparent 12.6%),
     /* Centre spot */
-    radial-gradient(circle at 50% 50%, rgba(255,255,255,0.35) 1%, transparent 1%),
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.35) 1%, transparent 1%),
     /* Half-way line */
-    linear-gradient(to bottom, transparent 49.5%, rgba(255,255,255,0.15) 49.5%, rgba(255,255,255,0.15) 50.5%, transparent 50.5%),
+    linear-gradient(to bottom, transparent 49.5%, rgba(255, 255, 255, 0.15) 49.5%, rgba(255, 255, 255, 0.15) 50.5%, transparent 50.5%),
     /* Penalty area top */
-    linear-gradient(to bottom, transparent 5%, rgba(255,255,255,0.1) 5%, rgba(255,255,255,0.1) 5.5%, transparent 5.5%);
+    linear-gradient(to bottom, transparent 5%, rgba(255, 255, 255, 0.1) 5%, rgba(255, 255, 255, 0.1) 5.5%, transparent 5.5%);
   pointer-events: none;
   z-index: 0;
 }
@@ -1144,6 +1142,7 @@
 
 /* ── Responsive: tablet / mobile ─────────────────────────────────────────── */
 @media (max-width: 900px) {
+
   .squad-builder-body,
   .my-squad-body {
     display: flex;

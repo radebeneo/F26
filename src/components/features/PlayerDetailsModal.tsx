@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
@@ -34,6 +35,11 @@ export function PlayerDetailsModal({
   isBench,
 }: PlayerDetailsModalProps) {
   const [activeTab, setActiveTab] = useState<"overview" | "fixtures" | "results">("overview");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   if (!player) return null;
 
@@ -44,7 +50,13 @@ export function PlayerDetailsModal({
     ? `${player.firstName} ${player.lastName}`
     : player.lastName || player.firstName);
 
-  return (
+  // Use official FIFA portrait when available, otherwise fall back to kit image.
+  // Portraits are full-body — object-top crops to head/shoulders region.
+  const headerImageSrc = player.imageUrl ?? `/images/kits/${slug}.webp`;
+  const isPortrait = !!player.imageUrl;
+
+
+  const modalContent = (
     <AnimatePresence>
       {isOpen && (
         <>
@@ -101,12 +113,15 @@ export function PlayerDetailsModal({
                 </div>
 
                 {/* Right side player image */}
-                <div className="relative w-[180px] h-[180px] -mb-2 z-0">
+                <div className="relative w-[180px] h-[180px] -mb-2 z-0 overflow-hidden">
                   <Image
-                    src={`/images/kits/${slug}.webp`}
-                    alt={player.nation}
+                    src={headerImageSrc}
+                    alt={isPortrait ? `${player.firstName} ${player.lastName}` : player.nation}
                     fill
-                    className="object-cover object-top drop-shadow-xl"
+                    className={isPortrait
+                      ? "object-cover object-top scale-[2] origin-top drop-shadow-xl"
+                      : "object-cover object-top drop-shadow-xl"
+                    }
                   />
                 </div>
                 
@@ -234,4 +249,8 @@ export function PlayerDetailsModal({
       )}
     </AnimatePresence>
   );
+
+  if (!mounted) return null;
+
+  return createPortal(modalContent, document.body);
 }

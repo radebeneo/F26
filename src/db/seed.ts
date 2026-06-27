@@ -76,7 +76,8 @@ async function main() {
         existing.price !== p.price ||
         existing.position !== p.position ||
         existing.club !== p.club ||
-        existing.knownName !== p.knownName
+        existing.knownName !== p.knownName ||
+        existing.imageUrl !== p.imageUrl
       ) {
         toUpdate.push({ id: existing.id, ...p });
       }
@@ -101,14 +102,26 @@ async function main() {
     for (let i = 0; i < toUpdate.length; i += BATCH) {
       const chunk = toUpdate.slice(i, i + BATCH);
       const valuesList = chunk
-        .map((u) => `(${u.id}, ${u.price}::numeric, ${u.knownName ? `'${u.knownName.replace(/'/g, "''")}` : "NULL"}${u.knownName ? "'" : ""})`)
+        .map(
+          (u) =>
+            `(${u.id}, ${u.price}::numeric, ${
+              u.knownName
+                ? `'${u.knownName.replace(/'/g, "''")}'`
+                : "NULL"
+            }, ${
+              u.imageUrl
+                ? `'${u.imageUrl.replace(/'/g, "''")}'`
+                : "NULL"
+            })`
+        )
         .join(", ");
       await db.execute(
         sql.raw(`
           UPDATE players
           SET price = v.price,
-              known_name = v.known_name
-          FROM (VALUES ${valuesList}) AS v(id, price, known_name)
+              known_name = v.known_name,
+              image_url = v.image_url
+          FROM (VALUES ${valuesList}) AS v(id, price, known_name, image_url)
           WHERE players.id = v.id::int
         `)
       );

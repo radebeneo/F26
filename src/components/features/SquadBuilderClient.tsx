@@ -299,7 +299,7 @@ function SquadBuilderInner({
             <main className="squad-builder-body" id="squad-builder-main">
               {/* Left: Player Selection */}
               <div className="squad-builder-left">
-                <PlayerSelectionPanel players={players} />
+                <PlayerSelectionPanel players={players} opponentMap={opponentMap} />
               </div>
 
               {/* Right: Squad Selection */}
