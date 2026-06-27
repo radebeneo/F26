@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { LogOut, Menu, X, HelpCircle, ChevronLeft, ChevronRight, Calendar, Trophy } from "lucide-react";
+import { LogOut, Menu, X, HelpCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import Image from "next/image";
@@ -11,8 +11,6 @@ import { HowToPlayModal } from "@/components/features/HowToPlayModal";
 interface FixturesClientProps {
   signOutAction: () => Promise<void>;
 }
-
-type PageTab = "fixtures" | "standings";
 
 // ── Fixtures data ──────────────────────────────────────────────────────────────
 const GROUPS = [
@@ -30,21 +28,6 @@ const GROUPS = [
   { id: "L", label: "GROUP L", image: "/images/matches/groupL.webp", color: "#1B6CA8", teams: ["Qatar", "Switzerland", "Egypt", "Belgium"] },
 ] as const;
 
-// ── Standings data ─────────────────────────────────────────────────────────────
-const STANDINGS = [
-  { id: "A", label: "GROUP A", image: "/images/standings/A.webp", color: "#00C86E" },
-  { id: "B", label: "GROUP B", image: "/images/standings/B.webp", color: "#E8214A" },
-  { id: "C", label: "GROUP C", image: "/images/standings/C.webp", color: "#FF8C00" },
-  { id: "D", label: "GROUP D", image: "/images/standings/D.webp", color: "#3B5FE8" },
-  { id: "E", label: "GROUP E", image: "/images/standings/E.webp", color: "#6C3DD8" },
-  { id: "F", label: "GROUP F", image: "/images/standings/F.webp", color: "#C8A200" },
-  { id: "G", label: "GROUP G", image: "/images/standings/G.webp", color: "#EC4899" }, // Pink
-  { id: "H", label: "GROUP H", image: "/images/standings/H.webp", color: "#34D399" }, // Mint
-  { id: "I", label: "GROUP I", image: "/images/standings/I.webp", color: "#A855F7" }, // Purple
-  { id: "J", label: "GROUP J", image: "/images/standings/J.webp", color: "#14B8A6" }, // Teal
-  { id: "K", label: "GROUP K", image: "/images/standings/K.webp", color: "#F97316" }, // Orange
-  { id: "L", label: "GROUP L", image: "/images/standings/L.webp", color: "#1B6CA8" },
-] as const;
 
 const THIRD_PLACED = {
   id: "3RD",
@@ -54,17 +37,17 @@ const THIRD_PLACED = {
   textColor: "#000000",
 } as const;
 
-type FixtureGroupId = typeof GROUPS[number]["id"];
-type StandingGroupId = typeof STANDINGS[number]["id"] | "3RD";
+type GroupId = typeof GROUPS[number]["id"] | "3RD";
 
 // ── Reusable Lightbox ─────────────────────────────────────────────────────────
 interface LightboxItem {
   id: string;
   label: string;
-  image: string;
+  fixtureImage?: string;
+  standingImage?: string;
+  standingAspectRatio?: string;
   color: string;
   textColor?: string;
-  aspectRatio?: string;
 }
 
 function Lightbox({
@@ -99,7 +82,10 @@ function Lightbox({
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.88, opacity: 0 }}
         transition={{ type: "spring", damping: 24, stiffness: 300 }}
-        className="relative max-w-3xl w-[92vw] rounded-2xl shadow-2xl flex flex-col"
+        className={cn(
+          "relative w-[92vw] rounded-2xl shadow-2xl flex flex-col",
+          current.fixtureImage && current.standingImage ? "max-w-6xl" : "max-w-3xl"
+        )}
         style={{ maxHeight: "90vh" }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -122,19 +108,44 @@ function Lightbox({
         </div>
 
         {/* Scrollable image area */}
-        <div className="overflow-y-auto rounded-b-2xl bg-[#111]">
-          <div
-            className="relative w-full"
-            style={{ aspectRatio: current.aspectRatio ?? "780/880" }}
-          >
-            <Image
-              src={current.image}
-              alt={current.label}
-              fill
-              className="object-contain"
-              sizes="(max-width: 768px) 92vw, 768px"
-              priority
-            />
+        <div className="overflow-y-auto rounded-b-2xl bg-[#111] w-full">
+          <div className="flex flex-col md:flex-row items-center md:items-start justify-center gap-4 md:gap-6 p-4 md:p-6 w-full">
+            {current.fixtureImage && (
+              <div
+                className={cn(
+                  "relative w-full",
+                  current.standingImage ? "md:w-3/5" : "max-w-4xl"
+                )}
+                style={{ aspectRatio: "1344/800" }}
+              >
+                <Image
+                  src={current.fixtureImage}
+                  alt={`${current.label} Fixtures`}
+                  fill
+                  className="object-contain"
+                  sizes="(max-width: 768px) 92vw, 60vw"
+                  priority
+                />
+              </div>
+            )}
+            {current.standingImage && (
+              <div
+                className={cn(
+                  "relative w-full",
+                  current.fixtureImage ? "md:w-2/5" : "max-w-md mx-auto"
+                )}
+                style={{ aspectRatio: current.standingAspectRatio || "780/880" }}
+              >
+                <Image
+                  src={current.standingImage}
+                  alt={`${current.label} Standings`}
+                  fill
+                  className="object-contain"
+                  sizes="(max-width: 768px) 92vw, 40vw"
+                  priority
+                />
+              </div>
+            )}
           </div>
         </div>
 
@@ -181,49 +192,38 @@ function Lightbox({
 export function FixturesClient({ signOutAction }: FixturesClientProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isHowToPlayOpen, setIsHowToPlayOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<PageTab>("fixtures");
 
-  // Fixtures lightbox
-  const [fixtureLightbox, setFixtureLightbox] = useState<FixtureGroupId | null>(null);
-  // Standings lightbox — includes all 12 groups + 3RD
-  const [standingLightbox, setStandingLightbox] = useState<StandingGroupId | null>(null);
+  // Active lightbox
+  const [activeLightbox, setActiveLightbox] = useState<GroupId | null>(null);
 
   const navLinks: { label: string; href?: string; action?: () => void }[] = [
     { label: "My Squad", href: "/dashboard" },
-    { label: "Fixtures", href: "/fixtures" },
+    { label: "Group Stage", href: "/fixtures" },
     { label: "Leaderboard", href: "/leaderboard" },
     { label: "How to Play", action: () => setIsHowToPlayOpen(true) },
   ];
 
-  // ── Fixture lightbox helpers ──────────────────────────────────────────────
-  const fixtureItems: LightboxItem[] = GROUPS.map((g) => ({
-    id: g.id,
-    label: g.label,
-    image: g.image,
-    color: g.color,
-    aspectRatio: "1344/800",
-  }));
-  const fixtureIndex = fixtureItems.findIndex((i) => i.id === fixtureLightbox);
-
-  // ── Standings lightbox helpers ─────────────────────────────────────────────
-  const standingItems: LightboxItem[] = [
-    ...STANDINGS.map((s) => ({
-      id: s.id,
-      label: s.label,
-      image: s.image,
-      color: s.color,
-      aspectRatio: "780/880",
+  // ── Lightbox items ──────────────────────────────────────────────
+  const lightboxItems: LightboxItem[] = [
+    ...GROUPS.map((g) => ({
+      id: g.id,
+      label: g.label,
+      fixtureImage: g.image,
+      standingImage: `/images/standings/${g.id}.webp`,
+      standingAspectRatio: "780/880",
+      color: g.color,
     })),
     {
       id: THIRD_PLACED.id,
       label: THIRD_PLACED.label,
-      image: THIRD_PLACED.image,
+      standingImage: THIRD_PLACED.image,
+      standingAspectRatio: "780/1420",
       color: THIRD_PLACED.color,
       textColor: THIRD_PLACED.textColor,
-      aspectRatio: "780/1420",
     },
   ];
-  const standingIndex = standingItems.findIndex((i) => i.id === standingLightbox);
+
+  const lightboxIndex = lightboxItems.findIndex((i) => i.id === activeLightbox);
 
   return (
     <div className="squad-builder-root flex flex-col h-screen bg-[#0a0a0a] text-white overflow-hidden relative">
@@ -232,22 +232,13 @@ export function FixturesClient({ signOutAction }: FixturesClientProps) {
 
       {/* ── Lightboxes ── */}
       <AnimatePresence>
-        {fixtureLightbox && (
+        {activeLightbox && (
           <Lightbox
-            items={fixtureItems}
-            activeId={fixtureLightbox}
-            onClose={() => setFixtureLightbox(null)}
-            onPrev={() => fixtureIndex > 0 && setFixtureLightbox(fixtureItems[fixtureIndex - 1].id as FixtureGroupId)}
-            onNext={() => fixtureIndex < fixtureItems.length - 1 && setFixtureLightbox(fixtureItems[fixtureIndex + 1].id as FixtureGroupId)}
-          />
-        )}
-        {standingLightbox && (
-          <Lightbox
-            items={standingItems}
-            activeId={standingLightbox}
-            onClose={() => setStandingLightbox(null)}
-            onPrev={() => standingIndex > 0 && setStandingLightbox(standingItems[standingIndex - 1].id as StandingGroupId)}
-            onNext={() => standingIndex < standingItems.length - 1 && setStandingLightbox(standingItems[standingIndex + 1].id as StandingGroupId)}
+            items={lightboxItems}
+            activeId={activeLightbox}
+            onClose={() => setActiveLightbox(null)}
+            onPrev={() => lightboxIndex > 0 && setActiveLightbox(lightboxItems[lightboxIndex - 1].id as GroupId)}
+            onNext={() => lightboxIndex < lightboxItems.length - 1 && setActiveLightbox(lightboxItems[lightboxIndex + 1].id as GroupId)}
           />
         )}
       </AnimatePresence>
@@ -388,207 +379,115 @@ export function FixturesClient({ signOutAction }: FixturesClientProps) {
           <div className="max-w-7xl mx-auto flex flex-col gap-6">
 
             {/* ── Page header ── */}
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-1 text-center md:text-left">
               <p className="text-[#c8f000] text-xs font-black uppercase tracking-[0.2em]">
-                FIFA World Cup 2026 · Group Stage
+                FIFA World Cup 2026
               </p>
               <h1 className="text-4xl md:text-5xl font-display font-black text-white uppercase tracking-widest drop-shadow-lg">
-                {activeTab === "fixtures" ? "Fixtures" : "Standings"}
+                Group Stage
               </h1>
               <p className="text-white/50 text-sm font-semibold mt-1">
-                {activeTab === "fixtures"
-                  ? "Click any group card to view the full fixtures & results."
-                  : "Click any group to view the current group standings."}
+                Click any group card to view fixtures & standings side-by-side.
               </p>
-            </div>
-
-            {/* ── Tab switcher ── */}
-            <div className="flex items-center gap-1 bg-white/5 border border-white/10 rounded-xl p-1 w-fit backdrop-blur-sm">
-              <button
-                id="tab-fixtures"
-                onClick={() => setActiveTab("fixtures")}
-                className={cn(
-                  "flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-black uppercase tracking-widest transition-all duration-200",
-                  activeTab === "fixtures"
-                    ? "bg-[#c8f000] text-black shadow-lg shadow-[#c8f000]/20"
-                    : "text-white/50 hover:text-white"
-                )}
-              >
-                <Calendar size={14} />
-                Fixtures
-              </button>
-              <button
-                id="tab-standings"
-                onClick={() => setActiveTab("standings")}
-                className={cn(
-                  "flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-black uppercase tracking-widest transition-all duration-200",
-                  activeTab === "standings"
-                    ? "bg-[#c8f000] text-black shadow-lg shadow-[#c8f000]/20"
-                    : "text-white/50 hover:text-white"
-                )}
-              >
-                <Trophy size={14} />
-                Standings
-              </button>
             </div>
 
             {/* ── Tab content ── */}
             <AnimatePresence mode="wait">
-
-              {/* FIXTURES TAB */}
-              {activeTab === "fixtures" && (
-                <motion.div
-                  key="fixtures-tab"
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5">
-                    {GROUPS.map((group, index) => (
-                      <motion.button
-                        key={group.id}
-                        id={`btn-fixture-${group.id.toLowerCase()}`}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.04, duration: 0.35 }}
-                        onClick={() => setFixtureLightbox(group.id)}
-                        className="group relative rounded-xl overflow-hidden cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 text-left"
-                        style={{ aspectRatio: "1344/800" }}
-                        aria-label={`View ${group.label} fixtures`}
-                      >
-                        <Image
-                          src={group.image}
-                          alt={`${group.label} Fixtures`}
-                          fill
-                          className="object-cover transition-transform duration-500 group-hover:scale-105"
-                          sizes="(max-width: 768px) 50vw, (max-width: 1280px) 33vw, 25vw"
-                        />
-                        <div
-                          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"
-                          style={{ backgroundColor: `${group.color}CC` }}
-                        >
-                          <span className="font-display font-black text-white text-lg tracking-widest uppercase drop-shadow-lg">
-                            {group.label}
-                          </span>
-                        </div>
-                        <div
-                          className="absolute top-2 right-2 px-2.5 py-1 rounded-md text-[10px] font-black text-white tracking-wider uppercase shadow-lg transition-opacity group-hover:opacity-0"
-                          style={{ backgroundColor: group.color }}
-                        >
-                          {group.label}
-                        </div>
-                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent pt-6 pb-2 px-2 transition-opacity group-hover:opacity-0">
-                          <p className="text-white/70 text-[9px] font-bold tracking-wide truncate">
-                            {group.teams.join(" · ")}
-                          </p>
-                        </div>
-                      </motion.button>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-
-              {/* STANDINGS TAB */}
-              {activeTab === "standings" && (
-                <motion.div
-                  key="standings-tab"
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.2 }}
-                  className="flex flex-col gap-8"
-                >
-                  {/* 12 group standings grid */}
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-4">
-                    {STANDINGS.map((standing, index) => (
-                      <motion.button
-                        key={standing.id}
-                        id={`btn-standing-${standing.id.toLowerCase()}`}
-                        initial={{ opacity: 0, y: 16 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.04, duration: 0.3 }}
-                        onClick={() => setStandingLightbox(standing.id)}
-                        className="group relative rounded-xl overflow-hidden cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
-                        style={{ aspectRatio: "780/880" }}
-                        aria-label={`View ${standing.label} standings`}
-                      >
-                        <Image
-                          src={standing.image}
-                          alt={`${standing.label} Standings`}
-                          fill
-                          className="object-cover transition-transform duration-500 group-hover:scale-105"
-                          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 16vw"
-                        />
-                        {/* Hover overlay */}
-                        <div
-                          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"
-                          style={{ backgroundColor: `${standing.color}CC` }}
-                        >
-                          <span className="font-display font-black text-white text-base tracking-widest uppercase drop-shadow-lg">
-                            {standing.label}
-                          </span>
-                        </div>
-                        {/* Badge */}
-                        <div
-                          className="absolute top-2 right-2 px-2 py-0.5 rounded-md text-[9px] font-black text-white tracking-wider uppercase shadow-md transition-opacity group-hover:opacity-0"
-                          style={{ backgroundColor: standing.color }}
-                        >
-                          GRP {standing.id}
-                        </div>
-                      </motion.button>
-                    ))}
-                  </div>
-
-                  {/* 3rd placed teams — full-width prominent card */}
-                  <div className="flex flex-col gap-3">
-                    <div className="flex items-center gap-3">
-                      <div className="h-px flex-1 bg-white/10" />
-                      <span className="text-white/40 text-xs font-black uppercase tracking-widest">
-                        Wild Card Rankings
-                      </span>
-                      <div className="h-px flex-1 bg-white/10" />
-                    </div>
-
+              <motion.div
+                key="group-stage-tab"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.2 }}
+                className="flex flex-col gap-10"
+              >
+                {/* 12 group fixtures grid */}
+                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5">
+                  {GROUPS.map((group, index) => (
                     <motion.button
-                      id="btn-standing-3rd"
-                      initial={{ opacity: 0, y: 16 }}
+                      key={group.id}
+                      id={`btn-group-${group.id.toLowerCase()}`}
+                      initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.5, duration: 0.35 }}
-                      onClick={() => setStandingLightbox("3RD")}
-                      className="group relative rounded-2xl overflow-hidden cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 w-full max-w-md mx-auto"
-                      style={{ aspectRatio: "780/1420" }}
-                      aria-label="View ranking of third placed teams"
+                      transition={{ delay: index * 0.04, duration: 0.35 }}
+                      onClick={() => setActiveLightbox(group.id)}
+                      className="group relative rounded-xl overflow-hidden cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 text-left"
+                      style={{ aspectRatio: "1344/800" }}
+                      aria-label={`View ${group.label}`}
                     >
                       <Image
-                        src={THIRD_PLACED.image}
-                        alt="Ranking of Third Placed Teams"
+                        src={group.image}
+                        alt={`${group.label}`}
                         fill
-                        className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                        sizes="(max-width: 768px) 90vw, 448px"
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        sizes="(max-width: 768px) 50vw, (max-width: 1280px) 33vw, 25vw"
                       />
-                      {/* Gradient overlay at bottom */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-6">
-                        <span className="font-display font-black text-white text-sm tracking-widest uppercase drop-shadow-lg bg-black/40 px-4 py-2 rounded-full">
-                          Tap to expand
+                      <div
+                        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"
+                        style={{ backgroundColor: `${group.color}E6` }}
+                      >
+                        <span className="font-display font-black text-white text-lg tracking-widest uppercase drop-shadow-lg flex flex-col items-center gap-1">
+                          {group.label}
+                          <span className="text-[10px] font-bold text-white/80">Fixtures & Standings</span>
                         </span>
                       </div>
-                      {/* Badge */}
                       <div
-                        className="absolute top-3 right-3 px-3 py-1 rounded-lg text-[10px] font-black tracking-wider uppercase shadow-lg"
-                        style={{ backgroundColor: THIRD_PLACED.color, color: THIRD_PLACED.textColor || "white" }}
+                        className="absolute top-2 right-2 px-2.5 py-1 rounded-md text-[10px] font-black text-white tracking-wider uppercase shadow-lg transition-opacity group-hover:opacity-0"
+                        style={{ backgroundColor: group.color }}
                       >
-                        3rd Place Ranking
+                        {group.label}
+                      </div>
+                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent pt-8 pb-3 px-3 transition-opacity group-hover:opacity-0">
+                        <p className="text-white/80 text-[10px] font-bold tracking-wide truncate">
+                          {group.teams.join(" · ")}
+                        </p>
                       </div>
                     </motion.button>
+                  ))}
+                </div>
+
+                {/* 3rd placed teams — full-width prominent card */}
+                <div className="flex flex-col gap-4 bg-white/5 rounded-2xl p-6 border border-white/10 relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                  <div className="flex flex-col items-center text-center gap-2 mb-2">
+                    <h3 className="text-xl font-display font-black uppercase tracking-widest text-white">
+                      Wild Card Rankings
+                    </h3>
+                    <p className="text-sm text-white/50 max-w-md">
+                      The top 8 third-placed teams will also advance to the knockout stage.
+                    </p>
                   </div>
 
-                  <p className="text-white/30 text-xs text-center font-medium pb-4">
-                    Standings update after each group stage match is completed.
-                  </p>
-                </motion.div>
-              )}
+                  <motion.button
+                    id="btn-standing-3rd"
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5, duration: 0.35 }}
+                    onClick={() => setActiveLightbox("3RD")}
+                    className="group relative rounded-2xl overflow-hidden cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#c8f000] w-full max-w-sm mx-auto shadow-2xl"
+                    style={{ aspectRatio: "780/1420" }}
+                    aria-label="View ranking of third placed teams"
+                  >
+                    <Image
+                      src={THIRD_PLACED.image}
+                      alt="Ranking of Third Placed Teams"
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                      sizes="(max-width: 768px) 90vw, 384px"
+                    />
+                    {/* Gradient overlay at bottom */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-6">
+                      <span className="font-display font-black text-black text-sm tracking-widest uppercase drop-shadow-lg bg-[#c8f000] px-5 py-2 rounded-full">
+                        View Full Ranking
+                      </span>
+                    </div>
+                  </motion.button>
+                </div>
 
+                <p className="text-white/30 text-xs text-center font-medium pb-4">
+                  Standings update after each group stage match is completed.
+                </p>
+              </motion.div>
             </AnimatePresence>
 
           </div>

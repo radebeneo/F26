@@ -130,7 +130,7 @@ function SquadBuilderInner({
   const navLinks: { label: string; target?: ViewMode; href?: string; action?: () => void }[] = [
     ...(!squadSaved ? [{ label: "Squad Builder", target: "builder" as ViewMode }] : []),
     { label: "My Squad", target: "mySquad" as ViewMode },
-    { label: "Fixtures", href: "/fixtures" },
+    { label: "Group Stage", href: "/fixtures" },
     { label: "Leaderboard", href: "/leaderboard" },
     { label: "How to Play", action: () => setIsHowToPlayOpen(true) },
   ];

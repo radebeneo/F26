@@ -72,7 +72,7 @@ export function LeagueDetailClient({
 
   const navLinks: { label: string; href?: string; action?: () => void }[] = [
     { label: "My Squad", href: "/dashboard" },
-    { label: "Fixtures", href: "/fixtures" },
+    { label: "Group Stage", href: "/fixtures" },
     { label: "Leaderboard", href: "/leaderboard" },
     { label: "How to Play", action: () => setIsHowToPlayOpen(true) },
   ];
