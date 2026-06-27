@@ -8,7 +8,8 @@
  * Communicates add/remove actions via the Zustand squadStore.
  */
 
-import { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -26,7 +27,7 @@ import { cn } from "@/lib/utils";
 import { useSquadStore } from "@/store/squadStore";
 import { useToast } from "@/components/ui/toast";
 import type { Player } from "@/db/schema";
-import { PlayerDetailsModal } from "./PlayerDetailsModal";
+const PlayerDetailsModal = dynamic(() => import("./PlayerDetailsModal").then((mod) => mod.PlayerDetailsModal));
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -62,14 +63,14 @@ const POSITION_ORDER = ["GK", "DEF", "MID", "FWD"];
 interface PlayerRowProps {
   player: Player;
   isSelected: boolean;
-  onAdd: () => void;
-  onRemove: () => void;
-  onInfoClick?: () => void;
+  onAdd: (player: Player) => void;
+  onRemove: (player: Player) => void;
+  onInfoClick?: (player: Player) => void;
   showFullName?: boolean;
   mode: "transfer" | "12th-man" | "view";
 }
 
-function PlayerRow({ player, isSelected, onAdd, onRemove, onInfoClick, showFullName, mode }: PlayerRowProps) {
+const PlayerRow = React.memo(function PlayerRow({ player, isSelected, onAdd, onRemove, onInfoClick, showFullName, mode }: PlayerRowProps) {
   const slug = nationToSlug(player.nation);
   // Priority: knownName (official known alias) → full name if duplicate → lastName → firstName
   const displayName = player.knownName
@@ -87,7 +88,7 @@ function PlayerRow({ player, isSelected, onAdd, onRemove, onInfoClick, showFullN
     >
       {/* Info icon */}
       <button
-        onClick={onInfoClick}
+        onClick={() => onInfoClick?.(player)}
         aria-label={`Info about ${displayName}`}
         className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-white/40 hover:text-white/80 hover:bg-white/10 transition-colors"
       >
@@ -145,7 +146,7 @@ function PlayerRow({ player, isSelected, onAdd, onRemove, onInfoClick, showFullN
         <button
           id={`btn-player-${player.id}`}
           aria-label={isSelected ? `Remove ${displayName}` : `Add ${displayName}`}
-          onClick={isSelected ? onRemove : onAdd}
+          onClick={isSelected ? () => onRemove(player) : () => onAdd(player)}
           className={cn(
             "flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center font-bold transition-all duration-150 text-white",
             isSelected
@@ -158,7 +159,7 @@ function PlayerRow({ player, isSelected, onAdd, onRemove, onInfoClick, showFullN
       )}
     </div>
   );
-}
+});
 
 // ── Pagination controls ────────────────────────────────────────────────────────
 
@@ -222,6 +223,7 @@ interface PlayerSelectionPanelProps {
 }
 
 export function PlayerSelectionPanel({ players, mode = "transfer", opponentMap }: PlayerSelectionPanelProps) {
+  const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
   const [posFilter, setPosFilter] = useState("All");
   const [nationFilter, setNationFilter] = useState("All");
@@ -236,7 +238,7 @@ export function PlayerSelectionPanel({ players, mode = "transfer", opponentMap }
 
   const { selectedPlayers, addPlayer, removePlayer, twelfthManId, setTwelfthManId } = useSquadStore();
   const { toast } = useToast();
-  const selectedIds = new Set(selectedPlayers.map((p) => p.id));
+  const selectedIds = useMemo(() => new Set(selectedPlayers.map((p) => p.id)), [selectedPlayers]);
 
   // Derive unique nation list
   const nations = useMemo(() => {
@@ -300,12 +302,21 @@ export function PlayerSelectionPanel({ players, mode = "transfer", opponentMap }
   // Reset page whenever filters change
   const resetPage = useCallback(() => setPage(1), []);
 
+  // Debounce search
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearch(searchInput);
+      resetPage();
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchInput, resetPage]);
+
   const handleFilterChange = <T,>(setter: (v: T) => void) => (v: T) => {
     setter(v);
     resetPage();
   };
 
-  const handleAdd = (player: Player) => {
+  const handleAdd = useCallback((player: Player) => {
     if (mode === "12th-man") {
       if (selectedIds.has(player.id)) {
         toast({
@@ -356,15 +367,15 @@ export function PlayerSelectionPanel({ players, mode = "transfer", opponentMap }
       // Fallback
       toast({ variant: "info", title: reason });
     }
-  };
+  }, [mode, selectedIds, setTwelfthManId, addPlayer, toast]);
 
-  const handleRemove = (player: Player) => {
+  const handleRemove = useCallback((player: Player) => {
     if (mode === "12th-man") {
       setTwelfthManId(null);
       return;
     }
     removePlayer(player.id);
-  };
+  }, [mode, setTwelfthManId, removePlayer]);
 
   return (
     <aside className="squad-panel flex flex-col h-full overflow-hidden">
@@ -406,11 +417,8 @@ export function PlayerSelectionPanel({ players, mode = "transfer", opponentMap }
             id="player-search"
             type="text"
             placeholder="Search by name…"
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              resetPage();
-            }}
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
             className="w-full h-9 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm pl-9 pr-4 focus:outline-none focus:ring-1 focus:ring-primaryBrand-500 focus:border-primaryBrand-500 transition-all"
           />
         </div>
@@ -484,6 +492,7 @@ export function PlayerSelectionPanel({ players, mode = "transfer", opponentMap }
                   <button
                     id="btn-reset-filters"
                     onClick={() => {
+                      setSearchInput("");
                       setSearch("");
                       setPosFilter("All");
                       setNationFilter("All");
@@ -526,9 +535,9 @@ export function PlayerSelectionPanel({ players, mode = "transfer", opponentMap }
                     key={player.id}
                     player={player}
                     isSelected={mode === "12th-man" ? twelfthManId === player.id : selectedIds.has(player.id)}
-                    onAdd={() => handleAdd(player)}
-                    onRemove={() => handleRemove(player)}
-                    onInfoClick={() => setSelectedPlayerForModal(player)}
+                    onAdd={handleAdd}
+                    onRemove={handleRemove}
+                    onInfoClick={setSelectedPlayerForModal}
                     showFullName={
                       !player.knownName &&
                       (player.lastName ? duplicatedLastNames.has(`${player.nation}|${player.lastName}`) : false)
@@ -547,6 +556,7 @@ export function PlayerSelectionPanel({ players, mode = "transfer", opponentMap }
             <p className="text-sm text-white/40">No players match your filters.</p>
             <button
               onClick={() => {
+                setSearchInput("");
                 setSearch("");
                 setPosFilter("All");
                 setNationFilter("All");

@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
 import { Users, TrendingUp, Trophy, UserCircle2 } from "lucide-react";
+import { PlayNowButton } from "@/components/features/PlayNowButton";
 
 export const metadata: Metadata = {
   title: "Home | FWC26 Fantasy",
@@ -75,9 +76,7 @@ export default function HomePage() {
             <p className="homepage-sub-tagline">
               Build your 15-player squad and challenge other managers!
             </p>
-            <Link id="cta-play-now" href="/auth/register" className="homepage-cta-btn">
-              PLAY NOW
-            </Link>
+            <PlayNowButton />
           </div>
 
           {/* Right — portrait pitch */}

@@ -1,14 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { Search, LogOut, Menu, X, HelpCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/components/ui/toast";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { HowToPlayModal } from "@/components/features/HowToPlayModal";
+import dynamic from "next/dynamic";
+const HowToPlayModal = dynamic(() => import("@/components/features/HowToPlayModal").then(mod => mod.HowToPlayModal));
 
 interface LeagueData {
   id: number;
@@ -29,8 +29,27 @@ export function LeaderboardClient({ leagues, joinedLeagueIds, signOutAction }: L
   const [isJoining, setIsJoining] = useState<number | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isHowToPlayOpen, setIsHowToPlayOpen] = useState(false);
+  const [page, setPage] = useState(1);
+  const ITEMS_PER_PAGE = 10;
   const { toast } = useToast();
+  const [isPending, startTransition] = useTransition();
+  const [pendingPath, setPendingPath] = useState<string | null>(null);
   const router = useRouter();
+
+  const handleNavClick = (href: string) => {
+    setIsMobileMenuOpen(false);
+    setPendingPath(href);
+    startTransition(() => {
+      router.push(href);
+    });
+  };
+
+  const handleSignOut = () => {
+    setPendingPath("signout");
+    startTransition(() => {
+      signOutAction();
+    });
+  };
 
   const navLinks: { label: string; href?: string; action?: () => void }[] = [
     { label: "My Squad", href: "/dashboard" },
@@ -77,6 +96,12 @@ export function LeaderboardClient({ leagues, joinedLeagueIds, signOutAction }: L
     l.name.toLowerCase().includes(search.toLowerCase())
   );
 
+  const totalPages = Math.max(1, Math.ceil(filteredLeagues.length / ITEMS_PER_PAGE));
+  const safePage = Math.min(page, totalPages);
+  const pageStart = (safePage - 1) * ITEMS_PER_PAGE;
+  const pageEnd = pageStart + ITEMS_PER_PAGE;
+  const paginatedLeagues = filteredLeagues.slice(pageStart, pageEnd);
+
   return (
     <div className="squad-builder-root flex flex-col h-screen bg-[#0a0a0a] text-white overflow-hidden relative">
       {/* ── How to Play modal ── */}
@@ -98,18 +123,21 @@ export function LeaderboardClient({ leagues, joinedLeagueIds, signOutAction }: L
             {navLinks.map(({ label, href, action }) => {
               if (href) {
                 return (
-                  <Link
+                  <button
                     key={label}
-                    href={href}
+                    onClick={() => handleNavClick(href)}
+                    disabled={isPending}
                     className={cn(
-                      "text-xs font-bold transition-colors uppercase tracking-wide",
-                      href === "/leaderboard"
-                        ? "text-[#c8f000]"
-                        : "text-white/60 hover:text-white"
+                      "flex items-center gap-2 text-xs font-bold transition-colors uppercase tracking-wide",
+                      href === "/leaderboard" ? "text-[#c8f000]" : "text-white/60 hover:text-white",
+                      isPending && pendingPath === href ? "opacity-70 cursor-wait" : ""
                     )}
                   >
+                    {isPending && pendingPath === href && (
+                      <span className="w-3 h-3 border-2 border-white/60 border-t-transparent rounded-full animate-spin inline-block" />
+                    )}
                     {label}
-                  </Link>
+                  </button>
                 );
               }
               if (action) {
@@ -130,15 +158,24 @@ export function LeaderboardClient({ leagues, joinedLeagueIds, signOutAction }: L
           </nav>
 
           <div className="flex items-center gap-4">
-            <form action={signOutAction} className="hidden md:block">
-              <button
-                type="submit"
-                className="flex items-center gap-2 text-xs font-semibold text-white/50 hover:text-white transition-colors"
-              >
+            {/* Sign out */}
+            <button
+              onClick={handleSignOut}
+              disabled={isPending}
+              id="btn-sign-out"
+              className={cn(
+                "hidden md:flex items-center gap-2 text-xs font-semibold transition-colors",
+                "text-white/50 hover:text-white",
+                isPending && pendingPath === "signout" ? "opacity-70 cursor-wait" : ""
+              )}
+            >
+              {isPending && pendingPath === "signout" ? (
+                <span className="w-3.5 h-3.5 border-2 border-white/50 border-t-transparent rounded-full animate-spin inline-block" />
+              ) : (
                 <LogOut size={14} />
-                Sign out
-              </button>
-            </form>
+              )}
+              Sign out
+            </button>
 
             <button
               className="md:hidden text-white/80 hover:text-white"
@@ -163,19 +200,21 @@ export function LeaderboardClient({ leagues, joinedLeagueIds, signOutAction }: L
               {navLinks.map(({ label, href, action }) => {
                 if (href) {
                   return (
-                    <Link
+                    <button
                       key={label}
-                      href={href}
-                      onClick={() => setIsMobileMenuOpen(false)}
+                      onClick={() => handleNavClick(href)}
+                      disabled={isPending}
                       className={cn(
-                        "text-sm font-bold transition-colors uppercase tracking-wide",
-                        href === "/leaderboard"
-                          ? "text-[#c8f000]"
-                          : "text-white/60 hover:text-white"
+                        "flex items-center gap-2 text-sm font-bold transition-colors uppercase tracking-wide text-left",
+                        href === "/leaderboard" ? "text-[#c8f000]" : "text-white/60 hover:text-white",
+                        isPending && pendingPath === href ? "opacity-70 cursor-wait" : ""
                       )}
                     >
+                      {isPending && pendingPath === href && (
+                        <span className="w-3.5 h-3.5 border-2 border-white/60 border-t-transparent rounded-full animate-spin inline-block" />
+                      )}
                       {label}
-                    </Link>
+                    </button>
                   );
                 }
                 if (action) {
@@ -193,15 +232,22 @@ export function LeaderboardClient({ leagues, joinedLeagueIds, signOutAction }: L
                 return null;
               })}
               <div className="h-px w-full bg-white/10 my-2" />
-              <form action={signOutAction}>
-                <button
-                  type="submit"
-                  className="flex items-center gap-2 text-sm font-semibold text-white/50 hover:text-white transition-colors"
-                >
+              <button
+                onClick={handleSignOut}
+                disabled={isPending}
+                className={cn(
+                  "flex items-center gap-2 text-sm font-semibold transition-colors",
+                  "text-white/50 hover:text-white",
+                  isPending && pendingPath === "signout" ? "opacity-70 cursor-wait" : ""
+                )}
+              >
+                {isPending && pendingPath === "signout" ? (
+                  <span className="w-4 h-4 border-2 border-white/50 border-t-transparent rounded-full animate-spin inline-block" />
+                ) : (
                   <LogOut size={16} />
-                  Sign out
-                </button>
-              </form>
+                )}
+                Sign out
+              </button>
             </div>
           </motion.div>
         )}
@@ -233,7 +279,10 @@ export function LeaderboardClient({ leagues, joinedLeagueIds, signOutAction }: L
                   type="text"
                   placeholder="Search for a League"
                   value={search}
-                  onChange={(e) => setSearch(e.target.value)}
+                  onChange={(e) => {
+                    setSearch(e.target.value);
+                    setPage(1);
+                  }}
                   className="w-full h-12 pl-4 pr-12 rounded-xl bg-white/90 backdrop-blur-md text-black font-semibold outline-none focus:ring-2 focus:ring-[#c8f000] transition-all shadow-md border border-white/20"
                 />
                 <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
@@ -244,7 +293,7 @@ export function LeaderboardClient({ leagues, joinedLeagueIds, signOutAction }: L
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start mt-4">
               {/* League List */}
               <div className="flex flex-col gap-4 w-full">
-                {filteredLeagues.map((league) => {
+                {paginatedLeagues.map((league) => {
                   const hasJoined = joinedLeagueIds.includes(league.id);
                   return (
                     <div
@@ -273,12 +322,23 @@ export function LeaderboardClient({ leagues, joinedLeagueIds, signOutAction }: L
 
                         {/* Join / View Button */}
                         {hasJoined ? (
-                          <Link
-                            href={`/leaderboard/${league.id}`}
-                            className="px-6 py-2.5 rounded-xl font-black uppercase tracking-widest transition-all h-fit self-end mb-2 bg-[#3b82f6] text-white hover:bg-[#2563eb] hover:scale-105 shadow-md shadow-[#3b82f6]/20"
+                          <button
+                            onClick={() => handleNavClick(`/leaderboard/${league.id}`)}
+                            disabled={isPending}
+                            className={cn(
+                              "px-6 py-2.5 rounded-xl font-black uppercase tracking-widest transition-all h-fit self-end mb-2 bg-[#3b82f6] text-white hover:bg-[#2563eb] hover:scale-105 shadow-md shadow-[#3b82f6]/20 flex items-center justify-center gap-2",
+                              isPending && pendingPath === `/leaderboard/${league.id}` && "opacity-70 pointer-events-none hover:scale-100"
+                            )}
                           >
-                            VIEW LEAGUE
-                          </Link>
+                            {isPending && pendingPath === `/leaderboard/${league.id}` ? (
+                              <>
+                                <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin inline-block" />
+                                LOADING...
+                              </>
+                            ) : (
+                              "VIEW LEAGUE"
+                            )}
+                          </button>
                         ) : (
                           <button
                             onClick={() => handleJoin(league.id)}
@@ -304,6 +364,32 @@ export function LeaderboardClient({ leagues, joinedLeagueIds, signOutAction }: L
                     <p className="text-white/60 font-semibold">No leagues found matching &quot;{search}&quot;</p>
                   </div>
                 )}
+                {/* {filteredLeagues.length > 0 && (
+                  <div className="flex items-center justify-between mt-2 bg-white/5 backdrop-blur-md rounded-xl p-4 border border-white/20">
+                    <span className="text-sm text-white/60 font-semibold hidden sm:inline-block">
+                      Showing {pageStart + 1} to {Math.min(pageEnd, filteredLeagues.length)} of {filteredLeagues.length} leagues
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => setPage((p) => Math.max(1, p - 1))}
+                        disabled={safePage === 1}
+                        className="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all font-semibold text-sm"
+                      >
+                        Previous
+                      </button>
+                      <span className="text-sm font-bold text-white px-2">
+                        {safePage} / {totalPages}
+                      </span>
+                      <button
+                        onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                        disabled={safePage === totalPages}
+                        className="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all font-semibold text-sm"
+                      >
+                        Next
+                      </button>
+                    </div>
+                  </div>
+                )} */}
               </div>
 
               {/* Create a League Card */}

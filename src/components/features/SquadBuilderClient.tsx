@@ -8,16 +8,16 @@
  * the "Enter Squad" action — saving the squad to the DB via POST /api/squad/enter.
  */
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useTransition } from "react";
 import { LogOut, Menu, X, HelpCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { PlayerSelectionPanel } from "@/components/features/PlayerSelectionPanel";
 import { SquadSelectionPanel } from "@/components/features/SquadSelectionPanel";
 import { MySquadView } from "@/components/features/MySquadView";
-import { HowToPlayModal } from "@/components/features/HowToPlayModal";
+import dynamic from "next/dynamic";
+const HowToPlayModal = dynamic(() => import("@/components/features/HowToPlayModal").then(mod => mod.HowToPlayModal));
 import { ToastProvider, useToast } from "@/components/ui/toast";
 import { useSquadStore } from "@/store/squadStore";
 import type { Player } from "@/db/schema";
@@ -57,6 +57,8 @@ function SquadBuilderInner({
   const router = useRouter();
   const { selectedPlayers, setFullSquadState } = useSquadStore();
   const [view, setView] = useState<ViewMode>(hasExistingSquad ? "mySquad" : "builder");
+  const [isPending, startTransition] = useTransition();
+  const [pendingPath, setPendingPath] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isHowToPlayOpen, setIsHowToPlayOpen] = useState(false);
@@ -118,12 +120,26 @@ function SquadBuilderInner({
     }
   };
 
-  const handleNavClick = (target: ViewMode | null) => {
+  const handleNavClick = (target: ViewMode | null, href?: string) => {
+    setIsMobileMenuOpen(false); // Close mobile menu on navigate
+    if (href) {
+      setPendingPath(href);
+      startTransition(() => {
+        router.push(href);
+      });
+      return;
+    }
     if (!target) return;
     // Once a squad is saved, the builder is permanently locked
     if (target === "builder" && squadSaved) return;
     setView(target);
-    setIsMobileMenuOpen(false); // Close mobile menu on navigate
+  };
+
+  const handleSignOut = () => {
+    setPendingPath("signout");
+    startTransition(() => {
+      signOutAction();
+    });
   };
 
   // Nav links — Squad Builder is hidden once the user has a saved squad
@@ -157,13 +173,21 @@ function SquadBuilderInner({
             {navLinks.map(({ label, target, href, action }) => {
               if (href) {
                 return (
-                  <Link
+                  <button
                     key={label}
-                    href={href}
-                    className="text-xs font-bold transition-colors uppercase tracking-wide text-white/60 hover:text-white"
+                    onClick={() => handleNavClick(null, href)}
+                    disabled={isPending}
+                    className={cn(
+                      "flex items-center gap-2 text-xs font-bold transition-colors uppercase tracking-wide",
+                      "text-white/60 hover:text-white",
+                      isPending && pendingPath === href ? "opacity-70 cursor-wait" : ""
+                    )}
                   >
+                    {isPending && pendingPath === href && (
+                      <span className="w-3 h-3 border-2 border-white/60 border-t-transparent rounded-full animate-spin inline-block" />
+                    )}
                     {label}
-                  </Link>
+                  </button>
                 );
               }
               if (action) {
@@ -198,16 +222,23 @@ function SquadBuilderInner({
 
           <div className="flex items-center gap-4">
             {/* Sign out */}
-            <form action={signOutAction} className="hidden md:block">
-              <button
-                type="submit"
-                id="btn-sign-out"
-                className="flex items-center gap-2 text-xs font-semibold text-white/50 hover:text-white transition-colors"
-              >
+            <button
+              onClick={handleSignOut}
+              disabled={isPending}
+              id="btn-sign-out"
+              className={cn(
+                "hidden md:flex items-center gap-2 text-xs font-semibold transition-colors",
+                "text-white/50 hover:text-white",
+                isPending && pendingPath === "signout" ? "opacity-70 cursor-wait" : ""
+              )}
+            >
+              {isPending && pendingPath === "signout" ? (
+                <span className="w-3.5 h-3.5 border-2 border-white/50 border-t-transparent rounded-full animate-spin inline-block" />
+              ) : (
                 <LogOut size={14} />
-                Sign out
-              </button>
-            </form>
+              )}
+              Sign out
+            </button>
 
             {/* Mobile menu toggle */}
             <button
@@ -233,14 +264,21 @@ function SquadBuilderInner({
               {navLinks.map(({ label, target, href, action }) => {
                 if (href) {
                   return (
-                    <Link
+                    <button
                       key={label}
-                      href={href}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="text-sm font-bold transition-colors uppercase tracking-wide text-white/60 hover:text-white"
+                      onClick={() => handleNavClick(null, href)}
+                      disabled={isPending}
+                      className={cn(
+                        "flex items-center gap-2 text-sm font-bold transition-colors uppercase tracking-wide text-left",
+                        "text-white/60 hover:text-white",
+                        isPending && pendingPath === href ? "opacity-70 cursor-wait" : ""
+                      )}
                     >
+                      {isPending && pendingPath === href && (
+                        <span className="w-3.5 h-3.5 border-2 border-white/60 border-t-transparent rounded-full animate-spin inline-block" />
+                      )}
                       {label}
-                    </Link>
+                    </button>
                   );
                 }
                 if (action) {
@@ -271,15 +309,22 @@ function SquadBuilderInner({
                 );
               })}
               <div className="h-px w-full bg-white/10 my-2" />
-              <form action={signOutAction}>
-                <button
-                  type="submit"
-                  className="flex items-center gap-2 text-sm font-semibold text-white/50 hover:text-white transition-colors"
-                >
+              <button
+                onClick={handleSignOut}
+                disabled={isPending}
+                className={cn(
+                  "flex items-center gap-2 text-sm font-semibold transition-colors",
+                  "text-white/50 hover:text-white",
+                  isPending && pendingPath === "signout" ? "opacity-70 cursor-wait" : ""
+                )}
+              >
+                {isPending && pendingPath === "signout" ? (
+                  <span className="w-4 h-4 border-2 border-white/50 border-t-transparent rounded-full animate-spin inline-block" />
+                ) : (
                   <LogOut size={16} />
-                  Sign out
-                </button>
-              </form>
+                )}
+                Sign out
+              </button>
             </div>
           </motion.div>
         )}
