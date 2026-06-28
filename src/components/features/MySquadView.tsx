@@ -325,12 +325,14 @@ export function MySquadView({
     activeBooster,
     setActiveBooster,
     twelfthManId,
-    setFullSquadState
+    setFullSquadState,
+    budgetRemaining
   } = useSquadStore();
 
   const [isTransferMode, setIsTransferMode] = useState(false);
   const [is12thManMode, setIs12thManMode] = useState(false);
   const [isBoosterOpen, setIsBoosterOpen] = useState(false);
+  const remaining = budgetRemaining();
   const [selectedPlayerForModal, setSelectedPlayerForModal] = useState<Player | null>(null);
 
   const [isSubstitutionMode, setIsSubstitutionMode] = useState(false);
@@ -516,21 +518,40 @@ export function MySquadView({
           <section className="squad-panel flex flex-col h-full overflow-hidden">
             {/* Team header */}
             <div className="flex-shrink-0 px-5 pt-5 pb-3 border-b border-white/10">
-              <div className="flex items-center gap-3">
-                <div className="relative w-5 h-5 drop-shadow-md">
-                  <Image
-                    src={`/images/flags/${getCountrySlug(favoriteCountry)}.webp`}
-                    alt={`${favoriteCountry} flag`}
-                    fill
-                    className="object-contain"
-                    sizes="20px"
-                  />
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="relative w-5 h-5 drop-shadow-md">
+                    <Image
+                      src={`/images/flags/${getCountrySlug(favoriteCountry)}.webp`}
+                      alt={`${favoriteCountry} flag`}
+                      fill
+                      className="object-contain"
+                      sizes="20px"
+                    />
+                  </div>
+                  <div>
+                    <p className="text-xs font-black text-white uppercase tracking-wide">
+                      {teamName}
+                    </p>
+                    <p className="text-[10px] text-white/50">{managerName}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-xs font-black text-white uppercase tracking-wide">
-                    {teamName}
-                  </p>
-                  <p className="text-[10px] text-white/50">{managerName}</p>
+
+                {/* Budget badge */}
+                <div className="flex items-center gap-2">
+                  <p className="text-[10px] text-white/40 uppercase font-bold tracking-widest mt-0.5">Bank</p>
+                  <div
+                    className={cn(
+                      "px-3 py-1 rounded-md text-sm font-black text-white transition-colors",
+                      remaining < 5
+                        ? "bg-secondaryRed-600"
+                        : remaining < 20
+                          ? "bg-secondaryYellow-600"
+                          : "bg-secondaryGreen-600"
+                    )}
+                  >
+                    ${remaining.toFixed(1)}m
+                  </div>
                 </div>
               </div>
             </div>
@@ -823,7 +844,7 @@ export function MySquadView({
               )}
 
               {/* Confirm / Reset / Join League Action Buttons */}
-              {!isTransferMode && !isSubstitutionMode && !is12thManMode && (
+              {!isSubstitutionMode && !is12thManMode && (
                 <div className="flex items-center justify-center gap-4 mt-6 px-4">
                   {!hasJoinedLeague ? (
                     !isConfirmed ? (
@@ -1001,6 +1022,12 @@ export function MySquadView({
           if (selectedPlayerForModal) {
             setSubOutPlayerId(selectedPlayerForModal.id);
             setIsSubstitutionMode(true);
+            setSelectedPlayerForModal(null);
+          }
+        } : undefined}
+        onTransferOut={isManaging ? () => {
+          if (selectedPlayerForModal) {
+            setIsTransferMode(true);
             setSelectedPlayerForModal(null);
           }
         } : undefined}

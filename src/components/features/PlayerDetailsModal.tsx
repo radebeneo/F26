@@ -273,7 +273,13 @@ export function PlayerDetailsModal({
                 </button>
                 <button
                   onClick={onTransferOut}
-                  className="w-full py-3 bg-[#e0e0e0] rounded-[100px] text-[#b0b0b0] text-lg font-black uppercase text-center cursor-not-allowed"
+                  disabled={!onTransferOut}
+                  className={cn(
+                    "w-full py-3 rounded-[100px] text-lg font-black uppercase text-center shadow-sm transition-colors",
+                    !onTransferOut
+                      ? "bg-white/10 text-white/30 cursor-not-allowed"
+                      : "bg-[#f5a623] text-white hover:bg-[#e09515]"
+                  )}
                 >
                   TRANSFER OUT
                 </button>
