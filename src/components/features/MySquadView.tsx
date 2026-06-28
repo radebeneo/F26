@@ -326,7 +326,9 @@ export function MySquadView({
     setActiveBooster,
     twelfthManId,
     setFullSquadState,
-    budgetRemaining
+    budgetRemaining,
+    autoPick,
+    reset
   } = useSquadStore();
 
   const [isTransferMode, setIsTransferMode] = useState(false);
@@ -849,6 +851,23 @@ export function MySquadView({
                   {!hasJoinedLeague ? (
                     !isConfirmed ? (
                       <>
+                        {isTransferMode && (
+                          <>
+                            <button
+                              onClick={() => reset()}
+                              disabled={selectedPlayers.length === 0}
+                              className="px-6 py-2 rounded-xl border border-[#f44336] text-[#f44336] text-xs font-bold uppercase tracking-widest hover:bg-[#f44336]/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              Clear Squad
+                            </button>
+                            <button
+                              onClick={() => autoPick(allPlayers)}
+                              className="px-6 py-2 rounded-xl border border-[#3b82f6] text-[#3b82f6] text-xs font-bold uppercase tracking-widest hover:bg-[#3b82f6]/10 transition-colors"
+                            >
+                              Auto Pick
+                            </button>
+                          </>
+                        )}
                         <button
                           onClick={handleReset}
                           disabled={!initialSquadState || isSaving}
@@ -889,6 +908,23 @@ export function MySquadView({
                         >
                           Cancel
                         </button>
+                        {isTransferMode && (
+                          <>
+                            <button
+                              onClick={() => reset()}
+                              disabled={selectedPlayers.length === 0}
+                              className="px-6 py-2 rounded-xl border border-[#f44336] text-[#f44336] text-xs font-bold uppercase tracking-widest hover:bg-[#f44336]/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              Clear Squad
+                            </button>
+                            <button
+                              onClick={() => autoPick(allPlayers)}
+                              className="px-6 py-2 rounded-xl border border-[#3b82f6] text-[#3b82f6] text-xs font-bold uppercase tracking-widest hover:bg-[#3b82f6]/10 transition-colors"
+                            >
+                              Auto Pick
+                            </button>
+                          </>
+                        )}
                         <button
                           onClick={handleReset}
                           disabled={!initialSquadState || isSaving}
