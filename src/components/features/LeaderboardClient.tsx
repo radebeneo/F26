@@ -54,6 +54,7 @@ export function LeaderboardClient({ leagues, joinedLeagueIds, signOutAction }: L
   const navLinks: { label: string; href?: string; action?: () => void }[] = [
     { label: "My Squad", href: "/dashboard" },
     { label: "Group Stage", href: "/fixtures" },
+    { label: "Knockout Stage", href: "/knockout" },
     { label: "Leaderboard", href: "/leaderboard" },
     { label: "How to Play", action: () => setIsHowToPlayOpen(true) },
   ];

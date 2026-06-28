@@ -84,13 +84,13 @@ export function PlayerDetailsModal({
                 {/* Close button */}
                 <button
                   onClick={onClose}
-                  className="absolute top-4 right-4 z-10 w-8 h-8 bg-white rounded-full flex items-center justify-center text-black hover:bg-gray-200 transition-colors"
+                  className="absolute top-4 right-4 z-30 w-8 h-8 bg-white rounded-full flex items-center justify-center text-black hover:bg-gray-200 transition-colors"
                 >
                   <X size={20} strokeWidth={3} />
                 </button>
 
                 {/* Left side text details */}
-                <div className="relative z-10 pb-6">
+                <div className="relative z-10 pb-6 flex-1 min-w-0">
                   <h2 className="text-3xl font-black text-white uppercase tracking-tight leading-none mb-1 shadow-black drop-shadow-md">
                     {displayName}
                   </h2>
@@ -105,7 +105,7 @@ export function PlayerDetailsModal({
                   </p>
                   <div className="mt-2">
                     <Image
-                      src="/fantasy-icons/boosters.webp" 
+                      src="/fantasy-icons/boosters.webp"
                       alt="Coin"
                       width={20}
                       height={20}
@@ -115,7 +115,7 @@ export function PlayerDetailsModal({
                 </div>
 
                 {/* Right side player image */}
-                <div className="relative w-[180px] h-[180px] -mb-2 z-0 overflow-hidden">
+                <div className="relative w-[180px] h-[180px] -mb-2 z-20 overflow-hidden flex-shrink-0">
                   <Image
                     src={headerImageSrc}
                     alt={isPortrait ? `${player.firstName} ${player.lastName}` : player.nation}
@@ -126,7 +126,7 @@ export function PlayerDetailsModal({
                     }
                   />
                 </div>
-                
+
                 {/* Background decorative curve (optional, just to match aesthetic if needed, screenshot has some green curve on the right) */}
                 <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-[#009639] rounded-l-full translate-x-1/2 opacity-80 z-[-1]" />
               </div>
@@ -174,7 +174,7 @@ export function PlayerDetailsModal({
                         className={cn(
                           "flex-1 py-3 rounded-[100px] text-lg font-black uppercase text-center transition-all",
                           isCaptain || !onSetCaptain
-                            ? "bg-white/10 text-white/30 cursor-not-allowed" 
+                            ? "bg-white/10 text-white/30 cursor-not-allowed"
                             : "bg-white text-gray-300 hover:bg-gray-100 shadow-md"
                         )}
                       >
@@ -186,7 +186,7 @@ export function PlayerDetailsModal({
                         className={cn(
                           "flex-1 py-3 rounded-[100px] text-lg font-black uppercase text-center transition-all",
                           isViceCaptain || !onSetViceCaptain
-                            ? "bg-white/10 text-white/30 cursor-not-allowed" 
+                            ? "bg-white/10 text-white/30 cursor-not-allowed"
                             : "bg-[#717171] text-black hover:bg-[#858585] shadow-md"
                         )}
                       >

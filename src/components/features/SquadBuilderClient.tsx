@@ -147,6 +147,7 @@ function SquadBuilderInner({
     ...(!squadSaved ? [{ label: "Squad Builder", target: "builder" as ViewMode }] : []),
     { label: "My Squad", target: "mySquad" as ViewMode },
     { label: "Group Stage", href: "/fixtures" },
+    { label: "Knockout Stage", href: "/knockout" },
     { label: "Leaderboard", href: "/leaderboard" },
     { label: "How to Play", action: () => setIsHowToPlayOpen(true) },
   ];
