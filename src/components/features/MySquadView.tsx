@@ -54,7 +54,7 @@ function MySquadPitchSlot({
 }: {
   player?: Player;
   pos: string;
-  opponentMap?: Record<string, string>;
+  opponentMap?: Record<string, { acronym: string; name: string }>;
   captainId: number | null;
   viceCaptainId: number | null;
   isTransferMode: boolean;
