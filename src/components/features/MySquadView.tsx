@@ -358,6 +358,7 @@ export function MySquadView({
           viceCaptainId,
           activeBooster,
           twelfthManId,
+          gameweekId: 4,
         }),
       });
 
@@ -376,7 +377,10 @@ export function MySquadView({
         variant: "success",
       });
       setIsConfirmed(true);
-      if (hasJoinedLeague) {
+      if (isTransferMode) {
+        setIsTransferMode(false);
+        setIsManaging(true);
+      } else if (hasJoinedLeague) {
         setIsManaging(false);
       }
       router.refresh();

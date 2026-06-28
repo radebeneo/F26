@@ -13,6 +13,7 @@ const UpdateSquadBody = z.object({
   viceCaptainId: z.number().int().positive().nullable(),
   activeBooster: z.string().nullable().optional(),
   twelfthManId: z.number().int().positive().nullable().optional(),
+  gameweekId: z.number().int().positive().optional(),
 });
 
 export async function POST(req: NextRequest) {
@@ -40,7 +41,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { startingXI, bench, captainId, viceCaptainId, activeBooster, twelfthManId } = parsed.data;
+  const { startingXI, bench, captainId, viceCaptainId, activeBooster, twelfthManId, gameweekId } = parsed.data;
 
   const dbUser = await db.query.users.findFirst({
     where: eq(users.email, user.email as string),
@@ -50,15 +51,23 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: false, error: "User profile not found" }, { status: 404 });
   }
 
-  let gameweek = await db.query.gameweeks.findFirst({
-    where: and(eq(gameweeks.isCurrent, true), eq(gameweeks.isFinished, false)),
-  });
-
-  if (!gameweek) {
+  let gameweek;
+  
+  if (gameweekId) {
     gameweek = await db.query.gameweeks.findFirst({
-      where: eq(gameweeks.isFinished, false),
-      orderBy: asc(gameweeks.id),
+      where: eq(gameweeks.id, gameweekId),
     });
+  } else {
+    gameweek = await db.query.gameweeks.findFirst({
+      where: and(eq(gameweeks.isCurrent, true), eq(gameweeks.isFinished, false)),
+    });
+
+    if (!gameweek) {
+      gameweek = await db.query.gameweeks.findFirst({
+        where: eq(gameweeks.isFinished, false),
+        orderBy: asc(gameweeks.id),
+      });
+    }
   }
 
   if (!gameweek) {
