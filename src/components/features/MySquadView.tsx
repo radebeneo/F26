@@ -15,7 +15,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { cn } from "@/lib/utils";
+import { cn, ELIMINATED_NATIONS } from "@/lib/utils";
 import { useSquadStore } from "@/store/squadStore";
 import { getCountrySlug } from "@/components/features/SquadSelectionPanel";
 import { HowToScorePanel } from "@/components/features/HowToScorePanel";
@@ -31,7 +31,7 @@ interface MySquadViewProps {
   managerName: string;
   favoriteCountry: string;
   allPlayers: Player[];
-  opponentMap?: Record<string, string>;
+  opponentMap?: Record<string, { acronym: string; name: string }>;
   initialSquadState?: Partial<SquadState> | null;
   hasJoinedLeague?: boolean;
 }
@@ -66,10 +66,11 @@ function MySquadPitchSlot({
 }) {
   const slug = player ? getCountrySlug(player.nation) : null;
   const opponentAcronym =
-    player && opponentMap ? opponentMap[player.nation] : null;
+    player && opponentMap ? opponentMap[player.nation]?.acronym : null;
 
   const isCaptain = player && captainId === player.id;
   const isViceCaptain = player && viceCaptainId === player.id;
+  const isEliminated = player ? ELIMINATED_NATIONS.includes(player.nation) : false;
 
   return (
     <motion.div
@@ -87,6 +88,11 @@ function MySquadPitchSlot({
     >
       {player ? (
         <div className="relative flex flex-col items-center w-[64px]">
+          {isEliminated && (
+            <div className="absolute -top-1 -left-2 z-50 w-6 h-6 bg-white rounded-full flex items-center justify-center p-[2px] shadow-sm">
+              <Image src="/fantasy-icons/eliminated.webp" alt="Eliminated" width={20} height={20} className="object-contain" />
+            </div>
+          )}
           {/* Sub Out Icon */}
           {isSubOutSelected && (
             <div className="absolute -top-2 -left-2 z-40 w-5 h-5 bg-white rounded-full border-[1.5px] border-[#f44336] flex items-center justify-center shadow-sm">
@@ -138,9 +144,10 @@ function MySquadPitchSlot({
             </div>
           )}
 
-          {/* Player portrait or nation kit */}
-          <div className="relative w-14 h-14 z-10 -mb-1 flex-shrink-0 drop-shadow-md overflow-hidden border-[1.5px] border-white rounded-md">
-            <Image
+          <div className={cn("w-full flex flex-col items-center relative z-0", isEliminated && "grayscale-[80%] opacity-80")}>
+            {/* Player portrait or nation kit */}
+            <div className="relative w-14 h-14 z-10 -mb-1 flex-shrink-0 drop-shadow-md overflow-hidden border-[1.5px] border-white rounded-md">
+              <Image
               src={player.imageUrl ?? `/images/kits/${slug}.webp`}
               alt={player.imageUrl ? `${player.firstName} ${player.lastName}` : player.nation}
               fill
@@ -175,6 +182,7 @@ function MySquadPitchSlot({
                   </span>
                 </>
               )}
+            </div>
             </div>
           </div>
         </div>
@@ -670,21 +678,25 @@ export function MySquadView({
                     <div className="absolute top-2 right-2 z-30 flex flex-col items-end gap-1 group">
                       <button
                         id="btn-make-transfers"
-                        disabled={true}
-                        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wide shadow-lg bg-white/50 text-black/50 cursor-not-allowed"
+                        onClick={() => {
+                          if (isManaging) setIsTransferMode(true);
+                        }}
+                        className={cn(
+                          "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-white text-[10px] font-bold uppercase tracking-wide shadow-lg transition-all",
+                          isManaging
+                            ? "bg-[#f5a623]/90 hover:bg-[#f5a623] hover:scale-105"
+                            : "bg-[#f5a623]/50 cursor-not-allowed"
+                        )}
                       >
                         <Image
                           src="/fantasy-icons/transfer.webp"
                           alt="Transfer"
                           width={16}
                           height={16}
-                          className="object-contain opacity-50"
+                          className="object-contain"
                         />
                         Make Transfers
                       </button>
-                      <div className="opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 bg-black/70 backdrop-blur-sm text-[#cca64f] text-[9px] font-bold px-2 py-1 rounded text-center leading-tight max-w-[130px] border border-white/10 shadow-lg">
-                        Transfers will be available after the Group Stage matches are completed.
-                      </div>
                     </div>
                   )}
 
@@ -971,7 +983,12 @@ export function MySquadView({
         isBench={selectedPlayerForModal ? bench.includes(selectedPlayerForModal.id) : false}
         opponentAcronym={
           selectedPlayerForModal && opponentMap
-            ? opponentMap[selectedPlayerForModal.nation]
+            ? opponentMap[selectedPlayerForModal.nation]?.acronym
+            : null
+        }
+        opponentNation={
+          selectedPlayerForModal && opponentMap
+            ? opponentMap[selectedPlayerForModal.nation]?.name
             : null
         }
         onSetCaptain={isManaging ? () => {

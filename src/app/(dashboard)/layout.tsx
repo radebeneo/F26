@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { BackgroundMusicPlayer } from "@/components/features/BackgroundMusicPlayer";
 
 /**
  * (dashboard) layout
@@ -25,7 +24,6 @@ export default async function DashboardLayout({
   return (
     <>
       {children}
-      <BackgroundMusicPlayer />
     </>
   );
 }

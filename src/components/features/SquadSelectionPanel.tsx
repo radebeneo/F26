@@ -16,7 +16,7 @@ import { useState, useMemo } from "react";
 import Image from "next/image";
 import { UserCircle2, Minus } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { cn, ELIMINATED_NATIONS } from "@/lib/utils";
 import {
   useSquadStore,
   MAX_SQUAD_SIZE,
@@ -34,7 +34,7 @@ interface SquadSelectionPanelProps {
   allPlayers: Player[];
   onEnterSquad: () => void;
   isSubmitting?: boolean;
-  opponentMap?: Record<string, string>;
+  opponentMap?: Record<string, { acronym: string; name: string }>;
 }
 
 // ── Pitch slot definitions ────────────────────────────────────────────────────
@@ -69,12 +69,13 @@ function PitchSlot({
   player?: Player;
   pos: string;
   onRemove?: () => void;
-  opponentMap?: Record<string, string>;
+  opponentMap?: Record<string, { acronym: string; name: string }>;
   showFullName?: boolean;
 }) {
   const slug = player ? getCountrySlug(player.nation) : null;
 
-  const opponentAcronym = player && opponentMap ? opponentMap[player.nation] : null;
+  const opponentAcronym = player && opponentMap ? opponentMap[player.nation]?.acronym : null;
+  const isEliminated = player ? ELIMINATED_NATIONS.includes(player.nation) : false;
 
   return (
     <motion.div
@@ -88,9 +89,16 @@ function PitchSlot({
     >
       {player ? (
         <div className="relative flex flex-col items-center w-[64px]">
-          {/* Player portrait or nation kit */}
-          <div className="relative w-14 h-14 z-10 -mb-1 flex-shrink-0 drop-shadow-md overflow-hidden border-[1.5px] border-white rounded-md">
-            <Image
+          {isEliminated && (
+            <div className="absolute -top-1 -left-2 z-40 w-6 h-6 bg-white rounded-full flex items-center justify-center p-[2px] shadow-sm">
+              <Image src="/fantasy-icons/eliminated.webp" alt="Eliminated" width={20} height={20} className="object-contain" />
+            </div>
+          )}
+          
+          <div className={cn("w-full flex flex-col items-center relative z-0", isEliminated && "grayscale-[80%] opacity-80")}>
+            {/* Player portrait or nation kit */}
+            <div className="relative w-14 h-14 z-10 -mb-1 flex-shrink-0 drop-shadow-md overflow-hidden border-[1.5px] border-white rounded-md">
+              <Image
               src={player.imageUrl ?? `/images/kits/${slug}.webp`}
               alt={player.imageUrl ? `${player.firstName} ${player.lastName}` : player.nation}
               fill
@@ -117,6 +125,7 @@ function PitchSlot({
               <span className="text-[8px] font-bold text-white">v</span>
               <span className="text-[9px] font-black text-[#cca64f]">{opponentAcronym || "TBD"}</span>
             </div>
+          </div>
           </div>
           {/* Remove button */}
           <button
@@ -151,7 +160,7 @@ function PitchView({
 }: {
   selectedPlayers: Player[];
   onRemove: (id: number) => void;
-  opponentMap?: Record<string, string>;
+  opponentMap?: Record<string, { acronym: string; name: string }>;
   duplicatedLastNames?: Set<string>;
 }) {
   const byPos: Record<string, Player[]> = { GK: [], DEF: [], MID: [], FWD: [] };
@@ -385,7 +394,14 @@ function ListView({
           key={p.id}
           className="flex items-center gap-3 px-3 py-2 rounded-lg bg-white/5 hover:bg-white/8 transition-colors"
         >
-          <span
+          <div className="relative flex-shrink-0">
+            {ELIMINATED_NATIONS.includes(p.nation) && (
+              <div className="absolute -top-1 -left-1 z-20 bg-white rounded-full p-[1px] shadow-sm">
+                <Image src="/fantasy-icons/eliminated.webp" alt="Eliminated" width={12} height={12} className="object-contain" />
+              </div>
+            )}
+            <div className={cn("flex flex-row items-center gap-2", ELIMINATED_NATIONS.includes(p.nation) && "grayscale-[80%] opacity-80")}>
+              <span
             className={cn(
               "text-[9px] font-black px-1.5 py-0.5 rounded uppercase tracking-wide",
               p.position === "GK" && "bg-yellow-500/20 text-yellow-400",
@@ -395,10 +411,12 @@ function ListView({
             )}
           >
             {p.position}
-          </span>
-          <span className="flex-1 text-sm font-semibold text-white truncate">
-            {p.knownName || `${p.firstName} ${p.lastName}`}
-          </span>
+            </span>
+            <span className="flex-1 text-sm font-semibold text-white truncate w-24">
+              {p.knownName || `${p.firstName} ${p.lastName}`}
+            </span>
+            </div>
+          </div>
           <span className="text-xs text-white/50">{p.club ?? p.nation}</span>
           <span className="text-xs font-semibold text-white/70 w-12 text-right">
             ${p.price}m

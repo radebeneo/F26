@@ -31,7 +31,7 @@ interface SquadBuilderClientProps {
   managerName: string;
   favoriteCountry: string;
   signOutAction: () => Promise<void>;
-  opponentMap?: Record<string, string>;
+  opponentMap?: Record<string, { acronym: string; name: string }>;
   /** True when the user has already submitted a squad — skip the builder */
   hasExistingSquad?: boolean;
   /** Pre-populated state if hasExistingSquad is true */

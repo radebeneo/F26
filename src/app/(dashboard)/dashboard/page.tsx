@@ -64,13 +64,13 @@ export default async function DashboardPage() {
     orderBy: asc(fixtures.kickoffTime),
   });
 
-  const opponentMap: Record<string, string> = {};
+  const opponentMap: Record<string, { acronym: string; name: string }> = {};
   for (const f of activeFixtures) {
     if (!opponentMap[f.homeNation]) {
-      opponentMap[f.homeNation] = getAcronym(f.awayNation);
+      opponentMap[f.homeNation] = { acronym: getAcronym(f.awayNation), name: f.awayNation };
     }
     if (!opponentMap[f.awayNation]) {
-      opponentMap[f.awayNation] = getAcronym(f.homeNation);
+      opponentMap[f.awayNation] = { acronym: getAcronym(f.homeNation), name: f.homeNation };
     }
   }
 

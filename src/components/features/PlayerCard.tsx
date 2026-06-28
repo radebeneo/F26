@@ -36,7 +36,7 @@ export function PlayerCard({ player, nextFixture, className }: PlayerCardProps) 
   return (
     <div
       className={cn(
-        "relative w-[180px] h-[220px] rounded-2xl overflow-hidden shadow-lg flex flex-col bg-[#8c8c8c]",
+        "relative w-[180px] h-[270px] rounded-2xl overflow-hidden shadow-lg flex flex-col bg-[#8c8c8c]",
         className
       )}
     >
@@ -63,6 +63,22 @@ export function PlayerCard({ player, nextFixture, className }: PlayerCardProps) 
             <span className="text-[12px] font-black text-[#cca64f] uppercase">{nextFixture}</span>
           </div>
         )}
+      </div>
+
+      {/* Stats section: %selected, Last Rd Pts, Total Pts */}
+      <div className="bg-[#f8f8f8] w-full py-1.5 flex items-center justify-around border-t border-gray-200">
+        <div className="flex flex-col items-center">
+          <span className="text-black font-black text-sm">{player.percentSelected ?? 0}%</span>
+          <span className="text-[8px] font-bold text-black/50 uppercase tracking-widest">Selected</span>
+        </div>
+        <div className="flex flex-col items-center">
+          <span className="text-black font-black text-sm">{player.lastRoundPoints ?? 0}</span>
+          <span className="text-[8px] font-bold text-black/50 uppercase tracking-widest">Last Rd</span>
+        </div>
+        <div className="flex flex-col items-center">
+          <span className="text-black font-black text-sm">{player.totalPoints ?? 0}</span>
+          <span className="text-[8px] font-bold text-black/50 uppercase tracking-widest">Total</span>
+        </div>
       </div>
 
       {/* Bottom section: Player Price */}

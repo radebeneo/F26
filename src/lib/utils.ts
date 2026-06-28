@@ -10,3 +10,23 @@ import { twMerge } from "tailwind-merge";
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+
+export const ELIMINATED_NATIONS = [
+  "South Korea",
+  "Czechia",
+  "Qatar",
+  "Haiti",
+  "Scotland",
+  "Türkiye",
+  "Curacao",
+  "Tunisia",
+  "New Zealand",
+  "Iran",
+  "Uruguay",
+  "Saudi Arabia",
+  "Iraq",
+  "Jordan",
+  "Uzbekistan",
+  "Panama",
+];
+

@@ -15,7 +15,7 @@ import type { Player } from "@/db/schema";
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
-export const BUDGET_LIMIT = 100; // $m
+export const BUDGET_LIMIT = 105; // $m
 export const MAX_SQUAD_SIZE = 15;
 
 const POSITION_LIMITS: Record<string, number> = {

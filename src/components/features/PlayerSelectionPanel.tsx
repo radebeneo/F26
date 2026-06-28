@@ -23,7 +23,7 @@ import {
   ChevronRight,
   SlidersHorizontal,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, ELIMINATED_NATIONS } from "@/lib/utils";
 import { useSquadStore } from "@/store/squadStore";
 import { useToast } from "@/components/ui/toast";
 import type { Player } from "@/db/schema";
@@ -79,6 +79,8 @@ const PlayerRow = React.memo(function PlayerRow({ player, isSelected, onAdd, onR
       ? `${player.firstName} ${player.lastName}`
       : (player.lastName || player.firstName);
 
+  const isEliminated = ELIMINATED_NATIONS.includes(player.nation);
+
   return (
     <div
       className={cn(
@@ -96,8 +98,14 @@ const PlayerRow = React.memo(function PlayerRow({ player, isSelected, onAdd, onR
       </button>
 
       {/* Portrait or flag thumbnail */}
-      <div className="relative w-8 h-8 rounded-md overflow-hidden flex-shrink-0 bg-white/10">
-        <Image
+      <div className="relative w-8 h-8 rounded-md flex-shrink-0 bg-white/10">
+        {isEliminated && (
+          <div className="absolute -top-1 -left-1 z-20 bg-white rounded-full p-[1px] shadow-sm">
+            <Image src="/fantasy-icons/eliminated.webp" alt="Eliminated" width={12} height={12} className="object-contain" />
+          </div>
+        )}
+        <div className={cn("relative w-full h-full rounded-md overflow-hidden", isEliminated && "grayscale-[80%] opacity-80")}>
+          <Image
           src={player.imageUrl ?? `/images/kits/${slug}.webp`}
           alt={player.imageUrl ? `${player.firstName} ${player.lastName}` : player.nation}
           fill
@@ -108,10 +116,11 @@ const PlayerRow = React.memo(function PlayerRow({ player, isSelected, onAdd, onR
           sizes="120px"
           quality={100}
         />
+        </div>
       </div>
 
       {/* Name + nation meta */}
-      <div className="flex-1 min-w-0">
+      <div className={cn("flex-1 min-w-0", isEliminated && "grayscale-[80%] opacity-80")}>
         <p className="text-sm font-bold text-white truncate leading-none mb-0.5">
           {displayName}
         </p>
@@ -147,11 +156,12 @@ const PlayerRow = React.memo(function PlayerRow({ player, isSelected, onAdd, onR
           id={`btn-player-${player.id}`}
           aria-label={isSelected ? `Remove ${displayName}` : `Add ${displayName}`}
           onClick={isSelected ? () => onRemove(player) : () => onAdd(player)}
+          disabled={!isSelected && isEliminated}
           className={cn(
             "flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center font-bold transition-all duration-150 text-white",
             isSelected
               ? "bg-secondaryRed-600 hover:bg-secondaryRed-500"
-              : "bg-[#c8f000] hover:bg-[#d4ff00] text-black"
+              : "bg-[#c8f000] hover:bg-[#d4ff00] text-black disabled:opacity-30 disabled:cursor-not-allowed"
           )}
         >
           {isSelected ? <Minus size={14} /> : <Plus size={14} className="text-black" />}
@@ -219,7 +229,7 @@ function Pagination({
 interface PlayerSelectionPanelProps {
   players: Player[];
   mode?: "transfer" | "12th-man" | "view";
-  opponentMap?: Record<string, string>;
+  opponentMap?: Record<string, { acronym: string; name: string }>;
 }
 
 export function PlayerSelectionPanel({ players, mode = "transfer", opponentMap }: PlayerSelectionPanelProps) {
@@ -590,7 +600,8 @@ export function PlayerSelectionPanel({ players, mode = "transfer", opponentMap }
         onClose={() => setSelectedPlayerForModal(null)}
         isCaptain={false}
         isViceCaptain={false}
-        opponentAcronym={selectedPlayerForModal ? opponentMap?.[selectedPlayerForModal.nation] : undefined}
+        opponentAcronym={selectedPlayerForModal ? opponentMap?.[selectedPlayerForModal.nation]?.acronym : undefined}
+        opponentNation={selectedPlayerForModal ? opponentMap?.[selectedPlayerForModal.nation]?.name : undefined}
       />
     </aside>
   );

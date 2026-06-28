@@ -18,6 +18,7 @@ interface PlayerDetailsModalProps {
   onSubOut?: () => void;
   onTransferOut?: () => void;
   opponentAcronym?: string | null;
+  opponentNation?: string | null;
   isBench?: boolean;
 }
 
@@ -32,6 +33,7 @@ export function PlayerDetailsModal({
   onSubOut,
   onTransferOut,
   opponentAcronym,
+  opponentNation,
   isBench,
 }: PlayerDetailsModalProps) {
   const [activeTab, setActiveTab] = useState<"overview" | "fixtures" | "results">("overview");
@@ -215,8 +217,41 @@ export function PlayerDetailsModal({
                 )}
 
                 {activeTab === "fixtures" && (
-                  <div className="py-8 text-center text-white/50 text-sm">
-                    Fixtures data not available yet.
+                  <div className="flex flex-col gap-4">
+                    {opponentNation ? (
+                      <div className="bg-white/5 rounded-xl p-4 flex flex-col items-center justify-center border border-white/10 gap-3">
+                        <span className="text-xs font-bold text-white/50 uppercase tracking-widest">Next Fixture</span>
+                        <div className="flex items-center justify-center gap-6 w-full">
+                          <div className="flex flex-col items-center gap-2 flex-1">
+                            <div className="relative w-12 h-12 drop-shadow-md">
+                              <Image
+                                src={`/images/flags/${getCountrySlug(player.nation)}.webp`}
+                                alt={`${player.nation} flag`}
+                                fill
+                                className="object-contain"
+                              />
+                            </div>
+                            <span className="text-sm font-bold text-white text-center uppercase leading-tight">{player.nation}</span>
+                          </div>
+                          <span className="text-xl font-black text-white/30">V</span>
+                          <div className="flex flex-col items-center gap-2 flex-1">
+                            <div className="relative w-12 h-12 drop-shadow-md">
+                              <Image
+                                src={`/images/flags/${getCountrySlug(opponentNation)}.webp`}
+                                alt={`${opponentNation} flag`}
+                                fill
+                                className="object-contain"
+                              />
+                            </div>
+                            <span className="text-sm font-bold text-white text-center uppercase leading-tight">{opponentNation}</span>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="py-8 text-center text-white/50 text-sm">
+                        No upcoming fixtures.
+                      </div>
+                    )}
                   </div>
                 )}
 
