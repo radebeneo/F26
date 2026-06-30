@@ -28,5 +28,9 @@ export const ELIMINATED_NATIONS = [
   "Jordan",
   "Uzbekistan",
   "Panama",
+  "Germany",
+  "Netherlands",
+  "South Africa",
+  "Japan",
 ];
 
