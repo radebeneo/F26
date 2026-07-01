@@ -32,5 +32,7 @@ export const ELIMINATED_NATIONS = [
   "Netherlands",
   "South Africa",
   "Japan",
+  "Sweden",
+  "Côte d'Ivoire",
+  "Ecuador",
 ];
-
