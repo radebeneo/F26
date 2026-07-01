@@ -5,7 +5,7 @@ import { registerAction } from "./actions";
 export const metadata: Metadata = {
   title: "Create Account",
   description:
-    "Register for F26 Fantasy and build your FIFA World Cup 2026 dream squad.",
+    "Register for FWC26 Fantasy and build your FIFA World Cup 2026 dream squad.",
 };
 
 export default function RegisterPage() {

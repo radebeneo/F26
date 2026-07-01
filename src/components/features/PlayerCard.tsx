@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { cn } from "@/lib/utils";
+import { cn, ELIMINATED_NATIONS } from "@/lib/utils";
 import type { Player } from "@/db/schema";
 
 interface PlayerCardProps {
@@ -32,14 +32,21 @@ export function PlayerCard({ player, nextFixture, className }: PlayerCardProps) 
   // Portraits are full-body — object-top anchors the head/shoulders in the crop area.
   const imageSrc = player.imageUrl ?? `/images/kits/${formattedNation}.webp`;
   const isPortrait = !!player.imageUrl;
+  const isEliminated = ELIMINATED_NATIONS.includes(player.nation);
 
   return (
     <div
       className={cn(
         "relative w-[180px] h-[270px] rounded-2xl overflow-hidden shadow-lg flex flex-col bg-[#8c8c8c]",
+        isEliminated && "grayscale-[100%] opacity-90",
         className
       )}
     >
+      {isEliminated && (
+        <div className="absolute top-2 left-2 z-20 bg-white rounded-full p-1 shadow-sm">
+          <Image src="/fantasy-icons/eliminated.webp" alt="Eliminated" width={24} height={24} className="object-contain" />
+        </div>
+      )}
       {/* Top section: Player portrait or nation kit */}
       <div className="relative flex-1 w-full bg-[#8c8c8c] overflow-hidden">
         <Image

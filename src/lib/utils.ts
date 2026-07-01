@@ -35,4 +35,5 @@ export const ELIMINATED_NATIONS = [
   "Sweden",
   "Côte d'Ivoire",
   "Ecuador",
+  "Congo DR",
 ];
