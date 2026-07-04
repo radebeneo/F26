@@ -68,7 +68,6 @@ async function syncPlayers(officialPlayers: OfficialPlayer[]) {
     .filter((dbP) => jsonById.has(dbP.id))
     .map((dbP) => {
       const jp = jsonById.get(dbP.id)!;
-      const rp = jp.stats?.roundPoints;
       const isAvailable = jp.status === "playing";
       const totalPoints = jp.stats?.totalPoints ?? 0;
       const lastRoundPoints = jp.stats?.lastRoundPoints ?? 0;
