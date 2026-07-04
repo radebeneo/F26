@@ -358,7 +358,6 @@ export function MySquadView({
           viceCaptainId,
           activeBooster,
           twelfthManId,
-          gameweekId: 4,
         }),
       });
 
