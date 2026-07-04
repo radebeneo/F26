@@ -40,5 +40,8 @@ export const ELIMINATED_NATIONS = [
   "Bosnia-Herzegovina",
   "Croatia",
   "Austria",
-  "Algeria"
+  "Algeria",
+  "Ghana",
+  "Cabo Verde",
+  "Australia",
 ];
