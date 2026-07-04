@@ -147,8 +147,8 @@ export const useSquadStore = create<SquadState>((set, get) => ({
       };
     }
 
-    // Nation limit (max 3 per nation)
-    const MAX_PER_NATION = 3;
+    // Nation limit (max 4 per nation)
+    const MAX_PER_NATION = 4;
     const nationCount = selectedPlayers.filter(
       (p) => p.nation === player.nation
     ).length;
