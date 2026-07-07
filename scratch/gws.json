@@ -1,0 +1,58 @@
+[
+  {
+    "id": 1,
+    "name": "Group Stage MD1",
+    "deadlineTime": "2026-06-11T11:00:00.000Z",
+    "isCurrent": false,
+    "isFinished": true
+  },
+  {
+    "id": 2,
+    "name": "Group Stage MD2",
+    "deadlineTime": "2026-06-18T11:00:00.000Z",
+    "isCurrent": false,
+    "isFinished": true
+  },
+  {
+    "id": 3,
+    "name": "Group Stage MD3",
+    "deadlineTime": "2026-06-19T11:00:00.000Z",
+    "isCurrent": false,
+    "isFinished": true
+  },
+  {
+    "id": 4,
+    "name": "Round of 32",
+    "deadlineTime": "2026-06-27T11:00:00.000Z",
+    "isCurrent": false,
+    "isFinished": true
+  },
+  {
+    "id": 5,
+    "name": "Round of 16",
+    "deadlineTime": "2026-07-02T11:00:00.000Z",
+    "isCurrent": true,
+    "isFinished": false
+  },
+  {
+    "id": 6,
+    "name": "Quarter-finals",
+    "deadlineTime": "2026-07-05T11:00:00.000Z",
+    "isCurrent": false,
+    "isFinished": false
+  },
+  {
+    "id": 7,
+    "name": "Semi-finals",
+    "deadlineTime": "2026-07-14T11:00:00.000Z",
+    "isCurrent": false,
+    "isFinished": false
+  },
+  {
+    "id": 8,
+    "name": "Final",
+    "deadlineTime": "2026-07-19T11:00:00.000Z",
+    "isCurrent": false,
+    "isFinished": false
+  }
+]

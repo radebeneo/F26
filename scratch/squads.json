@@ -1,0 +1,582 @@
+[
+  {
+    "id": "e6b783f3-a4f5-467f-ba11-3b9676d63fac",
+    "userId": "e64e1e20-4cf9-42fe-bf77-63efa70adf16",
+    "gameweekId": 4,
+    "gwPoints": 91,
+    "activeBooster": "12th-man",
+    "twelfthManId": 173,
+    "players": [
+      {
+        "id": "cd5ec882-6b95-43d0-b2a4-1067faaf893e",
+        "userSquadId": "e6b783f3-a4f5-467f-ba11-3b9676d63fac",
+        "playerId": 183,
+        "isStarter": true,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "5116f496-0fc2-4dcb-8b27-51fc5f07a0cb",
+        "userSquadId": "e6b783f3-a4f5-467f-ba11-3b9676d63fac",
+        "playerId": 1318,
+        "isStarter": true,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "6e31d7e5-a067-4aac-ac94-ee676bca7290",
+        "userSquadId": "e6b783f3-a4f5-467f-ba11-3b9676d63fac",
+        "playerId": 494,
+        "isStarter": true,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "40ddb0e5-6985-4ee8-af94-1debce05c4c9",
+        "userSquadId": "e6b783f3-a4f5-467f-ba11-3b9676d63fac",
+        "playerId": 164,
+        "isStarter": true,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "20b8cde2-bdc6-4ff1-8496-c39bffeabc1a",
+        "userSquadId": "e6b783f3-a4f5-467f-ba11-3b9676d63fac",
+        "playerId": 468,
+        "isStarter": true,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "9360e0d7-6147-46bd-babe-971c43cbade6",
+        "userSquadId": "e6b783f3-a4f5-467f-ba11-3b9676d63fac",
+        "playerId": 501,
+        "isStarter": true,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "916969db-6779-420b-a148-4ee77bd71ad8",
+        "userSquadId": "e6b783f3-a4f5-467f-ba11-3b9676d63fac",
+        "playerId": 517,
+        "isStarter": true,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "d4cc1ff0-0423-4fce-b525-22bc935830aa",
+        "userSquadId": "e6b783f3-a4f5-467f-ba11-3b9676d63fac",
+        "playerId": 50,
+        "isStarter": true,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "59cc430e-4b8a-4033-ab5a-eba90148e733",
+        "userSquadId": "e6b783f3-a4f5-467f-ba11-3b9676d63fac",
+        "playerId": 491,
+        "isStarter": true,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "6d889d54-aa4a-4909-8cb0-84e2d1dc13a9",
+        "userSquadId": "e6b783f3-a4f5-467f-ba11-3b9676d63fac",
+        "playerId": 38,
+        "isStarter": true,
+        "isCaptain": true,
+        "isViceCaptain": false,
+        "multiplier": 2
+      },
+      {
+        "id": "cd6c0ffc-bcb7-4995-bb11-c1dd2648ca91",
+        "userSquadId": "e6b783f3-a4f5-467f-ba11-3b9676d63fac",
+        "playerId": 500,
+        "isStarter": true,
+        "isCaptain": false,
+        "isViceCaptain": true,
+        "multiplier": 1
+      },
+      {
+        "id": "46ee9d1a-7a43-4fa8-b2fe-49103d718507",
+        "userSquadId": "e6b783f3-a4f5-467f-ba11-3b9676d63fac",
+        "playerId": 1522,
+        "isStarter": false,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "74e6296b-d38a-4704-b244-0a86b0c67280",
+        "userSquadId": "e6b783f3-a4f5-467f-ba11-3b9676d63fac",
+        "playerId": 463,
+        "isStarter": false,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "70781315-5bd8-4988-bb90-5e95dbb68232",
+        "userSquadId": "e6b783f3-a4f5-467f-ba11-3b9676d63fac",
+        "playerId": 265,
+        "isStarter": false,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "fed4ffd2-397e-417e-b332-d5b7614014bd",
+        "userSquadId": "e6b783f3-a4f5-467f-ba11-3b9676d63fac",
+        "playerId": 461,
+        "isStarter": false,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      }
+    ]
+  },
+  {
+    "id": "be866f0a-c585-41c0-9f42-110dd4472142",
+    "userId": "e64e1e20-4cf9-42fe-bf77-63efa70adf16",
+    "gameweekId": 3,
+    "gwPoints": 62,
+    "activeBooster": "qualification-booster",
+    "twelfthManId": null,
+    "players": [
+      {
+        "id": "f168f95d-301b-4519-b723-b05b2b69e685",
+        "userSquadId": "be866f0a-c585-41c0-9f42-110dd4472142",
+        "playerId": 1027,
+        "isStarter": false,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "9e06e5c6-df07-44a3-99a0-212dd606a1f2",
+        "userSquadId": "be866f0a-c585-41c0-9f42-110dd4472142",
+        "playerId": 1318,
+        "isStarter": false,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "7c2a3e0a-0253-4a6c-9ae2-b3c5aa395812",
+        "userSquadId": "be866f0a-c585-41c0-9f42-110dd4472142",
+        "playerId": 214,
+        "isStarter": false,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "09daa173-07c1-48ee-acd4-443272c8d5b7",
+        "userSquadId": "be866f0a-c585-41c0-9f42-110dd4472142",
+        "playerId": 916,
+        "isStarter": false,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "71fe3e4c-f74e-4d9f-aeac-64882e4e916c",
+        "userSquadId": "be866f0a-c585-41c0-9f42-110dd4472142",
+        "playerId": 494,
+        "isStarter": true,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "95a83ee7-343d-4895-8ed2-9029a870245d",
+        "userSquadId": "be866f0a-c585-41c0-9f42-110dd4472142",
+        "playerId": 38,
+        "isStarter": true,
+        "isCaptain": false,
+        "isViceCaptain": true,
+        "multiplier": 1
+      },
+      {
+        "id": "ba6b634a-3d48-416e-ad1e-35af1781d1ba",
+        "userSquadId": "be866f0a-c585-41c0-9f42-110dd4472142",
+        "playerId": 1429,
+        "isStarter": true,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "8bbcfb6e-def4-4e5a-8093-2c0221219cc6",
+        "userSquadId": "be866f0a-c585-41c0-9f42-110dd4472142",
+        "playerId": 491,
+        "isStarter": true,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "4af924f2-9779-4959-a304-2e98dda6aa3a",
+        "userSquadId": "be866f0a-c585-41c0-9f42-110dd4472142",
+        "playerId": 468,
+        "isStarter": true,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "877208de-837c-4cdf-bf52-d3aaab45fe39",
+        "userSquadId": "be866f0a-c585-41c0-9f42-110dd4472142",
+        "playerId": 937,
+        "isStarter": true,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "75319ced-3786-4e78-b114-86e686173621",
+        "userSquadId": "be866f0a-c585-41c0-9f42-110dd4472142",
+        "playerId": 50,
+        "isStarter": true,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "c994c91f-c978-4305-b193-9d378a3330db",
+        "userSquadId": "be866f0a-c585-41c0-9f42-110dd4472142",
+        "playerId": 164,
+        "isStarter": true,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "74c59fcb-b6fc-4bf3-963e-1a637985b7f4",
+        "userSquadId": "be866f0a-c585-41c0-9f42-110dd4472142",
+        "playerId": 500,
+        "isStarter": true,
+        "isCaptain": true,
+        "isViceCaptain": false,
+        "multiplier": 2
+      },
+      {
+        "id": "83dfc026-5e9f-4714-87cf-47a78f5bd513",
+        "userSquadId": "be866f0a-c585-41c0-9f42-110dd4472142",
+        "playerId": 936,
+        "isStarter": true,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "c9841133-d995-4287-8d87-51b3e1ffc3f2",
+        "userSquadId": "be866f0a-c585-41c0-9f42-110dd4472142",
+        "playerId": 1522,
+        "isStarter": true,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      }
+    ]
+  },
+  {
+    "id": "824d4968-88b1-4419-8d6b-2774f8d0e36d",
+    "userId": "e64e1e20-4cf9-42fe-bf77-63efa70adf16",
+    "gameweekId": 2,
+    "gwPoints": 107,
+    "activeBooster": null,
+    "twelfthManId": null,
+    "players": [
+      {
+        "id": "1ef32892-ff3e-4c45-9969-dfa722e159af",
+        "userSquadId": "824d4968-88b1-4419-8d6b-2774f8d0e36d",
+        "playerId": 1522,
+        "isStarter": true,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "4658f8a4-1115-46e7-a1c9-f187bbe5d5a0",
+        "userSquadId": "824d4968-88b1-4419-8d6b-2774f8d0e36d",
+        "playerId": 461,
+        "isStarter": true,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "f4ef8e1e-b540-4351-842f-4dc342019f88",
+        "userSquadId": "824d4968-88b1-4419-8d6b-2774f8d0e36d",
+        "playerId": 463,
+        "isStarter": true,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "a83b271e-2d2f-436c-b48c-dd59d136c290",
+        "userSquadId": "824d4968-88b1-4419-8d6b-2774f8d0e36d",
+        "playerId": 164,
+        "isStarter": true,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "7cbc39ba-97b8-46e5-bf03-c011288c4058",
+        "userSquadId": "824d4968-88b1-4419-8d6b-2774f8d0e36d",
+        "playerId": 796,
+        "isStarter": true,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "3cf10d0d-5ea7-4abb-9c70-d3769721b65e",
+        "userSquadId": "824d4968-88b1-4419-8d6b-2774f8d0e36d",
+        "playerId": 517,
+        "isStarter": true,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "2a5883b8-19f7-4416-b6fd-7c2fab1abd0b",
+        "userSquadId": "824d4968-88b1-4419-8d6b-2774f8d0e36d",
+        "playerId": 501,
+        "isStarter": true,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "e50f1f52-71ff-4037-8695-c8f15988cb28",
+        "userSquadId": "824d4968-88b1-4419-8d6b-2774f8d0e36d",
+        "playerId": 1058,
+        "isStarter": true,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "7a89bb66-be1b-42d5-b86c-3af30818712c",
+        "userSquadId": "824d4968-88b1-4419-8d6b-2774f8d0e36d",
+        "playerId": 491,
+        "isStarter": true,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "03b1c0c6-3e12-4740-adfe-d5ddc301d095",
+        "userSquadId": "824d4968-88b1-4419-8d6b-2774f8d0e36d",
+        "playerId": 500,
+        "isStarter": true,
+        "isCaptain": false,
+        "isViceCaptain": true,
+        "multiplier": 1
+      },
+      {
+        "id": "15b7a636-a3bc-4441-bfc0-cee981f39599",
+        "userSquadId": "824d4968-88b1-4419-8d6b-2774f8d0e36d",
+        "playerId": 38,
+        "isStarter": true,
+        "isCaptain": true,
+        "isViceCaptain": false,
+        "multiplier": 2
+      },
+      {
+        "id": "aaf54edf-14e0-49d7-a03e-adeb1cffa769",
+        "userSquadId": "824d4968-88b1-4419-8d6b-2774f8d0e36d",
+        "playerId": 183,
+        "isStarter": false,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "9dd52eb3-040e-4f78-9e41-bfb686b63bc4",
+        "userSquadId": "824d4968-88b1-4419-8d6b-2774f8d0e36d",
+        "playerId": 1318,
+        "isStarter": false,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "ccc99d08-1f7a-4d59-bad1-937d0352b07e",
+        "userSquadId": "824d4968-88b1-4419-8d6b-2774f8d0e36d",
+        "playerId": 50,
+        "isStarter": false,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "642ecf3a-6628-4795-9852-5f366a8090c1",
+        "userSquadId": "824d4968-88b1-4419-8d6b-2774f8d0e36d",
+        "playerId": 855,
+        "isStarter": false,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      }
+    ]
+  },
+  {
+    "id": "4e92ca86-db44-42c2-ada3-f185b551c79a",
+    "userId": "e64e1e20-4cf9-42fe-bf77-63efa70adf16",
+    "gameweekId": 1,
+    "gwPoints": 115,
+    "activeBooster": "12th-man",
+    "twelfthManId": 855,
+    "players": [
+      {
+        "id": "97930470-d52f-4ea3-8554-135bc5dcf241",
+        "userSquadId": "4e92ca86-db44-42c2-ada3-f185b551c79a",
+        "playerId": 494,
+        "isStarter": true,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "87ed9cbe-1d09-46bc-85b2-d3837992c838",
+        "userSquadId": "4e92ca86-db44-42c2-ada3-f185b551c79a",
+        "playerId": 38,
+        "isStarter": true,
+        "isCaptain": false,
+        "isViceCaptain": true,
+        "multiplier": 1
+      },
+      {
+        "id": "875a4a11-cbe5-46f6-bede-1ef65e7e4839",
+        "userSquadId": "4e92ca86-db44-42c2-ada3-f185b551c79a",
+        "playerId": 1429,
+        "isStarter": true,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "49b19628-7468-4dc0-a659-51ad83b03f6f",
+        "userSquadId": "4e92ca86-db44-42c2-ada3-f185b551c79a",
+        "playerId": 491,
+        "isStarter": true,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "f56da47b-add1-4c0a-a311-397d13f31b0b",
+        "userSquadId": "4e92ca86-db44-42c2-ada3-f185b551c79a",
+        "playerId": 468,
+        "isStarter": true,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "3cbcb591-758a-4c70-9055-6cdf1e070b93",
+        "userSquadId": "4e92ca86-db44-42c2-ada3-f185b551c79a",
+        "playerId": 937,
+        "isStarter": true,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "ea0afaf3-3f17-42f5-a290-63ff3d7e0ac8",
+        "userSquadId": "4e92ca86-db44-42c2-ada3-f185b551c79a",
+        "playerId": 50,
+        "isStarter": true,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "37c04e42-e61b-49c1-92af-5396637ac9ce",
+        "userSquadId": "4e92ca86-db44-42c2-ada3-f185b551c79a",
+        "playerId": 164,
+        "isStarter": true,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "1638a920-950f-4b49-97f0-b5f4ccb7c451",
+        "userSquadId": "4e92ca86-db44-42c2-ada3-f185b551c79a",
+        "playerId": 500,
+        "isStarter": true,
+        "isCaptain": true,
+        "isViceCaptain": false,
+        "multiplier": 2
+      },
+      {
+        "id": "437c6286-b376-4d52-867f-ea7dd87c152a",
+        "userSquadId": "4e92ca86-db44-42c2-ada3-f185b551c79a",
+        "playerId": 936,
+        "isStarter": true,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "fe17b8f6-535d-42e2-8c02-b3e060aacb4e",
+        "userSquadId": "4e92ca86-db44-42c2-ada3-f185b551c79a",
+        "playerId": 1522,
+        "isStarter": true,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "2504d54f-7eb2-4dcb-9809-9549460f14c7",
+        "userSquadId": "4e92ca86-db44-42c2-ada3-f185b551c79a",
+        "playerId": 1027,
+        "isStarter": false,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "2615fb43-3e5f-41aa-8a02-afde6e887f70",
+        "userSquadId": "4e92ca86-db44-42c2-ada3-f185b551c79a",
+        "playerId": 1318,
+        "isStarter": false,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "7553443a-a56d-4b08-9be1-5ba77e701130",
+        "userSquadId": "4e92ca86-db44-42c2-ada3-f185b551c79a",
+        "playerId": 214,
+        "isStarter": false,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      },
+      {
+        "id": "9147c5fa-1b31-4f48-beda-c4b579e588df",
+        "userSquadId": "4e92ca86-db44-42c2-ada3-f185b551c79a",
+        "playerId": 916,
+        "isStarter": false,
+        "isCaptain": false,
+        "isViceCaptain": false,
+        "multiplier": 1
+      }
+    ]
+  }
+]
