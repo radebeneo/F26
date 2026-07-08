@@ -71,6 +71,7 @@ interface PlayerRowProps {
 }
 
 const PlayerRow = React.memo(function PlayerRow({ player, isSelected, onAdd, onRemove, onInfoClick, showFullName, mode }: PlayerRowProps) {
+  const [imgError, setImgError] = React.useState(false);
   const slug = nationToSlug(player.nation);
   // Priority: knownName (official known alias) → full name if duplicate → lastName → firstName
   const displayName = player.knownName
@@ -80,6 +81,10 @@ const PlayerRow = React.memo(function PlayerRow({ player, isSelected, onAdd, onR
       : (player.lastName || player.firstName);
 
   const isEliminated = ELIMINATED_NATIONS.includes(player.nation);
+
+  const fallbackSrc = `/images/kits/${slug}.webp`;
+  const imageSrc = !imgError && player.imageUrl ? player.imageUrl : fallbackSrc;
+  const isPortrait = !imgError && !!player.imageUrl;
 
   return (
     <div
@@ -106,15 +111,16 @@ const PlayerRow = React.memo(function PlayerRow({ player, isSelected, onAdd, onR
         )}
         <div className={cn("relative w-full h-full rounded-md overflow-hidden", isEliminated && "grayscale-[80%] opacity-80")}>
           <Image
-          src={player.imageUrl ?? `/images/kits/${slug}.webp`}
-          alt={player.imageUrl ? `${player.firstName} ${player.lastName}` : player.nation}
+          src={imageSrc}
+          alt={isPortrait ? `${player.firstName} ${player.lastName}` : player.nation}
           fill
-          className={player.imageUrl
+          className={isPortrait
             ? "object-cover object-top scale-[1.8] origin-top"
             : "object-cover object-top"
           }
           sizes="120px"
           quality={100}
+          onError={() => setImgError(true)}
         />
         </div>
       </div>

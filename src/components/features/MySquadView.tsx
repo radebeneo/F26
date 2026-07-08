@@ -66,6 +66,7 @@ function MySquadPitchSlot({
   benchIndex?: number;
   isSubDisabled?: boolean;
 }) {
+  const [imgError, setImgError] = useState(false);
   const slug = player ? getCountrySlug(player.nation) : null;
   const opponentAcronym =
     player && opponentMap ? opponentMap[player.nation]?.acronym : null;
@@ -73,6 +74,10 @@ function MySquadPitchSlot({
   const isCaptain = player && captainId === player.id;
   const isViceCaptain = player && viceCaptainId === player.id;
   const isEliminated = player ? ELIMINATED_NATIONS.includes(player.nation) : false;
+
+  const fallbackSrc = `/images/kits/${slug}.webp`;
+  const imageSrc = player && !imgError && player.imageUrl ? player.imageUrl : fallbackSrc;
+  const isPortrait = player && !imgError && !!player.imageUrl;
 
   return (
     <motion.div
@@ -156,15 +161,16 @@ function MySquadPitchSlot({
             {/* Player portrait or nation kit */}
             <div className="relative w-14 h-14 z-10 -mb-1 flex-shrink-0 drop-shadow-md overflow-hidden border-[1.5px] border-white rounded-md">
               <Image
-                src={player.imageUrl ?? `/images/kits/${slug}.webp`}
-                alt={player.imageUrl ? `${player.firstName} ${player.lastName}` : player.nation}
+                src={imageSrc}
+                alt={isPortrait ? `${player.firstName} ${player.lastName}` : player.nation}
                 fill
-                className={player.imageUrl
+                className={isPortrait
                   ? "object-cover object-top scale-[1.8] origin-top"
                   : "object-contain object-bottom"
                 }
                 sizes="120px"
                 quality={100}
+                onError={() => setImgError(true)}
               />
             </div>
 

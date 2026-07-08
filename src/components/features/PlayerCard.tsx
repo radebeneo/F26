@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { useState } from "react";
 import { cn, ELIMINATED_NATIONS } from "@/lib/utils";
 import type { Player } from "@/db/schema";
 
@@ -23,6 +26,7 @@ export function formatNationForUrl(nation: string) {
 }
 
 export function PlayerCard({ player, nextFixture, className }: PlayerCardProps) {
+  const [imgError, setImgError] = useState(false);
   const formattedNation = formatNationForUrl(player.nation);
 
   // Format price (e.g. 10 -> $10m, 10.5 -> $10.5m)
@@ -30,8 +34,9 @@ export function PlayerCard({ player, nextFixture, className }: PlayerCardProps) 
 
   // Use official FIFA portrait when available, otherwise fall back to kit image.
   // Portraits are full-body — object-top anchors the head/shoulders in the crop area.
-  const imageSrc = player.imageUrl ?? `/images/kits/${formattedNation}.webp`;
-  const isPortrait = !!player.imageUrl;
+  const fallbackSrc = `/images/kits/${formattedNation}.webp`;
+  const imageSrc = !imgError && player.imageUrl ? player.imageUrl : fallbackSrc;
+  const isPortrait = !imgError && !!player.imageUrl;
   const isEliminated = ELIMINATED_NATIONS.includes(player.nation);
 
   return (
@@ -56,6 +61,7 @@ export function PlayerCard({ player, nextFixture, className }: PlayerCardProps) 
           className="object-cover object-top"
           sizes="180px"
           priority
+          onError={() => setImgError(true)}
         />
       </div>
 

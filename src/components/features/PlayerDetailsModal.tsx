@@ -38,6 +38,7 @@ export function PlayerDetailsModal({
 }: PlayerDetailsModalProps) {
   const [activeTab, setActiveTab] = useState<"overview" | "fixtures" | "results">("overview");
   const [mounted, setMounted] = useState(false);
+  const [imgError, setImgError] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -54,8 +55,9 @@ export function PlayerDetailsModal({
 
   // Use official FIFA portrait when available, otherwise fall back to kit image.
   // Portraits are full-body — object-top crops to head/shoulders region.
-  const headerImageSrc = player.imageUrl ?? `/images/kits/${slug}.webp`;
-  const isPortrait = !!player.imageUrl;
+  const fallbackSrc = `/images/kits/${slug}.webp`;
+  const headerImageSrc = !imgError && player.imageUrl ? player.imageUrl : fallbackSrc;
+  const isPortrait = !imgError && !!player.imageUrl;
 
 
   const modalContent = (
@@ -124,6 +126,7 @@ export function PlayerDetailsModal({
                       ? "object-cover object-top scale-[2] origin-top drop-shadow-xl"
                       : "object-cover object-top drop-shadow-xl"
                     }
+                    onError={() => setImgError(true)}
                   />
                 </div>
 
