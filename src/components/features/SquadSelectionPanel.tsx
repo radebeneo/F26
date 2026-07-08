@@ -72,7 +72,7 @@ function PitchSlot({
   opponentMap?: Record<string, { acronym: string; name: string }>;
   showFullName?: boolean;
 }) {
-  const [imgError, setImgError] = React.useState(false);
+  const [imgError, setImgError] = useState(false);
   const slug = player ? getCountrySlug(player.nation) : null;
 
   const opponentAcronym = player && opponentMap ? opponentMap[player.nation]?.acronym : null;
