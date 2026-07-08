@@ -376,6 +376,12 @@ export function PlayerSelectionPanel({ players, mode = "transfer", opponentMap }
 
       // Fallback
       toast({ variant: "info", title: reason });
+    } else if (result.ok && result.reason) {
+      toast({
+        variant: "info",
+        title: "Notice",
+        description: result.reason,
+      });
     }
   }, [mode, selectedIds, setTwelfthManId, addPlayer, toast]);
 

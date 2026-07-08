@@ -89,14 +89,19 @@ export const fixtures: NewFixture[] = [
   { gameweekId: 4, homeNation: "Australia", awayNation: "Egypt", kickoffTime: new Date("2026-07-03T20:00:00+01:00"), status: "FINISHED" },
   { gameweekId: 4, homeNation: "Argentina", awayNation: "Cabo Verde", kickoffTime: new Date("2026-07-04T00:00:00+01:00"), status: "FINISHED" },
   { gameweekId: 4, homeNation: "Colombia", awayNation: "Ghana", kickoffTime: new Date("2026-07-04T03:30:00+01:00"), status: "FINISHED" },
-  
-  { gameweekId: 5, homeNation: "Canada", awayNation: "Morocco", kickoffTime: new Date("2026-07-04T19:00:00Z"), status: "UPCOMING" },
-  { gameweekId: 5, homeNation: "Paraguay", awayNation: "France", kickoffTime: new Date("2026-07-04T23:00:00Z"), status: "UPCOMING" },
-  { gameweekId: 5, homeNation: "Brazil", awayNation: "Norway", kickoffTime: new Date("2026-07-05T22:00:00Z"), status: "UPCOMING" },
-  { gameweekId: 5, homeNation: "Mexico", awayNation: "England", kickoffTime: new Date("2026-07-06T02:00:00Z"), status: "UPCOMING" },
-  { gameweekId: 5, homeNation: "Portugal", awayNation: "Spain", kickoffTime: new Date("2026-07-06T21:00:00Z"), status: "UPCOMING" },
-  { gameweekId: 5, homeNation: "United States", awayNation: "Belgium", kickoffTime: new Date("2026-07-07T02:00:00Z"), status: "UPCOMING" },
-  { gameweekId: 5, homeNation: "Argentina", awayNation: "Egypt", kickoffTime: new Date("2026-07-07T18:00:00Z"), status: "UPCOMING" },
-  { gameweekId: 5, homeNation: "Switzerland", awayNation: "Colombia", kickoffTime: new Date("2026-07-07T22:00:00Z"), status: "UPCOMING" },
+
+  { gameweekId: 5, homeNation: "Canada", awayNation: "Morocco", kickoffTime: new Date("2026-07-04T19:00:00Z"), status: "FINISHED" },
+  { gameweekId: 5, homeNation: "Paraguay", awayNation: "France", kickoffTime: new Date("2026-07-04T23:00:00Z"), status: "FINISHED" },
+  { gameweekId: 5, homeNation: "Brazil", awayNation: "Norway", kickoffTime: new Date("2026-07-05T22:00:00Z"), status: "FINISHED" },
+  { gameweekId: 5, homeNation: "Mexico", awayNation: "England", kickoffTime: new Date("2026-07-06T02:00:00Z"), status: "FINISHED" },
+  { gameweekId: 5, homeNation: "Portugal", awayNation: "Spain", kickoffTime: new Date("2026-07-06T21:00:00Z"), status: "FINISHED" },
+  { gameweekId: 5, homeNation: "United States", awayNation: "Belgium", kickoffTime: new Date("2026-07-07T02:00:00Z"), status: "FINISHED" },
+  { gameweekId: 5, homeNation: "Argentina", awayNation: "Egypt", kickoffTime: new Date("2026-07-07T18:00:00Z"), status: "FINISHED" },
+  { gameweekId: 5, homeNation: "Switzerland", awayNation: "Colombia", kickoffTime: new Date("2026-07-07T22:00:00Z"), status: "FINISHED" },
+
+  { gameweekId: 6, homeNation: "France", awayNation: "Morocco", kickoffTime: new Date("2026-07-09T22:00:00Z"), status: "UPCOMING" },
+  { gameweekId: 6, homeNation: "Spain", awayNation: "Belgium", kickoffTime: new Date("2026-07-10T21:00:00Z"), status: "UPCOMING" },
+  { gameweekId: 6, homeNation: "Norway", awayNation: "England", kickoffTime: new Date("2026-07-11T23:00:00Z"), status: "UPCOMING" },
+  { gameweekId: 6, homeNation: "Argentina", awayNation: "Switzerland", kickoffTime: new Date("2026-07-12T03:00:00Z"), status: "UPCOMING" },
 
 ];

@@ -49,5 +49,7 @@ export const ELIMINATED_NATIONS = [
   "Brazil",
   "Mexico",
   "Portugal",
-  "United States"
+  "United States",
+  "Egypt",
+  "Colombia",
 ];

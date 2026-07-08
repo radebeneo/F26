@@ -12,6 +12,7 @@
 
 import { create } from "zustand";
 import type { Player } from "@/db/schema";
+import { ELIMINATED_NATIONS } from "@/lib/utils";
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
@@ -60,9 +61,44 @@ function computeDefaultSquadState(players: Player[]) {
   };
 }
 
+function calculateBankBalance(initialPlayers: Player[], selectedPlayers: Player[]): number {
+  if (initialPlayers.length === 0) {
+    return BUDGET_LIMIT - selectedPlayers.reduce((sum, p) => sum + p.price, 0);
+  }
+  const initialSpent = initialPlayers.reduce((sum, p) => sum + p.price, 0);
+  let bank = BUDGET_LIMIT - initialSpent;
+
+  const removedPlayers = initialPlayers.filter(
+    (p) => !selectedPlayers.some((sp) => sp.id === p.id)
+  );
+  const addedPlayers = selectedPlayers.filter(
+    (p) => !initialPlayers.some((ip) => ip.id === p.id)
+  );
+
+  for (const p of removedPlayers) {
+    if (!ELIMINATED_NATIONS.includes(p.nation)) {
+      bank += p.price;
+    }
+  }
+
+  let freeTransfers = 4;
+  for (const p of addedPlayers) {
+    if (freeTransfers > 0) {
+      freeTransfers--;
+    } else {
+      bank -= p.price;
+    }
+  }
+
+  return bank;
+}
+
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 export interface SquadState {
+  /** The players originally in the squad (before transfers) */
+  initialPlayers: Player[];
+
   /** All players currently selected in the squad */
   selectedPlayers: Player[];
 
@@ -106,6 +142,8 @@ export interface SquadState {
   budget: () => number;
   /** $m remaining */
   budgetRemaining: () => number;
+  /** Free transfers remaining */
+  freeTransfersRemaining: () => number;
   /** Count of selected players per position */
   positionCounts: () => Record<string, number>;
 }
@@ -113,6 +151,7 @@ export interface SquadState {
 // ── Store ─────────────────────────────────────────────────────────────────────
 
 export const useSquadStore = create<SquadState>((set, get) => ({
+  initialPlayers: [],
   selectedPlayers: [],
   startingXI: [],
   bench: [],
@@ -123,7 +162,7 @@ export const useSquadStore = create<SquadState>((set, get) => ({
 
   // ── Add ──────────────────────────────────────────────────────────────────
   addPlayer: (player) => {
-    const { selectedPlayers } = get();
+    const { initialPlayers, selectedPlayers } = get();
 
     // Already selected
     if (selectedPlayers.some((p) => p.id === player.id)) {
@@ -160,20 +199,29 @@ export const useSquadStore = create<SquadState>((set, get) => ({
     }
 
     // Budget check
-    const spent = selectedPlayers.reduce((sum, p) => sum + p.price, 0);
-    if (spent + player.price > BUDGET_LIMIT) {
+    const newPlayers = [...selectedPlayers, player];
+    const testBank = calculateBankBalance(initialPlayers, newPlayers);
+    if (testBank < 0) {
       return {
         ok: false,
-        reason: `${player.firstName} ${player.lastName} costs $${player.price}m — exceeds your $${(BUDGET_LIMIT - spent).toFixed(1)}m remaining budget`,
+        reason: `${player.firstName} ${player.lastName} costs $${player.price}m — exceeds your $${(testBank + player.price).toFixed(1)}m remaining budget`,
       };
     }
 
-    const newPlayers = [...selectedPlayers, player];
+    const prevFreeTransfers = get().freeTransfersRemaining();
+
     set({
       selectedPlayers: newPlayers,
       ...computeDefaultSquadState(newPlayers),
     });
-    return { ok: true };
+
+    const newFreeTransfers = get().freeTransfersRemaining();
+    let alertReason = "";
+    if (initialPlayers.length > 0 && prevFreeTransfers > 0 && newFreeTransfers === 0) {
+      alertReason = "All 4 free transfers used. Further transfers will use your bank balance.";
+    }
+
+    return { ok: true, reason: alertReason };
   },
 
   // ── Remove ───────────────────────────────────────────────────────────────
@@ -190,23 +238,37 @@ export const useSquadStore = create<SquadState>((set, get) => ({
   // ── Set Initial Squad ─────────────────────────────────────────────────────
   setInitialSquad: (players) => {
     set({
-      selectedPlayers: players,
+      initialPlayers: [...players],
+      selectedPlayers: [...players],
       ...computeDefaultSquadState(players),
     });
   },
 
-  setFullSquadState: (state) => set(state),
+  setFullSquadState: (state) => set({
+    ...state,
+    initialPlayers: state.selectedPlayers ? [...state.selectedPlayers] : get().initialPlayers,
+  }),
 
   // ── Reset ─────────────────────────────────────────────────────────────────
-  reset: () => set({
-    selectedPlayers: [],
-    startingXI: [],
-    bench: [],
-    captainId: null,
-    viceCaptainId: null,
-    twelfthManId: null,
-    activeBooster: null,
-  }),
+  reset: () => {
+    const { initialPlayers } = get();
+    if (initialPlayers.length > 0) {
+      set({
+        selectedPlayers: [...initialPlayers],
+        ...computeDefaultSquadState(initialPlayers),
+      });
+    } else {
+      set({
+        selectedPlayers: [],
+        startingXI: [],
+        bench: [],
+        captainId: null,
+        viceCaptainId: null,
+        twelfthManId: null,
+        activeBooster: null,
+      });
+    }
+  },
 
   // ── Auto Pick ─────────────────────────────────────────────────────────────
   autoPick: (allPlayers) => {
@@ -222,16 +284,17 @@ export const useSquadStore = create<SquadState>((set, get) => ({
     }
 
     const picked: Player[] = [];
-    let spent = 0;
-
+    
     const tryPick = (pos: string, count: number) => {
       let taken = 0;
       for (const p of byPosition[pos]) {
         if (taken >= count) break;
-        if (spent + p.price <= BUDGET_LIMIT && !picked.some((x) => x.id === p.id)) {
-          picked.push(p);
-          spent += p.price;
-          taken++;
+        if (!picked.some((x) => x.id === p.id)) {
+          const testBank = calculateBankBalance(get().initialPlayers, [...picked, p]);
+          if (testBank >= 0) {
+            picked.push(p);
+            taken++;
+          }
         }
       }
     };
@@ -325,11 +388,18 @@ export const useSquadStore = create<SquadState>((set, get) => ({
   },
 
   // ── Derived ──────────────────────────────────────────────────────────────
-  budget: () =>
-    get().selectedPlayers.reduce((sum, p) => sum + p.price, 0),
+  budget: () => BUDGET_LIMIT - calculateBankBalance(get().initialPlayers, get().selectedPlayers),
 
-  budgetRemaining: () =>
-    BUDGET_LIMIT - get().selectedPlayers.reduce((sum, p) => sum + p.price, 0),
+  budgetRemaining: () => calculateBankBalance(get().initialPlayers, get().selectedPlayers),
+
+  freeTransfersRemaining: () => {
+    const state = get();
+    if (state.initialPlayers.length === 0) return 4;
+    const addedPlayers = state.selectedPlayers.filter(
+      (p) => !state.initialPlayers.some((ip) => ip.id === p.id)
+    );
+    return Math.max(0, 4 - addedPlayers.length);
+  },
 
   positionCounts: () => {
     const counts: Record<string, number> = { GK: 0, DEF: 0, MID: 0, FWD: 0 };

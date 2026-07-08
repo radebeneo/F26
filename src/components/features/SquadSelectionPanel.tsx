@@ -446,12 +446,13 @@ export function SquadSelectionPanel({
   opponentMap,
 }: SquadSelectionPanelProps) {
   const [view, setView] = useState<ViewMode>("pitch");
-  const { selectedPlayers, reset, autoPick, removePlayer, budgetRemaining } =
+  const { selectedPlayers, reset, autoPick, removePlayer, budgetRemaining, freeTransfersRemaining, initialPlayers } =
     useSquadStore();
 
   const count = selectedPlayers.length;
   const isFull = count >= MAX_SQUAD_SIZE;
   const remaining = budgetRemaining();
+  const freeTransfers = freeTransfersRemaining();
 
   const duplicatedLastNames = useMemo(() => {
     const counts: Record<string, number> = {};
@@ -563,6 +564,21 @@ export function SquadSelectionPanel({
             </div>
             <p className="text-[10px] text-white/40 mt-1">Bank</p>
           </div>
+
+          {/* Free Transfers badge */}
+          {initialPlayers.length > 0 && (
+            <div className="flex flex-col items-center">
+              <div
+                className={cn(
+                  "px-3 py-1 rounded-md text-sm font-black transition-colors",
+                  freeTransfers > 0 ? "bg-[#c8f000] text-black" : "bg-white/20 text-white/50"
+                )}
+              >
+                {freeTransfers}
+              </div>
+              <p className="text-[10px] text-white/40 mt-1">Free Transfers</p>
+            </div>
+          )}
         </div>
       </div>
 

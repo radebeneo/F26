@@ -47,6 +47,7 @@ function MySquadPitchSlot({
   viceCaptainId,
   isTransferMode,
   onClick,
+  onRemove,
   isSubOutSelected,
   isSubInValid,
   benchIndex,
@@ -59,6 +60,7 @@ function MySquadPitchSlot({
   viceCaptainId: number | null;
   isTransferMode: boolean;
   onClick?: () => void;
+  onRemove?: () => void;
   isSubOutSelected?: boolean;
   isSubInValid?: boolean;
   benchIndex?: number;
@@ -133,7 +135,13 @@ function MySquadPitchSlot({
 
           {/* Transfer icon (only in transfer mode) */}
           {isTransferMode && (
-            <div className="absolute -top-1 -right-2 z-30 w-5 h-5">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onRemove?.();
+              }}
+              className="absolute -top-1 -right-2 z-30 w-5 h-5 cursor-pointer hover:scale-110 transition-transform"
+            >
               <Image
                 src="/fantasy-icons/transfer.webp"
                 alt="Transfer"
@@ -141,48 +149,48 @@ function MySquadPitchSlot({
                 height={20}
                 className="object-contain"
               />
-            </div>
+            </button>
           )}
 
           <div className={cn("w-full flex flex-col items-center relative z-0", isEliminated && "grayscale-[80%] opacity-80")}>
             {/* Player portrait or nation kit */}
             <div className="relative w-14 h-14 z-10 -mb-1 flex-shrink-0 drop-shadow-md overflow-hidden border-[1.5px] border-white rounded-md">
               <Image
-              src={player.imageUrl ?? `/images/kits/${slug}.webp`}
-              alt={player.imageUrl ? `${player.firstName} ${player.lastName}` : player.nation}
-              fill
-              className={player.imageUrl
-                ? "object-cover object-top scale-[1.8] origin-top"
-                : "object-contain object-bottom"
-              }
-              sizes="120px"
-              quality={100}
-            />
-          </div>
+                src={player.imageUrl ?? `/images/kits/${slug}.webp`}
+                alt={player.imageUrl ? `${player.firstName} ${player.lastName}` : player.nation}
+                fill
+                className={player.imageUrl
+                  ? "object-cover object-top scale-[1.8] origin-top"
+                  : "object-contain object-bottom"
+                }
+                sizes="120px"
+                quality={100}
+              />
+            </div>
 
-          {/* Card body */}
-          <div className="w-full bg-[#111] border-[1.5px] border-white rounded-md flex flex-col overflow-hidden relative z-0">
-            <div className="bg-white px-0.5 py-[2px] text-center">
-              <span className="block text-[9px] font-bold text-black truncate w-full">
-                {player.knownName || player.lastName || player.firstName}
-              </span>
-            </div>
-            <div className="bg-[#111] px-0.5 py-[2px] text-center flex items-center justify-center gap-[2px]">
-              {isTransferMode ? (
-                /* In transfer mode, show price */
-                <span className="text-[9px] font-black text-[#cca64f]">
-                  ${player.price}m
+            {/* Card body */}
+            <div className="w-full bg-[#111] border-[1.5px] border-white rounded-md flex flex-col overflow-hidden relative z-0">
+              <div className="bg-white px-0.5 py-[2px] text-center">
+                <span className="block text-[9px] font-bold text-black truncate w-full">
+                  {player.knownName || player.lastName || player.firstName}
                 </span>
-              ) : (
-                /* Default mode, show opponent */
-                <>
-                  <span className="text-[8px] font-bold text-white">v</span>
+              </div>
+              <div className="bg-[#111] px-0.5 py-[2px] text-center flex items-center justify-center gap-[2px]">
+                {isTransferMode ? (
+                  /* In transfer mode, show price */
                   <span className="text-[9px] font-black text-[#cca64f]">
-                    {opponentAcronym || "TBD"}
+                    ${player.price}m
                   </span>
-                </>
-              )}
-            </div>
+                ) : (
+                  /* Default mode, show opponent */
+                  <>
+                    <span className="text-[8px] font-bold text-white">v</span>
+                    <span className="text-[9px] font-black text-[#cca64f]">
+                      {opponentAcronym || "TBD"}
+                    </span>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -327,14 +335,18 @@ export function MySquadView({
     twelfthManId,
     setFullSquadState,
     budgetRemaining,
+    freeTransfersRemaining,
+    initialPlayers,
     autoPick,
-    reset
+    reset,
+    removePlayer
   } = useSquadStore();
 
   const [isTransferMode, setIsTransferMode] = useState(false);
   const [is12thManMode, setIs12thManMode] = useState(false);
   const [isBoosterOpen, setIsBoosterOpen] = useState(false);
   const remaining = budgetRemaining();
+  const freeTransfers = freeTransfersRemaining();
   const [selectedPlayerForModal, setSelectedPlayerForModal] = useState<Player | null>(null);
 
   const [isSubstitutionMode, setIsSubstitutionMode] = useState(false);
@@ -491,6 +503,11 @@ export function MySquadView({
                 isTransferMode={isTransferMode}
                 isSubOutSelected={isOut}
                 isSubDisabled={isSubDisabled}
+                onRemove={() => {
+                  if (p) {
+                    removePlayer(p.id);
+                  }
+                }}
                 onClick={() => {
                   if (!p || isTransferMode) return;
                   if (isSubstitutionMode && subOutPlayerId) {
@@ -542,20 +559,36 @@ export function MySquadView({
                   </div>
                 </div>
 
-                {/* Budget badge */}
-                <div className="flex items-center gap-2">
-                  <p className="text-[10px] text-white/40 uppercase font-bold tracking-widest mt-0.5">Bank</p>
-                  <div
-                    className={cn(
-                      "px-3 py-1 rounded-md text-sm font-black text-white transition-colors",
-                      remaining < 5
-                        ? "bg-secondaryRed-600"
-                        : remaining < 20
-                          ? "bg-secondaryYellow-600"
-                          : "bg-secondaryGreen-600"
-                    )}
-                  >
-                    ${remaining.toFixed(1)}m
+                {/* Budget & Free transfers badges */}
+                <div className="flex items-center gap-3">
+                  {initialPlayers.length > 0 && isTransferMode && (
+                    <div className="flex items-center gap-2">
+                      <p className="text-[10px] text-white/40 uppercase font-bold tracking-widest mt-0.5">Free Transfers</p>
+                      <div
+                        className={cn(
+                          "px-2 py-1 rounded-md text-sm font-black transition-colors",
+                          freeTransfers > 0 ? "bg-[#c8f000] text-black" : "bg-white/20 text-white/50"
+                        )}
+                      >
+                        {freeTransfers}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex items-center gap-2">
+                    <p className="text-[10px] text-white/40 uppercase font-bold tracking-widest mt-0.5">Bank</p>
+                    <div
+                      className={cn(
+                        "px-3 py-1 rounded-md text-sm font-black text-white transition-colors",
+                        remaining < 5
+                          ? "bg-secondaryRed-600"
+                          : remaining < 20
+                            ? "bg-secondaryYellow-600"
+                            : "bg-secondaryGreen-600"
+                      )}
+                    >
+                      ${remaining.toFixed(1)}m
+                    </div>
                   </div>
                 </div>
               </div>
