@@ -81,7 +81,7 @@ function calculateBankBalance(initialPlayers: Player[], selectedPlayers: Player[
     }
   }
 
-  let freeTransfers = 4;
+  let freeTransfers = 5;
   for (const p of addedPlayers) {
     if (freeTransfers > 0) {
       freeTransfers--;
@@ -186,8 +186,8 @@ export const useSquadStore = create<SquadState>((set, get) => ({
       };
     }
 
-    // Nation limit (max 4 per nation)
-    const MAX_PER_NATION = 4;
+    // Nation limit (max 6 per nation)
+    const MAX_PER_NATION = 6;
     const nationCount = selectedPlayers.filter(
       (p) => p.nation === player.nation
     ).length;
@@ -218,7 +218,7 @@ export const useSquadStore = create<SquadState>((set, get) => ({
     const newFreeTransfers = get().freeTransfersRemaining();
     let alertReason = "";
     if (initialPlayers.length > 0 && prevFreeTransfers > 0 && newFreeTransfers === 0) {
-      alertReason = "All 4 free transfers used. Further transfers will use your bank balance.";
+      alertReason = "All 5 free transfers used. Further transfers will use your bank balance.";
     }
 
     return { ok: true, reason: alertReason };
@@ -394,11 +394,11 @@ export const useSquadStore = create<SquadState>((set, get) => ({
 
   freeTransfersRemaining: () => {
     const state = get();
-    if (state.initialPlayers.length === 0) return 4;
+    if (state.initialPlayers.length === 0) return 5;
     const addedPlayers = state.selectedPlayers.filter(
       (p) => !state.initialPlayers.some((ip) => ip.id === p.id)
     );
-    return Math.max(0, 4 - addedPlayers.length);
+    return Math.max(0, 5 - addedPlayers.length);
   },
 
   positionCounts: () => {

@@ -99,9 +99,14 @@ export const fixtures: NewFixture[] = [
   { gameweekId: 5, homeNation: "Argentina", awayNation: "Egypt", kickoffTime: new Date("2026-07-07T18:00:00Z"), status: "FINISHED" },
   { gameweekId: 5, homeNation: "Switzerland", awayNation: "Colombia", kickoffTime: new Date("2026-07-07T22:00:00Z"), status: "FINISHED" },
 
-  { gameweekId: 6, homeNation: "France", awayNation: "Morocco", kickoffTime: new Date("2026-07-09T22:00:00Z"), status: "UPCOMING" },
-  { gameweekId: 6, homeNation: "Spain", awayNation: "Belgium", kickoffTime: new Date("2026-07-10T21:00:00Z"), status: "UPCOMING" },
-  { gameweekId: 6, homeNation: "Norway", awayNation: "England", kickoffTime: new Date("2026-07-11T23:00:00Z"), status: "UPCOMING" },
-  { gameweekId: 6, homeNation: "Argentina", awayNation: "Switzerland", kickoffTime: new Date("2026-07-12T03:00:00Z"), status: "UPCOMING" },
+  { gameweekId: 6, homeNation: "France", awayNation: "Morocco", kickoffTime: new Date("2026-07-09T22:00:00Z"), status: "FINISHED" },
+  { gameweekId: 6, homeNation: "Spain", awayNation: "Belgium", kickoffTime: new Date("2026-07-10T21:00:00Z"), status: "FINISHED" },
+  { gameweekId: 6, homeNation: "Norway", awayNation: "England", kickoffTime: new Date("2026-07-11T23:00:00Z"), status: "FINISHED" },
+  { gameweekId: 6, homeNation: "Argentina", awayNation: "Switzerland", kickoffTime: new Date("2026-07-12T03:00:00Z"), status: "FINISHED" },
+
+  // Semi-finals
+  { gameweekId: 7, homeNation: "France", awayNation: "Spain", kickoffTime: new Date("2026-07-14T21:00:00Z"), status: "UPCOMING" },
+  { gameweekId: 7, homeNation: "England", awayNation: "Argentina", kickoffTime: new Date("2026-07-15T21:00:00Z"), status: "UPCOMING" },
+
 
 ];

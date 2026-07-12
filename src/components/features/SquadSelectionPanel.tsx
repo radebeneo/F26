@@ -486,7 +486,7 @@ export function SquadSelectionPanel({
               Squad Selection
             </h2>
             <p className="text-xs text-white/50">
-              Select a maximum of 3 players from a single nation or &apos;Auto
+              Select a maximum of 6 players from a single nation or &apos;Auto
               Pick&apos; if you&apos;re short of time.
             </p>
           </div>
