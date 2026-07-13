@@ -17,8 +17,7 @@ interface PlayerDetailsModalProps {
   onSetViceCaptain?: () => void;
   onSubOut?: () => void;
   onTransferOut?: () => void;
-  opponentAcronym?: string | null;
-  opponentNation?: string | null;
+  nextFixtures?: { acronym: string; name: string }[];
   isBench?: boolean;
 }
 
@@ -32,8 +31,7 @@ export function PlayerDetailsModal({
   onSetViceCaptain,
   onSubOut,
   onTransferOut,
-  opponentAcronym,
-  opponentNation,
+  nextFixtures,
   isBench,
 }: PlayerDetailsModalProps) {
   const [activeTab, setActiveTab] = useState<"overview" | "fixtures" | "results">("overview");
@@ -199,9 +197,13 @@ export function PlayerDetailsModal({
 
                     {/* Stats Grid */}
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="bg-white rounded py-4 flex flex-col items-center justify-center">
-                        <span className="text-xl font-black text-black uppercase">v {opponentAcronym || "TBD"}</span>
-                        <span className="text-xs font-bold text-black mt-1">Next fixture</span>
+                      <div className="bg-white rounded py-4 flex flex-col items-center justify-center text-center px-2">
+                        <span className="text-xl font-black text-black uppercase">
+                          {nextFixtures && nextFixtures.length > 0
+                            ? nextFixtures.map(f => `v ${f.acronym}`).join(", ")
+                            : "TBD"}
+                        </span>
+                        <span className="text-xs font-bold text-black mt-1">Next fixtures</span>
                       </div>
                       <div className="bg-white rounded py-4 flex flex-col items-center justify-center">
                         <span className="text-xl font-black text-black uppercase">{player.percentSelected ?? 0}%</span>
@@ -221,35 +223,39 @@ export function PlayerDetailsModal({
 
                 {activeTab === "fixtures" && (
                   <div className="flex flex-col gap-4">
-                    {opponentNation ? (
-                      <div className="bg-white/5 rounded-xl p-4 flex flex-col items-center justify-center border border-white/10 gap-3">
-                        <span className="text-xs font-bold text-white/50 uppercase tracking-widest">Next Fixture</span>
-                        <div className="flex items-center justify-center gap-6 w-full">
-                          <div className="flex flex-col items-center gap-2 flex-1">
-                            <div className="relative w-12 h-12 drop-shadow-md">
-                              <Image
-                                src={`/images/flags/${getCountrySlug(player.nation)}.webp`}
-                                alt={`${player.nation} flag`}
-                                fill
-                                className="object-contain"
-                              />
+                    {nextFixtures && nextFixtures.length > 0 ? (
+                      nextFixtures.map((fixture, idx) => (
+                        <div key={idx} className="bg-white/5 rounded-xl p-4 flex flex-col items-center justify-center border border-white/10 gap-3">
+                          <span className="text-xs font-bold text-white/50 uppercase tracking-widest">
+                            {idx === 0 ? "Next Fixture" : `Fixture ${idx + 1}`}
+                          </span>
+                          <div className="flex items-center justify-center gap-6 w-full">
+                            <div className="flex flex-col items-center gap-2 flex-1">
+                              <div className="relative w-12 h-12 drop-shadow-md">
+                                <Image
+                                  src={`/images/flags/${getCountrySlug(player.nation)}.webp`}
+                                  alt={`${player.nation} flag`}
+                                  fill
+                                  className="object-contain"
+                                />
+                              </div>
+                              <span className="text-sm font-bold text-white text-center uppercase leading-tight">{player.nation}</span>
                             </div>
-                            <span className="text-sm font-bold text-white text-center uppercase leading-tight">{player.nation}</span>
-                          </div>
-                          <span className="text-xl font-black text-white/30">V</span>
-                          <div className="flex flex-col items-center gap-2 flex-1">
-                            <div className="relative w-12 h-12 drop-shadow-md">
-                              <Image
-                                src={`/images/flags/${getCountrySlug(opponentNation)}.webp`}
-                                alt={`${opponentNation} flag`}
-                                fill
-                                className="object-contain"
-                              />
+                            <span className="text-xl font-black text-white/30">V</span>
+                            <div className="flex flex-col items-center gap-2 flex-1">
+                              <div className="relative w-12 h-12 drop-shadow-md">
+                                <Image
+                                  src={`/images/flags/${getCountrySlug(fixture.name)}.webp`}
+                                  alt={`${fixture.name} flag`}
+                                  fill
+                                  className="object-contain"
+                                />
+                              </div>
+                              <span className="text-sm font-bold text-white text-center uppercase leading-tight">{fixture.name}</span>
                             </div>
-                            <span className="text-sm font-bold text-white text-center uppercase leading-tight">{opponentNation}</span>
                           </div>
                         </div>
-                      </div>
+                      ))
                     ) : (
                       <div className="py-8 text-center text-white/50 text-sm">
                         No upcoming fixtures.

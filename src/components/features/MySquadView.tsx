@@ -1080,15 +1080,10 @@ export function MySquadView({
         isCaptain={selectedPlayerForModal?.id === captainId}
         isViceCaptain={selectedPlayerForModal?.id === viceCaptainId}
         isBench={selectedPlayerForModal ? bench.includes(selectedPlayerForModal.id) : false}
-        opponentAcronym={
-          selectedPlayerForModal && opponentMap
-            ? opponentMap[selectedPlayerForModal.nation]?.acronym
-            : null
-        }
-        opponentNation={
-          selectedPlayerForModal && opponentMap
-            ? opponentMap[selectedPlayerForModal.nation]?.name
-            : null
+        nextFixtures={
+          selectedPlayerForModal && opponentMap?.[selectedPlayerForModal.nation]
+            ? [opponentMap[selectedPlayerForModal.nation]]
+            : []
         }
         onSetCaptain={isManaging ? () => {
           if (selectedPlayerForModal) setCaptainId(selectedPlayerForModal.id);

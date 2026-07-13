@@ -612,8 +612,11 @@ export function PlayerSelectionPanel({ players, mode = "transfer", opponentMap }
         onClose={() => setSelectedPlayerForModal(null)}
         isCaptain={false}
         isViceCaptain={false}
-        opponentAcronym={selectedPlayerForModal ? opponentMap?.[selectedPlayerForModal.nation]?.acronym : undefined}
-        opponentNation={selectedPlayerForModal ? opponentMap?.[selectedPlayerForModal.nation]?.name : undefined}
+        nextFixtures={
+          selectedPlayerForModal && opponentMap?.[selectedPlayerForModal.nation]
+            ? [opponentMap[selectedPlayerForModal.nation]]
+            : []
+        }
       />
     </aside>
   );

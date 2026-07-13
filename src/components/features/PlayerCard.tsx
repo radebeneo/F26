@@ -7,7 +7,7 @@ import type { Player } from "@/db/schema";
 
 interface PlayerCardProps {
   player: Player;
-  nextFixture?: string;
+  nextFixtures?: { acronym: string; name: string }[];
   className?: string;
 }
 
@@ -25,7 +25,7 @@ export function formatNationForUrl(nation: string) {
     .replace(/^-+|-+$/g, ""); // trim hyphens
 }
 
-export function PlayerCard({ player, nextFixture, className }: PlayerCardProps) {
+export function PlayerCard({ player, nextFixtures, className }: PlayerCardProps) {
   const [imgError, setImgError] = useState(false);
   const formattedNation = formatNationForUrl(player.nation);
 
@@ -70,10 +70,14 @@ export function PlayerCard({ player, nextFixture, className }: PlayerCardProps) 
         <span className="text-black font-black text-2xl tracking-tight leading-none uppercase">
           {player.knownName || player.lastName || player.firstName}
         </span>
-        {nextFixture && (
-          <div className="mt-1 flex items-center justify-center gap-1">
-            <span className="text-[10px] font-bold text-black/60">v</span>
-            <span className="text-[12px] font-black text-[#cca64f] uppercase">{nextFixture}</span>
+        {nextFixtures && nextFixtures.length > 0 && (
+          <div className="mt-1 flex items-center justify-center gap-2 flex-wrap">
+            {nextFixtures.map((fixture, idx) => (
+              <div key={idx} className="flex items-center gap-1">
+                <span className="text-[10px] font-bold text-black/60">v</span>
+                <span className="text-[12px] font-black text-[#cca64f] uppercase">{fixture.acronym}</span>
+              </div>
+            ))}
           </div>
         )}
       </div>
