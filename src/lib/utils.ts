@@ -56,5 +56,6 @@ export const ELIMINATED_NATIONS = [
   "Norway",
   "Belgium",
   "Switzerland",
+  "France"
 
 ];
